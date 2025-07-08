@@ -1,1 +1,296 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// PrimeIcons
+@import 'primeicons/primeicons.css';
+
+/* Design System - CSS Custom Properties */
+:root {
+  /* Brand */
+  --color-primary: #1B5E20;
+  --color-primary-light: #43A047;
+  --color-secondary: #FFB300;
+  --color-secondary-dark: #F9A825;
+
+  /* Backgrounds */
+  --color-bg: #FEFCF9;
+  --color-surface: #FFFFFF;
+  --color-elevation-1: #F5F5F5;
+  --color-elevation-2: #EEEEEE;
+
+  /* Text */
+  --color-text-primary: #212121;
+  --color-text-secondary: #757575;
+  --color-link: #1B5E20;
+
+  /* Border & Lines */
+  --color-border: #E0E0E0;
+
+  /* Status */
+  --color-success: #4CAF50;
+  --color-error: #E53935;
+  --color-warning: #FB8C00;
+  --color-info: #039BE5;
+
+  /* Spacing System */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dark {
+  /* Brand */
+  --color-primary: #81C784;
+  --color-primary-light: #A5D6A7;
+  --color-secondary: #FFD54F;
+  --color-secondary-dark: #FFB300;
+
+  /* Backgrounds */
+  --color-bg: #121212;
+  --color-surface: #1E1E1E;
+  --color-elevation-1: #2C2C2C;
+  --color-elevation-2: #3A3A3A;
+
+  /* Text */
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #BDBDBD;
+  --color-link: #A5D6A7;
+
+  /* Border & Lines */
+  --color-border: #424242;
+
+  /* Status */
+  --color-success: #81C784;
+  --color-error: #EF9A9A;
+  --color-warning: #FFB74D;
+  --color-info: #4FC3F7;
+}
+
+/* Global Typography and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.875rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+  display: inline-block;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: var(--color-primary-light);
+  }
+}
+
+/* Design System Utility Classes */
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-surface { background-color: var(--color-surface); }
+.bg-elevation-1 { background-color: var(--color-elevation-1); }
+.bg-elevation-2 { background-color: var(--color-elevation-2); }
+
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-body { color: var(--color-text-primary); }
+.text-muted { color: var(--color-text-secondary); }
+.text-success { color: var(--color-success); }
+.text-error { color: var(--color-error); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
+
+.border-primary { border-color: var(--color-primary); }
+.border-secondary { border-color: var(--color-secondary); }
+.border-default { border-color: var(--color-border); }
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+
+/* Spacing Utilities */
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+
+.m-xs { margin: var(--spacing-xs); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+.m-xl { margin: var(--spacing-xl); }
+
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+/* Dark Mode Toggle Button */
+.theme-toggle {
+  position: fixed;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 1000;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+  }
+}
+
+/* PrimeNG Component Customization with Design System */
+::ng-deep .p-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-card .p-card-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: white;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+::ng-deep .p-card .p-card-content {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+::ng-deep .p-button {
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  &.p-button-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    
+    &:hover {
+      background: var(--color-primary-light);
+      border-color: var(--color-primary-light);
+    }
+  }
+  
+  &.p-button-secondary {
+    background: var(--color-secondary);
+    border-color: var(--color-secondary);
+    color: var(--color-text-primary);
+    
+    &:hover {
+      background: var(--color-secondary-dark);
+      border-color: var(--color-secondary-dark);
+    }
+  }
+}
+
+::ng-deep .p-inputtext {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+  }
+}
+
+/* Dark mode specific adjustments */
+.dark ::ng-deep .p-inputtext:focus {
+  box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.2);
+}
+
+/* Animation for theme switching */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
