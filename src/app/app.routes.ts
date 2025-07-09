@@ -29,4 +29,10 @@ export const routes: Routes = [
       import('./features/user/user.routes').then((m) => m.userRoutes),
     title: 'Usuário',
   },
+  {
+    path: 'listing',
+    loadChildren: () =>
+      import('./features/listing/listing.routes').then((m) => m.listingRoutes),
+    title: 'Carrinho',
+  },
 ];

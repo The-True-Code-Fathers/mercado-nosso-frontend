@@ -9,4 +9,6 @@ import { FooterComponent } from './shared/components/layout/footer/footer.compon
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'mercado-nosso-frontend';
+}
