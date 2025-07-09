@@ -1,135 +1,158 @@
 <div class="home-container">
   <!-- Hero Section -->
-  <section class="hero-section bg-primary text-white">
+  <section class="hero-section">
     <div class="hero-content">
-      <h1>Bem-vindo ao Mercado Nosso</h1>
+      <h1>Compre e venda com segurança</h1>
       <p class="hero-subtitle">
-        Encontre os melhores produtos frescos e de qualidade para sua mesa
+        Milhares de produtos esperando por você no Mercado Nosso
       </p>
-      <div class="hero-actions">
+      <div class="hero-search">
+        <span class="p-input-icon-left hero-search-wrapper">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            placeholder="Buscar produtos, marcas e muito mais..."
+            class="hero-search-input"
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onHeroSearch()"
+          />
+        </span>
         <p-button
-          label="Ver Produtos"
-          icon="pi pi-shopping-cart"
-          styleClass="p-button-secondary p-button-lg"
-          routerLink="/products">
-        </p-button>
-        <p-button
-          label="Criar Conta"
-          icon="pi pi-user-plus"
-          styleClass="p-button-outlined p-button-lg ml-3"
-          severity="secondary">
+          label="Buscar"
+          icon="pi pi-search"
+          styleClass="p-button-primary hero-search-button"
+          (click)="onHeroSearch()">
         </p-button>
       </div>
-    </div>
-    <div class="hero-image">
-      <i class="pi pi-shopping-bag hero-icon"></i>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-  <section class="features-section">
-    <div class="section-header">
-      <h2>Por que escolher o Mercado Nosso?</h2>
-      <p class="section-subtitle">Oferecemos a melhor experiência de compra online</p>
-    </div>
-
-    <div class="features-grid">
-      <p-card class="feature-card">
-        <ng-template pTemplate="header">
-          <div class="feature-icon bg-primary">
-            <i class="pi pi-truck text-white"></i>
-          </div>
-        </ng-template>
-        <h3>Entrega Rápida</h3>
-        <p>Entregamos seus produtos frescos em até 24 horas na sua região</p>
-      </p-card>
-
-      <p-card class="feature-card">
-        <ng-template pTemplate="header">
-          <div class="feature-icon bg-secondary">
-            <i class="pi pi-shield text-white"></i>
-          </div>
-        </ng-template>
-        <h3>Qualidade Garantida</h3>
-        <p>Todos os produtos passam por rigoroso controle de qualidade</p>
-      </p-card>
-
-      <p-card class="feature-card">
-        <ng-template pTemplate="header">
-          <div class="feature-icon bg-success">
-            <i class="pi pi-dollar text-white"></i>
-          </div>
-        </ng-template>
-        <h3>Melhores Preços</h3>
-        <p>Preços competitivos e promoções exclusivas para nossos clientes</p>
-      </p-card>
     </div>
   </section>
 
   <!-- Categories Section -->
-  <section class="categories-section bg-elevation-1">
+  <section class="categories-section">
     <div class="section-header">
-      <h2>Categorias Populares</h2>
-      <p class="section-subtitle">Explore nossas principais categorias</p>
+      <h2>Categorias</h2>
+      <p class="section-subtitle">Encontre o que você precisa</p>
     </div>
 
     <div class="categories-grid">
-      <div class="category-card" routerLink="/products">
-        <div class="category-icon">
-          <i class="pi pi-apple"></i>
+      <p-card 
+        class="category-card" 
+        *ngFor="let category of categories"
+        [routerLink]="['/products']" 
+        [queryParams]="{category: category.key}">
+        <ng-template pTemplate="header">
+          <div class="category-header">
+            <i [class]="category.icon + ' category-icon'"></i>
+          </div>
+        </ng-template>
+        <div class="category-content">
+          <h4>{{ category.name }}</h4>
+          <p>{{ category.description }}</p>
+          <p-badge [value]="category.count" severity="info"></p-badge>
         </div>
-        <h4>Frutas & Vegetais</h4>
-        <p>Produtos frescos e orgânicos</p>
-        <p-badge value="120+" severity="success"></p-badge>
+      </p-card>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-section">
+    <div class="section-header">
+      <h2>Produtos em destaque</h2>
+      <p class="section-subtitle">Os mais vendidos da semana</p>
+    </div>
+
+    <div class="products-grid">
+      <p-card 
+        class="product-card" 
+        *ngFor="let product of featuredProducts"
+        [routerLink]="['/product', product.id]">
+        <ng-template pTemplate="header">
+          <div class="product-image">
+            <img [src]="product.image" [alt]="product.name" />
+          </div>
+        </ng-template>
+        <div class="product-content">
+          <h5>{{ product.name }}</h5>
+          <p class="product-price">{{ product.price | currency:'BRL' }}</p>
+          <div class="product-rating">
+            <p-rating 
+              [ngModel]="product.rating" 
+              [readonly]="true" 
+              styleClass="product-rating-stars">
+            </p-rating>
+            <span class="rating-count">({{ product.reviews }})</span>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits-section">
+    <div class="section-header">
+      <h2>Por que escolher o Mercado Nosso?</h2>
+      <p class="section-subtitle">Benefícios exclusivos para você</p>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="pi pi-shield"></i>
+        </div>
+        <h4>Compra Protegida</h4>
+        <p>Seu dinheiro protegido até você receber o produto</p>
       </div>
 
-      <div class="category-card" routerLink="/products">
-        <div class="category-icon">
-          <i class="pi pi-gift"></i>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="pi pi-truck"></i>
         </div>
-        <h4>Carnes & Peixes</h4>
-        <p>Carnes premium e frutos do mar</p>
-        <p-badge value="80+" severity="info"></p-badge>
+        <h4>Frete Grátis</h4>
+        <p>Em milhares de produtos a partir de R$ 79</p>
       </div>
 
-      <div class="category-card" routerLink="/products">
-        <div class="category-icon">
-          <i class="pi pi-heart"></i>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="pi pi-credit-card"></i>
         </div>
-        <h4>Laticínios</h4>
-        <p>Leite, queijos e derivados</p>
-        <p-badge value="45+" ></p-badge>
+        <h4>Parcelamento</h4>
+        <p>Pague em até 12x sem juros no cartão</p>
       </div>
 
-      <div class="category-card" routerLink="/products">
-        <div class="category-icon">
-          <i class="pi pi-star"></i>
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="pi pi-headphones"></i>
         </div>
-        <h4>Padaria</h4>
-        <p>Pães frescos e confeitaria</p>
-        <p-badge value="60+" severity="secondary"></p-badge>
+        <h4>Suporte 24/7</h4>
+        <p>Atendimento especializado quando precisar</p>
       </div>
     </div>
   </section>
 
   <!-- CTA Section -->
-  <section class="cta-section bg-primary text-white">
-    <div class="cta-content">
-      <h2>Pronto para começar?</h2>
-      <p>Cadastre-se agora e receba ofertas exclusivas no seu e-mail</p>
-      <div class="cta-actions">
-        <div class="newsletter-form">
-          <input
-            pInputText
-            placeholder="Seu melhor e-mail"
-            class="newsletter-input">
+  <section class="cta-section">
+    <p-card class="cta-card">
+      <div class="cta-content">
+        <div class="cta-text">
+          <h3>Venda também no Mercado Nosso</h3>
+          <p>Milhões de pessoas podem comprar seus produtos</p>
+        </div>
+        <div class="cta-actions">
           <p-button
-            label="Cadastrar"
-            icon="pi pi-send"
-            styleClass="p-button-secondary">
+            label="Quero vender"
+            icon="pi pi-plus"
+            styleClass="p-button-primary"
+            routerLink="/seller">
+          </p-button>
+          <p-button
+            label="Saiba mais"
+            icon="pi pi-info-circle"
+            styleClass="p-button-outlined ml-2"
+            routerLink="/seller-info">
           </p-button>
         </div>
       </div>
-    </div>
+    </p-card>
   </section>
 </div>
