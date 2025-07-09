@@ -55,7 +55,7 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.dark {
+.p-dark {
   /* Brand */
   --color-primary: #81C784;
   --color-primary-light: #A5D6A7;
@@ -140,7 +140,7 @@ a {
   color: var(--color-link);
   text-decoration: none;
   transition: color 0.2s ease;
-  
+
   &:hover {
     color: var(--color-primary-light);
   }
@@ -214,7 +214,7 @@ a {
   cursor: pointer;
   box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
-  
+
   &:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
@@ -248,22 +248,22 @@ a {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   transition: all 0.2s ease;
-  
+
   &.p-button-primary {
     background: var(--color-primary);
     border-color: var(--color-primary);
-    
+
     &:hover {
       background: var(--color-primary-light);
       border-color: var(--color-primary-light);
     }
   }
-  
+
   &.p-button-secondary {
     background: var(--color-secondary);
     border-color: var(--color-secondary);
     color: var(--color-text-primary);
-    
+
     &:hover {
       background: var(--color-secondary-dark);
       border-color: var(--color-secondary-dark);
@@ -278,7 +278,7 @@ a {
   color: var(--color-text-primary);
   font-family: 'Inter', sans-serif;
   transition: all 0.2s ease;
-  
+
   &:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
@@ -286,7 +286,7 @@ a {
 }
 
 /* Dark mode specific adjustments */
-.dark ::ng-deep .p-inputtext:focus {
+.p-dark ::ng-deep .p-inputtext:focus {
   box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.2);
 }
 

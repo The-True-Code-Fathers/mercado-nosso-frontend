@@ -1,1 +1,46 @@
-<p>header works!</p>
+<header class="header">
+  <div class="header-container">
+    <!-- Logo/Brand -->
+    <div class="brand" routerLink="/home">
+      <i class="pi pi-shopping-bag brand-icon"></i>
+      <span class="brand-text">Mercado Nosso</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a routerLink="/home" routerLinkActive="active" class="nav-link">
+        <i class="pi pi-home"></i>
+        <span>Início</span>
+      </a>
+      <a routerLink="/products" routerLinkActive="active" class="nav-link">
+        <i class="pi pi-shopping-cart"></i>
+        <span>Produtos</span>
+      </a>
+    </nav>
+
+    <!-- User Actions -->
+    <div class="user-actions">
+      <p-button
+        icon="pi pi-shopping-cart"
+        styleClass="p-button-outlined p-button-rounded"
+        pTooltip="Carrinho"
+        routerLink="/cart">
+        <p-badge value="3" severity="danger" class="cart-badge"></p-badge>
+      </p-button>
+
+      <p-button
+        icon="pi pi-user"
+        styleClass="p-button-outlined p-button-rounded ml-2"
+        pTooltip="Minha Conta"
+        routerLink="/user">
+      </p-button>
+
+      <p-button
+        icon="pi pi-moon"
+        styleClass="p-button-text p-button-rounded ml-2"
+        pTooltip="Alternar tema"
+        (click)="toggleTheme()">
+      </p-button>
+    </div>
+  </div>
+</header>

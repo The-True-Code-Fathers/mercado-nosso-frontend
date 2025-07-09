@@ -1,0 +1,135 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section bg-primary text-white">
+    <div class="hero-content">
+      <h1>Bem-vindo ao Mercado Nosso</h1>
+      <p class="hero-subtitle">
+        Encontre os melhores produtos frescos e de qualidade para sua mesa
+      </p>
+      <div class="hero-actions">
+        <p-button
+          label="Ver Produtos"
+          icon="pi pi-shopping-cart"
+          styleClass="p-button-secondary p-button-lg"
+          routerLink="/products">
+        </p-button>
+        <p-button
+          label="Criar Conta"
+          icon="pi pi-user-plus"
+          styleClass="p-button-outlined p-button-lg ml-3"
+          severity="secondary">
+        </p-button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <i class="pi pi-shopping-bag hero-icon"></i>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-header">
+      <h2>Por que escolher o Mercado Nosso?</h2>
+      <p class="section-subtitle">Oferecemos a melhor experiência de compra online</p>
+    </div>
+
+    <div class="features-grid">
+      <p-card class="feature-card">
+        <ng-template pTemplate="header">
+          <div class="feature-icon bg-primary">
+            <i class="pi pi-truck text-white"></i>
+          </div>
+        </ng-template>
+        <h3>Entrega Rápida</h3>
+        <p>Entregamos seus produtos frescos em até 24 horas na sua região</p>
+      </p-card>
+
+      <p-card class="feature-card">
+        <ng-template pTemplate="header">
+          <div class="feature-icon bg-secondary">
+            <i class="pi pi-shield text-white"></i>
+          </div>
+        </ng-template>
+        <h3>Qualidade Garantida</h3>
+        <p>Todos os produtos passam por rigoroso controle de qualidade</p>
+      </p-card>
+
+      <p-card class="feature-card">
+        <ng-template pTemplate="header">
+          <div class="feature-icon bg-success">
+            <i class="pi pi-dollar text-white"></i>
+          </div>
+        </ng-template>
+        <h3>Melhores Preços</h3>
+        <p>Preços competitivos e promoções exclusivas para nossos clientes</p>
+      </p-card>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories-section bg-elevation-1">
+    <div class="section-header">
+      <h2>Categorias Populares</h2>
+      <p class="section-subtitle">Explore nossas principais categorias</p>
+    </div>
+
+    <div class="categories-grid">
+      <div class="category-card" routerLink="/products">
+        <div class="category-icon">
+          <i class="pi pi-apple"></i>
+        </div>
+        <h4>Frutas & Vegetais</h4>
+        <p>Produtos frescos e orgânicos</p>
+        <p-badge value="120+" severity="success"></p-badge>
+      </div>
+
+      <div class="category-card" routerLink="/products">
+        <div class="category-icon">
+          <i class="pi pi-gift"></i>
+        </div>
+        <h4>Carnes & Peixes</h4>
+        <p>Carnes premium e frutos do mar</p>
+        <p-badge value="80+" severity="info"></p-badge>
+      </div>
+
+      <div class="category-card" routerLink="/products">
+        <div class="category-icon">
+          <i class="pi pi-heart"></i>
+        </div>
+        <h4>Laticínios</h4>
+        <p>Leite, queijos e derivados</p>
+        <p-badge value="45+" ></p-badge>
+      </div>
+
+      <div class="category-card" routerLink="/products">
+        <div class="category-icon">
+          <i class="pi pi-star"></i>
+        </div>
+        <h4>Padaria</h4>
+        <p>Pães frescos e confeitaria</p>
+        <p-badge value="60+" severity="secondary"></p-badge>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section bg-primary text-white">
+    <div class="cta-content">
+      <h2>Pronto para começar?</h2>
+      <p>Cadastre-se agora e receba ofertas exclusivas no seu e-mail</p>
+      <div class="cta-actions">
+        <div class="newsletter-form">
+          <input
+            pInputText
+            placeholder="Seu melhor e-mail"
+            class="newsletter-input">
+          <p-button
+            label="Cadastrar"
+            icon="pi pi-send"
+            styleClass="p-button-secondary">
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
