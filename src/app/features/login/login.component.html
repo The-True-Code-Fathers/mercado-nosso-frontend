@@ -1,0 +1,21 @@
+<div class="login-container">
+    <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="login-card">
+        <h2 class="text-2xl font-bold text-center"> Login </h2>
+        <div class="form-field">
+            <label for="username"> Usuário </label>
+            <input id="username" pInputText formControlName="username" />
+            @if (isInvalid('username')) {
+            <p-message severity="error" text="Username é obrigatório"></p-message>
+            }
+        </div>
+
+        <div class="form-field">
+            <label for="email"> Email </label>
+            <input id="email" pInputText formControlName="email"/>
+            @if (exampleForm.get('email')?.errors?.['email']) {
+            <p-message severity="error" text="Formato de email inválido"></p-message>
+            }
+        </div>
+        <p-button type="submit" label="Entrar"></p-button>
+    </form>
+</div>
