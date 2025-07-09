@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
@@ -37,6 +37,8 @@ export class HeaderComponent {
   categoriesMenuVisible = false;
   mobileMenuVisible = false;
   mobileCategoriesVisible = false;
+
+  constructor(private router: Router) {}
 
   categories = [
     { key: 'electronics', label: 'Eletrônicos', icon: 'pi pi-desktop' },

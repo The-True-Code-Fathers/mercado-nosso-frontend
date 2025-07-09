@@ -98,39 +98,66 @@
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-xl);
   max-width: 1200px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
 }
 
 .category-card {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
   
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-md);
   }
 }
 
 .category-header {
   text-align: center;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-2xl);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
 }
 
 .category-icon {
-  font-size: 3rem;
+  font-size: 3.5rem;
   color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .category-content {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
   text-align: center;
   
   h4 {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: var(--spacing-sm);
     color: var(--color-text-primary);
@@ -139,7 +166,13 @@
   p {
     color: var(--color-text-secondary);
     margin-bottom: var(--spacing-md);
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
+}
+
+.category-badge {
+  margin-top: var(--spacing-sm);
 }
 
 /* Featured Products Section */

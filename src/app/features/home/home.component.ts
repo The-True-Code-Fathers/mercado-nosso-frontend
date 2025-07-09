@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -24,8 +24,14 @@ import { RatingModule } from 'primeng/rating';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   searchTerm: string = '';
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    // Inicialização se necessária
+  }
 
   categories = [
     {
@@ -110,8 +116,9 @@ export class HomeComponent {
   onHeroSearch() {
     if (this.searchTerm.trim()) {
       // Navegar para página de produtos com termo de busca
-      console.log('Buscando por:', this.searchTerm);
-      // Implementar navegação: this.router.navigate(['/products'], { queryParams: { search: this.searchTerm } });
+      this.router.navigate(['/products'], { 
+        queryParams: { search: this.searchTerm } 
+      });
     }
   }
 }

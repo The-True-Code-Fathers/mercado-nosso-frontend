@@ -13,7 +13,7 @@
         <p-button
           label="Categorias"
           icon="pi pi-angle-down"
-          styleClass="p-button-outlined categories-button"
+          styleClass="p-button-success categories-button"
           (click)="toggleCategoriesMenu($event)"
           [attr.aria-expanded]="categoriesMenuVisible"
           [attr.aria-haspopup]="true">
@@ -32,7 +32,7 @@
 
       <!-- Search -->
       <div class="search-container">
-        <p-iconField iconPosition="left">
+        <p-iconField iconPosition="left" class="search-field">
           <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
           <input
             type="text"
@@ -43,6 +43,12 @@
             class="search-input"
           />
         </p-iconField>
+        <p-button
+          icon="pi pi-search"
+          styleClass="p-button-success search-button"
+          (click)="onSearch()"
+          pTooltip="Buscar">
+        </p-button>
       </div>
     </div>
 
@@ -74,9 +80,9 @@
       </p-button>
 
       <p-button
-        icon="pi pi-moon"
+        [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
         styleClass="p-button-text p-button-rounded"
-        pTooltip="Alternar tema"
+        [pTooltip]="isDarkMode ? 'Tema claro' : 'Tema escuro'"
         (click)="toggleTheme()">
       </p-button>
     </div>
@@ -85,17 +91,24 @@
   <!-- Mobile Menu -->
   <div class="mobile-menu" [class.mobile-menu-active]="mobileMenuVisible">
     <div class="mobile-search">
-      <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
-        <input
-          type="text"
-          pInputText
-          placeholder="Buscar produtos..."
-          [(ngModel)]="searchTerm"
-          (keyup.enter)="onSearch()"
-          class="search-input"
-        />
-      </p-iconField>
+      <div class="mobile-search-wrapper">
+        <p-iconField iconPosition="left" class="mobile-search-field">
+          <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
+          <input
+            type="text"
+            pInputText
+            placeholder="Buscar produtos..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+            class="search-input"
+          />
+        </p-iconField>
+        <p-button
+          icon="pi pi-search"
+          styleClass="p-button-success mobile-search-button"
+          (click)="onSearch()">
+        </p-button>
+      </div>
     </div>
 
     <div class="mobile-categories">
@@ -141,10 +154,10 @@
 
       <div class="mobile-action-item">
         <p-button
-          icon="pi pi-moon"
-          label="Alternar tema"
+          [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
+          [label]="isDarkMode ? 'Tema claro' : 'Tema escuro'"
           styleClass="p-button-outlined mobile-action-button"
-          (click)="toggleTheme()">
+          (click)="toggleTheme(); closeMobileMenu()">
         </p-button>
       </div>
     </div>
