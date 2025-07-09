@@ -8,7 +8,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { AuthService } from '../../core/services/auth.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessageModule } from 'primeng/message'; 
+import { MessageModule } from 'primeng/message';
+import { InputNumber } from "primeng/inputnumber"; 
 
 
 @Component({
@@ -18,11 +19,12 @@ import { MessageModule } from 'primeng/message';
   styleUrl: './login.component.scss',
   imports: [
     CommonModule,
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     InputTextModule,
     ButtonModule,
-    MessageModule      
-  ]
+    MessageModule,
+    InputNumber
+]
 })
 export class LoginComponent implements OnInit {
   exampleForm!: FormGroup;
@@ -36,7 +38,7 @@ export class LoginComponent implements OnInit {
     this.exampleForm = this.fb.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-       password: ['', [Validators.required]] 
+      password: ['', [Validators.required]] 
     });
   }
 

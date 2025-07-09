@@ -1,144 +1,158 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.login-wrapper {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-bg);
 }
 
-:host {
-    --background-color: #ffffff;
-    --label-text-color: #334155;
-    --card-somber: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --border-radius: 12px --color-primary: #1B5E20;
-    --color-primary-light: #43A047;
-    --color-secondary: #FFB300;
-    --color-secondary-dark: #F9A825;
-
-    /* Backgrounds */
-    --color-bg: #FEFCF9;
-    --color-surface: #FFFFFF;
-    --color-elevation-1: #F5F5F5;
-    --color-elevation-2: #EEEEEE;
-
-    /* Text */
-    --color-text-primary: #212121;
-    --color-text-secondary: #757575;
-    --color-link: #1B5E20;
-
-    /* Border & Lines */
-    --color-border: #E0E0E0;
-
-    /* Status */
-    --color-success: #4CAF50;
-    --color-error: #E53935;
-    --color-warning: #FB8C00;
-    --color-info: #039BE5;
-
-    /* Spacing System */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
-
-    /* Border Radius */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.p-dark {
-    /* Brand */
-    --color-primary: #81C784;
-    --color-primary-light: #A5D6A7;
-    --color-secondary: #FFD54F;
-    --color-secondary-dark: #FFB300;
-
-    /* Backgrounds */
-    --color-bg: #121212;
-    --color-surface: #1E1E1E;
-    --color-elevation-1: #2C2C2C;
-    --color-elevation-2: #3A3A3A;
-
-    /* Text */
-    --color-text-primary: #FAFAFA;
-    --color-text-secondary: #BDBDBD;
-    --color-link: #A5D6A7;
-
-    /* Border & Lines */
-    --color-border: #424242;
-
-    /* Status */
-    --color-success: #81C784;
-    --color-error: #EF9A9A;
-    --color-warning: #FFB74D;
-    --color-info: #4FC3F7;
-}
-
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: var(--background-color);
-    padding: 1rem;
-}
-
-.login-card {
-    background-color: var(--color-primary);
-    padding: 2.5rem;
-    border-radius: 30px;
-    box-shadow: var(--card-somber);
-    width: 100%;
-    max-width: 420px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.form-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-2xl);
+  border-right: 1px solid var(--color-border);
 }
 
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
     label {
         font-weight: 500;
         color: white;
     }
 }
 
-input[pInputText].ng-valid.ng-dirty {
-    border-color: var(--color-error) !important;
-
-    &:focus {
-        box-shadow: 0 0 0 1px var(--color-error);
-    }
+.branding-section {
+  flex: 1; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-2xl);
+  background: linear-gradient(135deg, #fff7e6 0%, #ffffff 100%); 
 }
 
-:host ::ng-deep .p-button {
-  background: var(--cor-primaria);
-  border-color: var(--cor-primaria);
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  font-weight: bold;
-  transition: background-color 0.2s ease-in-out; 
+.branding-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
 
-  &:not(:disabled):hover {
-    background: #4f46e5; 
-    border-color: #4f46e5;
+.branding-logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+}
+
+.branding-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: var(--color-primary); 
+}
+
+.branding-subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+}
+
+.login-card {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl); 
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 450px; 
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.login-title, .login-subtitle {
+  color: white;
+  text-align: center;
+  margin: 0;
+}
+
+.login-subtitle {
+  opacity: 0.9;
+  font-weight: 300;
+  margin-bottom: var(--spacing-md);
+}
+
+.extra-links {
+  text-align: center;
+  margin-top: var(--spacing-md);
+  font-size: 0.9rem;
+
+  a {
+    color: white;
+    opacity: 0.8;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+  }
+
+  span {
+    color: white;
+    opacity: 0.5;
+    margin: 0 var(--spacing-sm);
   }
 }
 
-#username {
-    padding: 7px;
+#email {
+    padding: 9px;
 }
 
-#email {
-    padding: 7px;
+#password {
+    padding: 9px;
+}
+
+h2 {
+    color: white;
+}
+
+:host ::ng-deep .p-button {
+    background: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-weight: bold;
+    transition: background-color 0.2s ease-in-out;
+    width: 150px;
+
+    &:not(:disabled):hover {
+        background: white;
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+    }
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; 
+}
+
+
+@media (max-width: 900px) {
+  .login-wrapper {
+    flex-direction: column;
+  }
+
+  .form-section {
+    border-right: none; 
+    border-bottom: 1px solid var(--color-border); 
+  }
+
+  .branding-section {
+    display: none;
+  }
 }
