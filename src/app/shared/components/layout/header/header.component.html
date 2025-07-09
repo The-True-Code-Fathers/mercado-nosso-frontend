@@ -6,23 +6,61 @@
       <span class="brand-text">Mercado Nosso</span>
     </div>
 
-    <!-- Navigation -->
-    <nav class="nav">
-      <a routerLink="/home" routerLinkActive="active" class="nav-link">
-        <i class="pi pi-home"></i>
-        <span>Início</span>
-      </a>
-      <a routerLink="/products" routerLinkActive="active" class="nav-link">
-        <i class="pi pi-shopping-cart"></i>
-        <span>Produtos</span>
-      </a>
-    </nav>
+    <!-- Desktop Navigation -->
+    <div class="desktop-nav">
+      <!-- Categories Dropdown -->
+      <div class="categories-container">
+        <p-button
+          label="Categorias"
+          icon="pi pi-angle-down"
+          styleClass="p-button-outlined categories-button"
+          (click)="toggleCategoriesMenu($event)"
+          [attr.aria-expanded]="categoriesMenuVisible"
+          [attr.aria-haspopup]="true">
+        </p-button>
+        <p-overlayPanel #categoriesPanel>
+          <div class="categories-menu">
+            <div class="category-item" *ngFor="let category of categories">
+              <a [routerLink]="['/products']" [queryParams]="{category: category.key}">
+                <i [class]="category.icon"></i>
+                <span>{{ category.label }}</span>
+              </a>
+            </div>
+          </div>
+        </p-overlayPanel>
+      </div>
 
-    <!-- User Actions -->
-    <div class="user-actions">
+      <!-- Search -->
+      <div class="search-container">
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
+          <input
+            type="text"
+            pInputText
+            placeholder="Buscar produtos..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+            class="search-input"
+          />
+        </p-iconField>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <div class="mobile-menu-button">
+      <p-button
+        icon="pi pi-bars"
+        styleClass="p-button-text p-button-rounded"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="mobileMenuVisible">
+      </p-button>
+    </div>
+
+    <!-- Desktop User Actions -->
+    <div class="user-actions desktop-only">
       <p-button
         icon="pi pi-shopping-cart"
-        styleClass="p-button-outlined p-button-rounded"
+        styleClass="p-button-text p-button-rounded"
         pTooltip="Carrinho"
         routerLink="/cart">
         <p-badge value="3" severity="danger" class="cart-badge"></p-badge>
@@ -30,17 +68,85 @@
 
       <p-button
         icon="pi pi-user"
-        styleClass="p-button-outlined p-button-rounded ml-2"
+        styleClass="p-button-text p-button-rounded"
         pTooltip="Minha Conta"
         routerLink="/user">
       </p-button>
 
       <p-button
         icon="pi pi-moon"
-        styleClass="p-button-text p-button-rounded ml-2"
+        styleClass="p-button-text p-button-rounded"
         pTooltip="Alternar tema"
         (click)="toggleTheme()">
       </p-button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" [class.mobile-menu-active]="mobileMenuVisible">
+    <div class="mobile-search">
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
+        <input
+          type="text"
+          pInputText
+          placeholder="Buscar produtos..."
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          class="search-input"
+        />
+      </p-iconField>
+    </div>
+
+    <div class="mobile-categories">
+      <p-button
+        label="Categorias"
+        icon="pi pi-angle-down"
+        styleClass="p-button-outlined mobile-categories-button"
+        (click)="toggleMobileCategoriesMenu()"
+        [attr.aria-expanded]="mobileCategoriesVisible">
+      </p-button>
+
+      <div class="mobile-categories-menu" [class.mobile-categories-active]="mobileCategoriesVisible">
+        <div class="category-item" *ngFor="let category of categories">
+          <a [routerLink]="['/products']" [queryParams]="{category: category.key}" (click)="closeMobileMenu()">
+            <i [class]="category.icon"></i>
+            <span>{{ category.label }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-actions">
+      <div class="mobile-action-item">
+        <p-button
+          icon="pi pi-shopping-cart"
+          label="Carrinho"
+          styleClass="p-button-outlined mobile-action-button"
+          routerLink="/cart"
+          (click)="closeMobileMenu()">
+          <p-badge value="3" severity="danger" class="cart-badge"></p-badge>
+        </p-button>
+      </div>
+
+      <div class="mobile-action-item">
+        <p-button
+          icon="pi pi-user"
+          label="Minha Conta"
+          styleClass="p-button-outlined mobile-action-button"
+          routerLink="/user"
+          (click)="closeMobileMenu()">
+        </p-button>
+      </div>
+
+      <div class="mobile-action-item">
+        <p-button
+          icon="pi pi-moon"
+          label="Alternar tema"
+          styleClass="p-button-outlined mobile-action-button"
+          (click)="toggleTheme()">
+        </p-button>
+      </div>
     </div>
   </div>
 </header>
