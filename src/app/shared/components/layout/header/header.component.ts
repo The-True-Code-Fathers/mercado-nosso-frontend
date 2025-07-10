@@ -1,4 +1,10 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  OnInit,
+  OnDestroy,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -38,9 +44,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
   categoriesMenuVisible = false;
   mobileMenuVisible = false;
   mobileCategoriesVisible = false;
+  mobileSearchVisible = false; // Add mobile search state
   cartItemsCount = 3; // TODO: This should come from CartService
   username: string | null = 'Matheus'; // TODO: Replace with actual user service
-  
+
+  // Responsive properties
+  isMobile = false;
+  isTablet = false;
+  isDesktop = false;
+  currentScreenSize = 'desktop';
+
+  // Breakpoint constants
+  private readonly MOBILE_BREAKPOINT = 768;
+  private readonly TABLET_BREAKPOINT = 1024;
+  private readonly DESKTOP_BREAKPOINT = 1200;
+
   private hoverTimeout: any;
 
   constructor(
@@ -48,6 +66,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.checkScreenSize();
     // TODO: Subscribe to cart service to get real-time cart count
     // this.cartService.cartItems$.subscribe(items => {
     //   this.cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -158,6 +177,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.mobileCategoriesVisible = false;
   }
 
+  toggleMobileSearch() {
+    this.mobileSearchVisible = !this.mobileSearchVisible;
+    if (this.mobileSearchVisible) {
+      this.mobileMenuVisible = false;
+    }
+  }
+
+  closeMobileSearch() {
+    this.mobileSearchVisible = false;
+  }
+
   onSearch() {
     if (this.searchTerm.trim()) {
       // Navigate to product list with search term
@@ -165,6 +195,80 @@ export class HeaderComponent implements OnInit, OnDestroy {
         queryParams: { search: this.searchTerm.trim() },
       });
       this.closeMobileMenu();
+      this.closeMobileSearch();
     }
+  }
+
+  // HostListener to detect screen size changes
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.checkScreenSize();
+
+    // Close mobile menu when switching to desktop
+    if (this.isDesktop && this.mobileMenuVisible) {
+      this.closeMobileMenu();
+    }
+  }
+
+  private checkScreenSize() {
+    const width = window.innerWidth;
+
+    this.isMobile = width < this.MOBILE_BREAKPOINT;
+    this.isTablet =
+      width >= this.MOBILE_BREAKPOINT && width < this.DESKTOP_BREAKPOINT;
+    this.isDesktop = width >= this.DESKTOP_BREAKPOINT;
+
+    if (this.isMobile) {
+      this.currentScreenSize = 'mobile';
+    } else if (this.isTablet) {
+      this.currentScreenSize = 'tablet';
+    } else {
+      this.currentScreenSize = 'desktop';
+    }
+  }
+
+  // Get categories for current screen size
+  getQuickCategoriesForScreen() {
+    if (this.isMobile) {
+      return []; // No quick categories on mobile
+    } else if (this.isTablet) {
+      return this.quickCategories.slice(0, 4); // Show 4 categories on tablet
+    } else if (
+      this.currentScreenSize === 'desktop' &&
+      window.innerWidth < 1400
+    ) {
+      return this.quickCategories.slice(0, 6); // Show 6 categories on smaller desktop
+    } else {
+      return this.quickCategories; // Show all on large desktop
+    }
+  }
+
+  // Check if quick categories should be visible
+  shouldShowQuickCategories(): boolean {
+    return !this.isMobile;
+  }
+
+  // Get responsive label for categories button
+  getCategoriesButtonLabel(): string {
+    if (this.isMobile) {
+      return 'Categorias';
+    } else if (this.isTablet) {
+      return 'Todas as categorias';
+    } else {
+      return 'Todas as categorias';
+    }
+  }
+
+  // Get count of visible categories (for debugging/UI feedback)
+  getVisibleCategoriesCount(): number {
+    return this.getQuickCategoriesForScreen().length;
+  }
+
+  // Get non-quick categories for mobile dropdown (excluding quick categories)
+  getNonQuickCategories() {
+    const quickCategoryKeys = this.quickCategories.map((cat) => cat.key);
+    return this.categories.filter(
+      (category) => !quickCategoryKeys.includes(category.key)
+    );
   }
 }
