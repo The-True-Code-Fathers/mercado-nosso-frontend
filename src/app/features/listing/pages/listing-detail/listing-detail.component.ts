@@ -90,6 +90,7 @@ export class ListingDetailComponent implements OnInit {
   listingId: string | null = null
   cep: string = ''
   freteCalculado: boolean = false
+  freteError: string | null = null
   shippingOptions: ShippingOption[] = []
   productRating: number = 4.8
 
@@ -189,6 +190,11 @@ export class ListingDetailComponent implements OnInit {
       return
     }
 
+    // Reset estados anteriores
+    this.freteCalculado = false
+    this.freteError = null
+    this.shippingOptions = []
+
     // Remove o hífen para fazer a consulta na API
     const cepLimpo = this.cep.replace('-', '')
     
@@ -206,8 +212,14 @@ export class ListingDetailComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao consultar CEP:', error)
-          // Fallback para cálculo estimado por estado
-          this.calculateFallbackShipping()
+          // Verifica se é erro 404 (CEP não encontrado) ou outro erro
+          if (error.status === 404) {
+            this.freteError = 'CEP não encontrado'
+          } else {
+            this.freteError = 'Erro ao consultar CEP. Tente novamente em alguns instantes.'
+          }
+          this.shippingOptions = [] // Limpa as opções de frete em caso de erro
+          this.freteCalculado = true // Para exibir a mensagem de erro
         }
       })
   }
@@ -395,6 +407,7 @@ export class ListingDetailComponent implements OnInit {
     ]
 
     this.freteCalculado = true
+    this.freteError = null // Limpa qualquer erro anterior
   }
 
   private calculateShippingEstimate(cepData: CepResponse) {

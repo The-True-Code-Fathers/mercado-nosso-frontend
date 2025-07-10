@@ -120,11 +120,6 @@
           <!-- Product Title -->
           <div class="product-header">
             <h1 class="product-title">{{ displayTitle }}</h1>
-            <p-tag
-              [value]="displayCondition"
-              severity="success"
-              styleClass="condition-tag"
-            ></p-tag>
           </div>
 
           <!-- Rating and Reviews - MAIOR -->
@@ -141,6 +136,11 @@
               <a href="#" class="reviews-link"
                 >({{ defaultProduct.reviews }} avaliações)</a
               >
+              <p-tag
+                [value]="displayCondition"
+                severity="success"
+                styleClass="condition-tag"
+              ></p-tag>
             </div>
             <div class="sales-info">
               <p-badge
@@ -210,7 +210,7 @@
             <span class="payment-label">Pagamentos:</span>
             <div class="payment-icons">
               <div class="payment-icon" title="PayPal">
-                <img src="/images/196566.png" alt="PayPal" />
+                <img src="/images/paypal-logo.png" alt="PayPal" />
               </div>
               <div class="payment-icon" title="Mercado Pago">
                 <img src="/images/mercado-pago-logo.png" alt="Mercado Pago" />
@@ -226,34 +226,43 @@
 
           <!-- Shipping Results - Below action buttons -->
           <div
-            *ngIf="freteCalculado && shippingOptions.length > 0"
+            *ngIf="freteCalculado"
             class="shipping-results"
           >
-            <h4>Opções de entrega para CEP {{ cep }}</h4>
-            <div class="shipping-options">
-              <p-card
-                *ngFor="let option of shippingOptions"
-                styleClass="shipping-option-card"
-              >
-                <div class="shipping-option-content">
-                  <div class="shipping-header">
-                    <i [class]="option.icon" class="shipping-icon"></i>
-                    <strong>{{ option.type }}</strong>
+            <!-- Error Message -->
+            <div *ngIf="freteError" class="shipping-error">
+              <i class="pi pi-exclamation-triangle error-icon"></i>
+              <span>{{ freteError }}</span>
+            </div>
+            
+            <!-- Success Results -->
+            <div *ngIf="!freteError && shippingOptions.length > 0">
+              <h4>Opções de entrega para CEP {{ cep }}</h4>
+              <div class="shipping-options">
+                <p-card
+                  *ngFor="let option of shippingOptions"
+                  styleClass="shipping-option-card"
+                >
+                  <div class="shipping-option-content">
+                    <div class="shipping-header">
+                      <i [class]="option.icon" class="shipping-icon"></i>
+                      <strong>{{ option.type }}</strong>
+                    </div>
+                    <div class="shipping-details">
+                      <div class="shipping-cost">
+                        R$ {{ option.cost | number : '1.2-2' }}
+                      </div>
+                      <div class="shipping-time">
+                        {{ option.days }} dia{{ option.days > 1 ? 's' : '' }}
+                        úteis
+                      </div>
+                      <div class="shipping-description">
+                        {{ option.description }}
+                      </div>
+                    </div>
                   </div>
-                  <div class="shipping-details">
-                    <div class="shipping-cost">
-                      R$ {{ option.cost | number : '1.2-2' }}
-                    </div>
-                    <div class="shipping-time">
-                      {{ option.days }} dia{{ option.days > 1 ? 's' : '' }}
-                      úteis
-                    </div>
-                    <div class="shipping-description">
-                      {{ option.description }}
-                    </div>
-                  </div>
-                </div>
-              </p-card>
+                </p-card>
+              </div>
             </div>
           </div>
         </p-card>
