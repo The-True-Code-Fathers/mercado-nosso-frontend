@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   categoriesMegaMenuVisible = false;
   cartItemsCount = 3; // TODO: This should come from CartService
   username: string | null = 'Matheus'; // TODO: Replace with actual user service
-
+  megaMenuItems: any[] = [];
   constructor(
     private router: Router // private cartService: CartService // Inject when available
   ) {}

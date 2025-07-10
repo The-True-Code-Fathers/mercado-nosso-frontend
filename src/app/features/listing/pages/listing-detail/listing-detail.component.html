@@ -1,85 +1,255 @@
-<div class="listing-detail horizontal-layout center-layout">
-  <!-- Loading state -->
-  <div *ngIf="isLoading()" class="loading-state">
-    <p>Carregando produto...</p>
-  </div>
-
-  <!-- Error state -->
-  <div *ngIf="error()" class="error-state">
-    <p>{{ error() }}</p>
-    <button (click)="loadListing(listingId!)" *ngIf="listingId">
-      Tentar novamente
-    </button>
-  </div>
-
-  <!-- Content -->
-  <div *ngIf="!isLoading() && !error()" class="content-wrapper">
-    <div class="gallery-section">
-      <!-- Galeria de imagens -->
-      <img
-        [src]="displayImages[selectedImageIndex]"
-        alt="Imagem principal"
-        class="main-image"
-      />
-      <div class="gallery-thumbs">
-        <img
-          *ngFor="let img of displayImages; let i = index"
-          [src]="img"
-          class="thumb"
-          [class.selected]="i === selectedImageIndex"
-          (click)="selectImage(i)"
-        />
+<div class="listing-detail">
+  <!-- Loading Skeleton -->
+  <div *ngIf="isLoading()" class="loading-skeleton">
+    <div class="skeleton-container">
+      <div class="skeleton-gallery">
+        <p-skeleton
+          width="500px"
+          height="500px"
+          borderRadius="8px"
+        ></p-skeleton>
       </div>
-      <div class="cep-frete">
-        <input
-          type="text"
-          maxlength="9"
-          [(ngModel)]="cep"
-          placeholder="Digite seu CEP"
-          class="cep-input"
-        />
-        <button class="btn small" (click)="calcularFrete()">
-          Calcular frete
-        </button>
-      </div>
-      <div *ngIf="freteCalculado" class="frete-info">
-        <div class="custo-frete">Custo do frete: {{ custoFrete }}</div>
+      <div class="skeleton-info">
+        <p-skeleton width="80%" height="2rem" class="mb-3"></p-skeleton>
+        <p-skeleton width="60%" height="1.5rem" class="mb-2"></p-skeleton>
+        <p-skeleton width="40%" height="3rem" class="mb-3"></p-skeleton>
+        <p-skeleton width="100%" height="1rem" class="mb-2"></p-skeleton>
+        <p-skeleton width="100%" height="3rem" class="mb-2"></p-skeleton>
+        <p-skeleton width="100%" height="3rem"></p-skeleton>
       </div>
     </div>
-    <div class="info-section">
-      <h1 class="title">{{ displayTitle }}</h1>
-      <div class="rating-row">
-        <span class="stars">
-          <ng-container *ngFor="let star of starsArray; let i = index">
-            <span [class.filled]="i < filledStars">★</span>
-          </ng-container>
-        </span>
-        <span class="media">{{
-          defaultProduct.rating | number : '1.1-1'
-        }}</span>
-        <span class="reviews">({{ defaultProduct.reviews }} avaliações)</span>
-        <span class="condition">• {{ displayCondition }}</span>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="error-state">
+    <div class="error-content">
+      <i class="pi pi-exclamation-triangle error-icon"></i>
+      <h3>Ops! Algo deu errado</h3>
+      <p>{{ error() }}</p>
+      <p-button
+        *ngIf="listingId"
+        (onClick)="loadListing(listingId!)"
+        label="Tentar novamente"
+        icon="pi pi-refresh"
+        severity="secondary"
+      >
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading() && !error()" class="content-container">
+    <!-- Product Gallery and Info -->
+    <div class="product-section">
+      <!-- Gallery Section -->
+      <div class="gallery-container">
+        <p-galleria
+          [value]="galleriaImages"
+          [responsiveOptions]="[]"
+          [numVisible]="5"
+          [showThumbnails]="true"
+          [showItemNavigators]="true"
+          [circular]="true"
+          thumbnailsPosition="left"
+          styleClass="product-gallery"
+        >
+          <ng-template pTemplate="item" let-item>
+            <img
+              [src]="item.itemImageSrc"
+              [alt]="item.alt"
+              class="gallery-main-image"
+            />
+          </ng-template>
+
+          <ng-template pTemplate="thumbnail" let-item>
+            <img
+              [src]="item.thumbnailImageSrc"
+              [alt]="item.alt"
+              class="gallery-thumbnail"
+            />
+          </ng-template>
+        </p-galleria>
+
+        <!-- Shipping Calculator below gallery -->
+        <p-panel
+          header="Calcular frete e prazo"
+          [toggleable]="false"
+          styleClass="shipping-panel"
+        >
+          <div class="shipping-form">
+            <div class="shipping-input-row">
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-map-marker"></i>
+                </span>
+                <input
+                  pInputText
+                  type="text"
+                  maxlength="9"
+                  [(ngModel)]="cep"
+                  (input)="formatCep($event)"
+                  placeholder="Inserir CEP"
+                  class="cep-input"
+                />
+              </div>
+              <p-button
+                (onClick)="calcularFrete()"
+                label="OK"
+                icon="pi pi-check"
+                [disabled]="!cep || cep.length < 9"
+                styleClass="calc-button"
+              >
+              </p-button>
+            </div>
+            <div class="cep-help">
+              <a
+                href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                target="_blank"
+                class="cep-link"
+              >
+                Não lembro meu CEP
+              </a>
+            </div>
+          </div>
+        </p-panel>
       </div>
-      <div class="price">R$ {{ displayPrice | number : '1.2-2' }}</div>
-      <div class="installments">{{ defaultProduct.installments }}</div>
-      <div class="stock">Estoque disponível: {{ displayStock }}</div>
-      <div class="seller">
-        Vendedor: <b>{{ defaultProduct.seller.name }}</b>
-      </div>
-      <div class="actions-row">
-        <button class="btn buy">Comprar Agora</button>
-        <button class="btn primary">Adicionar ao carrinho</button>
-      </div>
-      <div class="shipping-block" *ngIf="freteCalculado">
-        <div class="delivery-estimate">{{ previsaoEntrega }}</div>
-      </div>
-      <div class="shipping-block" *ngIf="!freteCalculado">
-        <div class="shipping">{{ defaultProduct.shipping }}</div>
-        <div class="delivery-estimate">
-          {{ defaultProduct.deliveryEstimate }}
-        </div>
+
+      <!-- Product Info Section -->
+      <div class="info-container">
+        <p-card styleClass="product-info-card">
+          <!-- Product Title -->
+          <div class="product-header">
+            <h1 class="product-title">{{ displayTitle }}</h1>
+            <p-tag
+              [value]="displayCondition"
+              severity="success"
+              styleClass="condition-tag"
+            ></p-tag>
+          </div>
+
+          <!-- Rating and Reviews - MAIOR -->
+          <div class="rating-section">
+            <div class="rating-main">
+              <p-rating
+                [(ngModel)]="productRating"
+                [readonly]="true"
+                [stars]="5"
+                styleClass="product-rating-large"
+              >
+              </p-rating>
+              <span class="rating-score">{{ defaultProduct.rating }}</span>
+              <a href="#" class="reviews-link"
+                >({{ defaultProduct.reviews }} avaliações)</a
+              >
+            </div>
+            <div class="sales-info">
+              <p-badge
+                [value]="defaultProduct.sold + ' vendidos'"
+                severity="info"
+                styleClass="sales-badge"
+              ></p-badge>
+            </div>
+          </div>
+
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="main-price">
+              R$ {{ displayPrice | number : '1.2-2' }}
+            </div>
+
+            <!-- PIX Promotion -->
+            <div class="pix-promotion">
+              <div class="pix-icon-placeholder"></div>
+              <span class="pix-text">À vista no PIX com 5% de desconto</span>
+            </div>
+
+            <div class="installments">{{ defaultProduct.installments }}</div>
+          </div>
+
+          <!-- Seller Information -->
+          <div class="seller-section">
+            <h4>Vendido por</h4>
+            <div class="seller-info">
+              <a href="#" class="seller-name">{{
+                defaultProduct.seller.name
+              }}</a>
+              <div class="seller-stats">
+                <p-tag
+                  [value]="defaultProduct.seller.reputation"
+                  severity="success"
+                ></p-tag>
+                <span class="seller-sales"
+                  >{{ defaultProduct.seller.sales }} vendas</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="actions-section">
+            <p-button
+              label="Comprar agora"
+              icon="pi pi-shopping-cart"
+              size="large"
+              severity="success"
+              styleClass="buy-now-btn"
+            >
+            </p-button>
+            <p-button
+              label="Adicionar ao carrinho"
+              icon="pi pi-plus"
+              severity="secondary"
+              size="large"
+              styleClass="add-cart-btn"
+            >
+            </p-button>
+          </div>
+
+          <!-- Payment Methods -->
+          <div class="payment-methods">
+            <span class="payment-label">Pagamentos:</span>
+            <div class="payment-icons">
+              <div class="payment-icon-placeholder"></div>
+              <div class="payment-icon-placeholder"></div>
+              <div class="payment-icon-placeholder"></div>
+              <div class="payment-icon-placeholder"></div>
+            </div>
+          </div>
+
+          <!-- Shipping Results - Below action buttons -->
+          <div
+            *ngIf="freteCalculado && shippingOptions.length > 0"
+            class="shipping-results"
+          >
+            <h4>Opções de entrega para CEP {{ cep }}</h4>
+            <div class="shipping-options">
+              <p-card
+                *ngFor="let option of shippingOptions"
+                styleClass="shipping-option-card"
+              >
+                <div class="shipping-option-content">
+                  <div class="shipping-header">
+                    <i [class]="option.icon" class="shipping-icon"></i>
+                    <strong>{{ option.type }}</strong>
+                  </div>
+                  <div class="shipping-details">
+                    <div class="shipping-cost">
+                      R$ {{ option.cost | number : '1.2-2' }}
+                    </div>
+                    <div class="shipping-time">
+                      {{ option.days }} dia{{ option.days > 1 ? 's' : '' }}
+                      úteis
+                    </div>
+                    <div class="shipping-description">
+                      {{ option.description }}
+                    </div>
+                  </div>
+                </div>
+              </p-card>
+            </div>
+          </div>
+        </p-card>
       </div>
     </div>
   </div>
 </div>
-<!-- O restante da descrição, avaliações e comentários pode ser exibido abaixo ou em abas -->
