@@ -32,19 +32,11 @@ export class HomeComponent implements OnInit {
   heroSlides = [
     {
       id: 1,
-      image: '/images/banner.png',
+      image: '/images/banner-lg.jpg',
       title: 'Compre e venda com segurança',
       subtitle: 'Milhares de produtos esperando por você no Mercado Nosso',
       buttonText: 'Explorar Produtos',
       buttonLink: '/products',
-    },
-    {
-      id: 2,
-      image: '/images/banner.png',
-      title: 'Ofertas Imperdíveis',
-      subtitle: 'Até 70% de desconto em produtos selecionados',
-      buttonText: 'Ver Ofertas',
-      buttonLink: '/products?filter=offers',
     },
   ];
 
