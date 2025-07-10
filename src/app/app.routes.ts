@@ -29,4 +29,9 @@ export const routes: Routes = [
       import('./features/user/user.routes').then((m) => m.userRoutes),
     title: 'Usuário',
   },
+  {
+    path: 'finish',
+    loadComponent: () =>
+      import('./features/finish/finish.component').then((m) => m.FinishComponent),
+  },
 ];
