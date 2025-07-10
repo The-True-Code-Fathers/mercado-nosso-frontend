@@ -5,7 +5,7 @@
       <div class="top-left">
         <span class="delivery-info">
           <i class="pi pi-map-marker"></i>
-          Entregamos para toda São Paulo
+          Entregamos em toda grande Londrina
         </span>
       </div>
       <div class="top-right">
@@ -98,39 +98,38 @@
     </div>
       <div class="quick-categories">
         <div class="all-categories-container">
-          <span class="category-link all-categories-trigger" 
-                (click)="toggleCategoriesMegaMenu()"
-                [attr.aria-expanded]="categoriesMegaMenuVisible">
+          <span class="category-link all-categories-trigger"
+                (mouseenter)="onCategoriesHover($event)"
+                (mouseleave)="onCategoriesLeave()">
             <i class="pi pi-bars"></i>
             Todas as categorias
           </span>
-          
-          <div *ngIf="categoriesMegaMenuVisible" 
-               class="categories-overlay" 
-               (click)="closeCategoriesMegaMenu()">
-          </div>
-          
-          <div *ngIf="categoriesMegaMenuVisible" 
-               class="categories-megamenu-custom">
-            <div class="megamenu-header">
-              <h3>Todas as Categorias</h3>
-              <button class="close-button" (click)="closeCategoriesMegaMenu()">
-                <i class="pi pi-times"></i>
-              </button>
+
+          <p-overlayPanel
+            #categoriesPanel
+            styleClass="categories-overlay-panel"
+            (onHide)="categoriesMenuVisible = false"
+            (onShow)="categoriesMenuVisible = true"
+            [showCloseIcon]="false"
+            [dismissable]="false"
+            appendTo="body">
+            <div class="categories-mega-content"
+                 (mouseenter)="onOverlayPanelEnter()"
+                 (mouseleave)="onOverlayPanelLeave()">
+              <div class="categories-grid">
+                <a *ngFor="let category of categories"
+                   [routerLink]="['/products']"
+                   [queryParams]="{category: category.key}"
+                   class="category-item"
+                   (click)="onCategorySelected()">
+                  <i [class]="category.icon"></i>
+                  <span>{{ category.label }}</span>
+                </a>
+              </div>
             </div>
-            <div class="categories-grid">
-              <a *ngFor="let category of categories" 
-                 [routerLink]="['/products']" 
-                 [queryParams]="{category: category.key}"
-                 class="category-item"
-                 (click)="onCategorySelected()">
-                <i [class]="category.icon"></i>
-                <span>{{ category.label }}</span>
-              </a>
-            </div>
-          </div>
+          </p-overlayPanel>
         </div>
-        
+
         <span class="category-link" *ngFor="let category of quickCategories"
               [routerLink]="['/products']" [queryParams]="{category: category.key}">
           {{ category.label }}

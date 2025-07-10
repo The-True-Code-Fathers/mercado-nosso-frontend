@@ -38,16 +38,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   categoriesMenuVisible = false;
   mobileMenuVisible = false;
   mobileCategoriesVisible = false;
-  categoriesMegaMenuVisible = false;
   cartItemsCount = 3; // TODO: This should come from CartService
   username: string | null = 'Matheus'; // TODO: Replace with actual user service
+  
+  private hoverTimeout: any;
 
   constructor(
     private router: Router // private cartService: CartService // Inject when available
   ) {}
 
   ngOnInit() {
-    this.setupMegaMenuItems();
     // TODO: Subscribe to cart service to get real-time cart count
     // this.cartService.cartItems$.subscribe(items => {
     //   this.cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -55,47 +55,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.hoverTimeout) {
+      clearTimeout(this.hoverTimeout);
+    }
     // TODO: Unsubscribe from cart service
   }
 
-  setupMegaMenuItems() {
-    // Cria um array simples de itens de menu para o mega menu
-    const menuItems = this.categories.map((category) => ({
-      label: category.label,
-      icon: category.icon,
-      routerLink: ['/products'],
-      queryParams: { category: category.key },
-      command: () => {
-        this.categoriesMegaMenuVisible = false;
-      },
-    }));
-
-    // Organiza em colunas para melhor visualização
-    const itemsPerColumn = Math.ceil(menuItems.length / 3);
-    const columns = [];
-
-    for (let i = 0; i < menuItems.length; i += itemsPerColumn) {
-      columns.push(menuItems.slice(i, i + itemsPerColumn));
+  onCategoriesHover(event: Event) {
+    if (this.hoverTimeout) {
+      clearTimeout(this.hoverTimeout);
     }
-
-    this.megaMenuItems = [
-      {
-        label: 'Categorias',
-        items: [columns],
-      },
-    ];
+    this.categoriesPanel.show(event);
   }
 
-  toggleCategoriesMegaMenu() {
-    this.categoriesMegaMenuVisible = !this.categoriesMegaMenuVisible;
+  onCategoriesLeave() {
+    this.hoverTimeout = setTimeout(() => {
+      this.categoriesPanel.hide();
+    }, 300); // 300ms delay before hiding
   }
 
-  closeCategoriesMegaMenu() {
-    this.categoriesMegaMenuVisible = false;
+  onOverlayPanelEnter() {
+    if (this.hoverTimeout) {
+      clearTimeout(this.hoverTimeout);
+    }
+  }
+
+  onOverlayPanelLeave() {
+    this.hoverTimeout = setTimeout(() => {
+      this.categoriesPanel.hide();
+    }, 300);
   }
 
   onCategorySelected() {
-    this.categoriesMegaMenuVisible = false;
+    this.categoriesPanel.hide();
   }
 
   categories = [

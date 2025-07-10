@@ -436,7 +436,7 @@
   border: 2px solid var(--color-surface);
 }
 
-/* All Categories MegaMenu */
+/* All Categories Hover Menu */
 .all-categories-container {
   position: relative;
 }
@@ -444,104 +444,64 @@
 .all-categories-trigger {
   cursor: pointer;
   position: relative;
+  transition: all 0.2s ease;
   
   &:hover {
     color: var(--color-primary);
     background: var(--color-elevation-1);
   }
+}
+
+/* OverlayPanel Styles for Categories */
+::ng-deep .categories-overlay-panel {
+  .p-overlaypanel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    margin-top: 8px;
+    min-width: 800px;
+    max-width: 900px;
+    
+    @media (max-width: 1024px) {
+      min-width: 600px;
+      max-width: 700px;
+    }
+
+    @media (max-width: 768px) {
+      min-width: 320px;
+      max-width: 400px;
+    }
+  }
+
+  .p-overlaypanel-content {
+    padding: 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .p-overlaypanel:before {
+    border-bottom-color: var(--color-surface);
+  }
+
+  .p-overlaypanel:after {
+    border-bottom-color: var(--color-border);
+  }
+}
+
+.categories-mega-content {
+  padding: var(--spacing-lg);
   
-  &[aria-expanded="true"] {
-    color: var(--color-primary);
-    background: var(--color-elevation-1);
-  }
-}
-
-.categories-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 999;
-  backdrop-filter: blur(2px);
-}
-
-.categories-megamenu-custom {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1000;
-  min-width: 800px;
-  max-width: 900px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
-  animation: slideDown 0.2s ease-out;
-
-  @media (max-width: 1024px) {
-    min-width: 600px;
-    max-width: 700px;
-  }
-
   @media (max-width: 768px) {
-    min-width: 300px;
-    max-width: 400px;
-    left: -100px;
-  }
-
-  @media (max-width: 480px) {
-    min-width: 280px;
-    max-width: 320px;
-    left: -120px;
-  }
-}
-
-.megamenu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-elevation-1);
-
-  h3 {
-    margin: 0;
-    color: var(--color-text-primary);
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .close-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: var(--spacing-xs);
-    border-radius: var(--radius-sm);
-    color: var(--color-text-secondary);
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: var(--color-elevation-2);
-      color: var(--color-primary);
-    }
-
-    i {
-      font-size: 1.2rem;
-    }
+    padding: var(--spacing-md);
   }
 }
 
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-xs);
-  padding: var(--spacing-lg);
-  max-height: 400px;
-  overflow-y: auto;
-
+  gap: var(--spacing-sm);
+  
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -549,14 +509,13 @@
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: var(--spacing-xs);
-    padding: var(--spacing-md);
   }
 
   .category-item {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     text-decoration: none;
     color: var(--color-text-primary);
     border-radius: var(--radius-sm);
@@ -564,36 +523,44 @@
     font-weight: 500;
     font-size: 0.875rem;
     border: 1px solid transparent;
+    background: transparent;
 
     &:hover {
-      background: var(--color-elevation-1);
-      color: var(--color-primary);
-      transform: translateX(4px);
-      border-color: var(--color-primary);
+      background: var(--color-primary);
+      color: white;
+      transform: translateX(2px);
       box-shadow: var(--shadow-sm);
     }
 
     i {
-      font-size: 1.1rem;
-      color: var(--color-primary);
-      width: 20px;
+      font-size: 1rem;
+      width: 18px;
       text-align: center;
+      color: inherit;
     }
 
     span {
       flex: 1;
+      white-space: nowrap;
     }
   }
 }
 
-@keyframes slideDown {
-  from {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+/* Dark mode support for overlay panel */
+.p-dark {
+  ::ng-deep .categories-overlay-panel {
+    .p-overlaypanel {
+      background: var(--color-surface);
+      border-color: var(--color-border);
+    }
+
+    .p-overlaypanel:before {
+      border-bottom-color: var(--color-surface);
+    }
+
+    .p-overlaypanel:after {
+      border-bottom-color: var(--color-border);
+    }
   }
 }
 
