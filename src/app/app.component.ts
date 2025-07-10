@@ -8,4 +8,6 @@ import { HeaderComponent } from './shared/components/layout/header/header.compon
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'mercado-nosso-frontend';
+}
