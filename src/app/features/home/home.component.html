@@ -1,55 +1,21 @@
 <div class="home-container">
-  <!-- Hero Section -->
+  <!-- Hero Carousel Section -->
   <section class="hero-section">
-    <div class="hero-content">
-      <h1>Compre e venda com segurança</h1>
-      <p class="hero-subtitle">
-        Milhares de produtos esperando por você no Mercado Nosso
-      </p>
-      <div class="hero-search">
-        <span class="p-input-icon-left hero-search-wrapper">
-          <i class="pi pi-search"></i>
-          <input
-            type="text"
-            pInputText
-            placeholder="Buscar produtos, marcas e muito mais..."
-            class="hero-search-input"
-            [(ngModel)]="searchTerm"
-            (keyup.enter)="onHeroSearch()"
-          />
-        </span>
-        <p-button
-          label="Buscar"
-          icon="pi pi-search"
-          styleClass="p-button-primary hero-search-button"
-          (click)="onHeroSearch()">
-        </p-button>
-      </div>
-    </div>
-  </section>
+    <p-carousel
+      [value]="heroSlides"
+      [numVisible]="1"
+      [numScroll]="1"
+      [circular]="true"
+      [autoplayInterval]="5000"
+      [showIndicators]="true"
+      [showNavigators]="true"
+      styleClass="hero-carousel">
 
-  <!-- Categories Section -->
-  <section class="categories-section">
-    <div class="section-header">
-      <h2>Categorias</h2>
-      <p class="section-subtitle">Encontre o que você precisa</p>
-    </div>
-
-    <div class="categories-grid">
-      <div class="category-card" 
-           *ngFor="let category of categories"
-           [routerLink]="['/products']" 
-           [queryParams]="{category: category.key}">
-        <div class="category-header">
-          <i [class]="category.icon + ' category-icon'"></i>
+      <ng-template let-slide pTemplate="item">
+        <div class="hero-slide" [style.background-image]="'url(' + slide.image + ')'">
         </div>
-        <div class="category-content">
-          <h4>{{ category.name }}</h4>
-          <p>{{ category.description }}</p>
-          <p-badge [value]="category.count" severity="info" class="category-badge"></p-badge>
-        </div>
-      </div>
-    </div>
+      </ng-template>
+    </p-carousel>
   </section>
 
   <!-- Featured Products Section -->
@@ -60,8 +26,8 @@
     </div>
 
     <div class="products-grid">
-      <p-card 
-        class="product-card" 
+      <p-card
+        class="product-card"
         *ngFor="let product of featuredProducts"
         [routerLink]="['/product', product.id]">
         <ng-template pTemplate="header">
@@ -73,9 +39,9 @@
           <h5>{{ product.name }}</h5>
           <p class="product-price">{{ product.price | currency:'BRL' }}</p>
           <div class="product-rating">
-            <p-rating 
-              [ngModel]="product.rating" 
-              [readonly]="true" 
+            <p-rating
+              [ngModel]="product.rating"
+              [readonly]="true"
               styleClass="product-rating-stars">
             </p-rating>
             <span class="rating-count">({{ product.reviews }})</span>
@@ -84,6 +50,31 @@
       </p-card>
     </div>
   </section>
+
+  <!--
+
+  <section class="categories-section">
+    <div class="section-header">
+      <h2>Categorias</h2>
+      <p class="section-subtitle">Encontre o que você precisa</p>
+    </div>
+
+    <div class="categories-grid">
+      <div class="category-card"
+           *ngFor="let category of categories"
+           [routerLink]="['/products']"
+           [queryParams]="{category: category.key}">
+        <div class="category-header">
+          <i [class]="category.icon + ' category-icon'"></i>
+        </div>
+        <div class="category-content">
+          <h4>{{ category.name }}</h4>
+          <p>{{ category.description }}</p>
+          <p-badge [value]="category.count" severity="info" class="category-badge"></p-badge>
+        </div>
+      </div>
+    </div>
+  </section> -->
 
   <!-- Benefits Section -->
   <section class="benefits-section">
@@ -117,17 +108,18 @@
         <p>Pague em até 12x sem juros no cartão</p>
       </div>
 
-      <div class="benefit-item">
+      <!-- <div class="benefit-item">
         <div class="benefit-icon">
           <i class="pi pi-headphones"></i>
         </div>
         <h4>Suporte 24/7</h4>
         <p>Atendimento especializado quando precisar</p>
-      </div>
+      </div> -->
     </div>
   </section>
 
   <!-- CTA Section -->
+  <!--
   <section class="cta-section">
     <p-card class="cta-card">
       <div class="cta-content">
@@ -151,5 +143,5 @@
         </div>
       </div>
     </p-card>
-  </section>
+  </section> -->
 </div>

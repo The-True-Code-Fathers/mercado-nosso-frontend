@@ -42,13 +42,22 @@ export class HeaderComponent {
 
   categories = [
     { key: 'electronics', label: 'Eletrônicos', icon: 'pi pi-desktop' },
-    { key: 'clothing', label: 'Roupas', icon: 'pi pi-user' },
+    { key: 'clothing', label: 'Roupas e Acessórios', icon: 'pi pi-user' },
     { key: 'home', label: 'Casa e Jardim', icon: 'pi pi-home' },
-    { key: 'books', label: 'Livros', icon: 'pi pi-book' },
-    { key: 'sports', label: 'Esportes', icon: 'pi pi-star' },
+    { key: 'books', label: 'Livros e Mídia', icon: 'pi pi-book' },
+    { key: 'sports', label: 'Esportes e Lazer', icon: 'pi pi-star' },
     { key: 'toys', label: 'Brinquedos', icon: 'pi pi-heart' },
     { key: 'health', label: 'Saúde e Beleza', icon: 'pi pi-heart' },
     { key: 'auto', label: 'Automotivo', icon: 'pi pi-car' },
+    { key: 'food', label: 'Alimentos e Bebidas', icon: 'pi pi-shopping-cart' },
+    { key: 'pets', label: 'Pets', icon: 'pi pi-heart' },
+  ];
+
+  quickCategories = [
+    { key: 'electronics', label: 'Eletrônicos' },
+    { key: 'clothing', label: 'Moda' },
+    { key: 'home', label: 'Casa' },
+    { key: 'sports', label: 'Esportes' },
   ];
 
   toggleTheme() {
@@ -84,8 +93,10 @@ export class HeaderComponent {
 
   onSearch() {
     if (this.searchTerm.trim()) {
-      // Implementar lógica de pesquisa aqui
-      console.log('Pesquisando por:', this.searchTerm);
+      // Navigate to product list with search term
+      this.router.navigate(['/products'], {
+        queryParams: { search: this.searchTerm.trim() },
+      });
       this.closeMobileMenu();
     }
   }
