@@ -1,64 +1,84 @@
 <div class="listing-detail horizontal-layout center-layout">
-  <div class="gallery-section">
-    <!-- Galeria de imagens -->
-    <img
-      [src]="product.images[selectedImageIndex]"
-      alt="Imagem principal"
-      class="main-image"
-    />
-    <div class="gallery-thumbs">
-      <img
-        *ngFor="let img of product.images; let i = index"
-        [src]="img"
-        class="thumb"
-        [class.selected]="i === selectedImageIndex"
-        (click)="selectImage(i)"
-      />
-    </div>
-    <div class="cep-frete">
-      <input
-        type="text"
-        maxlength="9"
-        [(ngModel)]="cep"
-        placeholder="Digite seu CEP"
-        class="cep-input"
-      />
-      <button class="btn small" (click)="calcularFrete()">
-        Calcular frete
-      </button>
-    </div>
-    <div *ngIf="freteCalculado" class="frete-info">
-      <div class="custo-frete">Custo do frete: {{ custoFrete }}</div>
-    </div>
+  <!-- Loading state -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <p>Carregando produto...</p>
   </div>
-  <div class="info-section">
-    <h1 class="title">{{ product.title }}</h1>
-    <div class="rating-row">
-      <span class="stars">
-        <ng-container *ngFor="let star of starsArray; let i = index">
-          <span [class.filled]="i < filledStars">★</span>
-        </ng-container>
-      </span>
-      <span class="media">{{ product.rating | number : '1.1-1' }}</span>
-      <span class="reviews">({{ product.reviews }} avaliações)</span>
-      <span class="condition">• {{ product.condition }}</span>
+
+  <!-- Error state -->
+  <div *ngIf="error()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadListing(listingId!)" *ngIf="listingId">
+      Tentar novamente
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading() && !error()" class="content-wrapper">
+    <div class="gallery-section">
+      <!-- Galeria de imagens -->
+      <img
+        [src]="displayImages[selectedImageIndex]"
+        alt="Imagem principal"
+        class="main-image"
+      />
+      <div class="gallery-thumbs">
+        <img
+          *ngFor="let img of displayImages; let i = index"
+          [src]="img"
+          class="thumb"
+          [class.selected]="i === selectedImageIndex"
+          (click)="selectImage(i)"
+        />
+      </div>
+      <div class="cep-frete">
+        <input
+          type="text"
+          maxlength="9"
+          [(ngModel)]="cep"
+          placeholder="Digite seu CEP"
+          class="cep-input"
+        />
+        <button class="btn small" (click)="calcularFrete()">
+          Calcular frete
+        </button>
+      </div>
+      <div *ngIf="freteCalculado" class="frete-info">
+        <div class="custo-frete">Custo do frete: {{ custoFrete }}</div>
+      </div>
     </div>
-    <div class="price">R$ {{ product.price | number : '1.2-2' }}</div>
-    <div class="installments">{{ product.installments }}</div>
-    <div class="stock">Estoque disponível: {{ product.stock }}</div>
-    <div class="seller">
-      Vendedor: <b>{{ product.seller.name }}</b>
-    </div>
-    <div class="actions-row">
-      <button class="btn buy">Comprar Agora</button>
-      <button class="btn primary">Adicionar ao carrinho</button>
-    </div>
-    <div class="shipping-block" *ngIf="freteCalculado">
-      <div class="delivery-estimate">{{ previsaoEntrega }}</div>
-    </div>
-    <div class="shipping-block" *ngIf="!freteCalculado">
-      <div class="shipping">{{ product.shipping }}</div>
-      <div class="delivery-estimate">{{ product.deliveryEstimate }}</div>
+    <div class="info-section">
+      <h1 class="title">{{ displayTitle }}</h1>
+      <div class="rating-row">
+        <span class="stars">
+          <ng-container *ngFor="let star of starsArray; let i = index">
+            <span [class.filled]="i < filledStars">★</span>
+          </ng-container>
+        </span>
+        <span class="media">{{
+          defaultProduct.rating | number : '1.1-1'
+        }}</span>
+        <span class="reviews">({{ defaultProduct.reviews }} avaliações)</span>
+        <span class="condition">• {{ displayCondition }}</span>
+      </div>
+      <div class="price">R$ {{ displayPrice | number : '1.2-2' }}</div>
+      <div class="installments">{{ defaultProduct.installments }}</div>
+      <div class="stock">Estoque disponível: {{ displayStock }}</div>
+      <div class="seller">
+        Vendedor: <b>{{ defaultProduct.seller.name }}</b>
+      </div>
+      <div class="actions-row">
+        <button class="btn buy">Comprar Agora</button>
+        <button class="btn primary">Adicionar ao carrinho</button>
+      </div>
+      <div class="shipping-block" *ngIf="freteCalculado">
+        <div class="delivery-estimate">{{ previsaoEntrega }}</div>
+      </div>
+      <div class="shipping-block" *ngIf="!freteCalculado">
+        <div class="shipping">{{ defaultProduct.shipping }}</div>
+        <div class="delivery-estimate">
+          {{ defaultProduct.deliveryEstimate }}
+        </div>
+      </div>
     </div>
   </div>
 </div>
