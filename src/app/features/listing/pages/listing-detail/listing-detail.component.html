@@ -225,16 +225,13 @@
           </div>
 
           <!-- Shipping Results - Below action buttons -->
-          <div
-            *ngIf="freteCalculado"
-            class="shipping-results"
-          >
+          <div *ngIf="freteCalculado" class="shipping-results">
             <!-- Error Message -->
             <div *ngIf="freteError" class="shipping-error">
               <i class="pi pi-exclamation-triangle error-icon"></i>
               <span>{{ freteError }}</span>
             </div>
-            
+
             <!-- Success Results -->
             <div *ngIf="!freteError && shippingOptions.length > 0">
               <h4>Opções de entrega para CEP {{ cep }}</h4>
