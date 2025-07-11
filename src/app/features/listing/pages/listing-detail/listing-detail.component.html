@@ -43,32 +43,55 @@
     <div class="product-section">
       <!-- Gallery Section -->
       <div class="gallery-container">
-        <p-galleria
-          [value]="galleriaImages"
-          [responsiveOptions]="[]"
-          [numVisible]="5"
-          [showThumbnails]="true"
-          [showItemNavigators]="true"
-          [circular]="true"
-          thumbnailsPosition="left"
-          styleClass="product-gallery"
-        >
-          <ng-template pTemplate="item" let-item>
-            <img
-              [src]="item.itemImageSrc"
-              [alt]="item.alt"
-              class="gallery-main-image"
-            />
-          </ng-template>
+        <!-- Custom Gallery with Zoom -->
+        <div class="custom-gallery">
+          <!-- Thumbnails -->
+          <div class="thumbnails-container">
+            <div
+              *ngFor="let image of defaultProduct.images; let i = index"
+              class="thumbnail-item"
+              [class.active]="selectedImageIndex === i"
+              (click)="selectImage(i)"
+            >
+              <img [src]="image" [alt]="'Imagem ' + (i + 1)" />
+            </div>
+          </div>
 
-          <ng-template pTemplate="thumbnail" let-item>
-            <img
-              [src]="item.thumbnailImageSrc"
-              [alt]="item.alt"
-              class="gallery-thumbnail"
-            />
-          </ng-template>
-        </p-galleria>
+          <!-- Main Image with Zoom -->
+          <div class="main-image-container">
+            <div
+              class="zoom-container"
+              (mousemove)="onMouseMove($event)"
+              (mouseenter)="showZoom = true"
+              (mouseleave)="showZoom = false"
+            >
+              <img
+                #mainImage
+                [src]="defaultProduct.images[selectedImageIndex]"
+                alt="Imagem principal"
+                class="main-image"
+              />
+
+              <!-- Zoom Lens -->
+              <div
+                *ngIf="showZoom"
+                class="zoom-lens"
+                [style.left.px]="lensPosition.x"
+                [style.top.px]="lensPosition.y"
+              ></div>
+            </div>
+
+            <!-- Zoom Preview -->
+            <div
+              *ngIf="showZoom"
+              class="zoom-preview"
+              [style.background-image]="
+                'url(' + defaultProduct.images[selectedImageIndex] + ')'
+              "
+              [style.background-position]="zoomBackgroundPosition"
+            ></div>
+          </div>
+        </div>
 
         <!-- Shipping Calculator below gallery -->
         <p-panel

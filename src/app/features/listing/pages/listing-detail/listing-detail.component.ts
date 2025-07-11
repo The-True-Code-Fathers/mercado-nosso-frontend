@@ -13,7 +13,6 @@ import { RatingModule } from 'primeng/rating'
 import { TagModule } from 'primeng/tag'
 import { DividerModule } from 'primeng/divider'
 import { BadgeModule } from 'primeng/badge'
-import { GalleriaModule } from 'primeng/galleria'
 import { PanelModule } from 'primeng/panel'
 import { SkeletonModule } from 'primeng/skeleton'
 
@@ -81,7 +80,6 @@ export interface ShippingCalculation {
     TagModule,
     DividerModule,
     BadgeModule,
-    GalleriaModule,
     PanelModule,
     SkeletonModule,
   ],
@@ -97,6 +95,12 @@ export class ListingDetailComponent implements OnInit {
   // Gallery images for PrimeNG Galleria
   galleriaImages: any[] = []
 
+  // Zoom functionality properties
+  selectedImageIndex: number = 0
+  showZoom: boolean = false
+  lensPosition = { x: 0, y: 0 }
+  zoomBackgroundPosition: string = '0% 0%'
+
   // Using signal for reactive state management
   listing = signal<Listing | null>(null)
   isLoading = signal<boolean>(false)
@@ -105,10 +109,7 @@ export class ListingDetailComponent implements OnInit {
   // Propriedades mockadas para exibição quando não há dados da API
   defaultProduct = {
     id: 1,
-    images: [
-      'https://http2.mlstatic.com/D_NQ_NP_2X_825234-MLA51585701313_092022-F.webp',
-      'https://http2.mlstatic.com/D_NQ_NP_2X_825234-MLA51585701313_092022-O.webp',
-    ],
+    images: ['/images/banner.png', '/images/banner-lg.jpg'],
     rating: 4.8,
     reviews: 120,
     comments: [
@@ -565,5 +566,53 @@ export class ListingDetailComponent implements OnInit {
 
   get filledStars() {
     return Math.round(this.defaultProduct.rating)
+  }
+
+  // Zoom and Gallery Methods
+  selectImage(index: number): void {
+    this.selectedImageIndex = index
+  }
+
+  onMouseMove(event: MouseEvent): void {
+    const container = event.currentTarget as HTMLElement
+    const rect = container.getBoundingClientRect()
+
+    // Calcular posição do mouse relativa ao container
+    const mouseX = event.clientX - rect.left
+    const mouseY = event.clientY - rect.top
+
+    // Tamanho da lente de zoom (160x201px)
+    const lensWidth = 160
+    const lensHeight = 201
+
+    // Posição da lente centrada no mouse, mas limitada pelas bordas
+    const halfLensWidth = lensWidth / 2
+    const halfLensHeight = lensHeight / 2
+
+    let lensX = mouseX - halfLensWidth
+    let lensY = mouseY - halfLensHeight
+
+    // Limitar a posição da lens para não sair da imagem
+    lensX = Math.max(0, Math.min(lensX, rect.width - lensWidth))
+    lensY = Math.max(0, Math.min(lensY, rect.height - lensHeight))
+
+    this.lensPosition = {
+      x: lensX,
+      y: lensY,
+    }
+
+    // Calcular posição do background para o zoom
+    // A lens de 160x201 deve mostrar exatamente a área correspondente no preview de 400x502
+    // Ratio de ampliação: 400/160 = 2.5x para largura, 502/201 = 2.5x para altura
+
+    // Calcular o centro da lens em relação à imagem total
+    const lensCenterX = lensX + halfLensWidth
+    const lensCenterY = lensY + halfLensHeight
+
+    // Converter para porcentagem da imagem total
+    const percentX = (lensCenterX / rect.width) * 100
+    const percentY = (lensCenterY / rect.height) * 100
+
+    this.zoomBackgroundPosition = `${percentX}% ${percentY}%`
   }
 }
