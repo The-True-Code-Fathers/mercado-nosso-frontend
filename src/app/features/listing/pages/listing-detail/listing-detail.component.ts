@@ -263,15 +263,15 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         this.showZoom = false
       }
     }
-    
+
     // Scroll events - triggers during scroll
     this.scrollListener = hideZoomPreview
     window.addEventListener('scroll', this.scrollListener, { passive: true })
-    
+
     // Wheel events - triggers immediately when wheel starts
-    this.wheelListener = hideZoomPreview  
+    this.wheelListener = hideZoomPreview
     window.addEventListener('wheel', this.wheelListener, { passive: true })
-    
+
     // Touch events for mobile scroll
     this.touchListener = hideZoomPreview
     window.addEventListener('touchmove', this.touchListener, { passive: true })
