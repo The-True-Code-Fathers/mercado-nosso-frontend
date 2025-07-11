@@ -80,16 +80,25 @@
                 [style.top.px]="lensPosition.y"
               ></div>
             </div>
+          </div>
+        </div>
 
-            <!-- Zoom Preview -->
-            <div
-              *ngIf="showZoom"
-              class="zoom-preview"
-              [style.background-image]="
-                'url(' + defaultProduct.images[selectedImageIndex] + ')'
-              "
-              [style.background-position]="zoomBackgroundPosition"
-            ></div>
+        <!-- Zoom Preview - Outside gallery container -->
+        <div
+          *ngIf="showZoom"
+          class="zoom-preview"
+        >
+          <div class="zoom-preview-viewport">
+            <div 
+              class="zoom-preview-container"
+              [style.transform]="'translate(' + zoomTranslateX + 'px, ' + zoomTranslateY + 'px)'"
+            >
+              <img
+                [src]="defaultProduct.images[selectedImageIndex]"
+                alt="Zoom preview"
+                class="zoom-preview-image"
+              />
+            </div>
           </div>
         </div>
 

@@ -100,6 +100,8 @@ export class ListingDetailComponent implements OnInit {
   showZoom: boolean = false
   lensPosition = { x: 0, y: 0 }
   zoomBackgroundPosition: string = '0% 0%'
+  zoomTranslateX: number = 0
+  zoomTranslateY: number = 0
 
   // Using signal for reactive state management
   listing = signal<Listing | null>(null)
@@ -601,18 +603,39 @@ export class ListingDetailComponent implements OnInit {
       y: lensY,
     }
 
-    // Calcular posição do background para o zoom
-    // A lens de 160x201 deve mostrar exatamente a área correspondente no preview de 400x502
-    // Ratio de ampliação: 400/160 = 2.5x para largura, 502/201 = 2.5x para altura
+    // Calcular posição para o preview de zoom
+    // O preview viewport é 400x502px e mostra uma área ampliada 2.5x
+    // O container ampliado é 1700x1260px (680x504 * 2.5)
+    
+    const zoomFactor = 2.5
+    
+    // A área da lens (160x201) no container original (680x504)
+    // deve aparecer centralizada no viewport do preview (400x502)
+    
+    // Posição onde a lens aparece no container ampliado
+    const lensXInZoom = lensX * zoomFactor  // posição da lens no container ampliado
+    const lensYInZoom = lensY * zoomFactor
+    
+    // Para centralizar a área da lens no viewport, precisamos mover o container ampliado
+    // de forma que a área da lens apareça no centro do viewport (200, 251)
+    const viewportCenterX = 400 / 2  // 200px
+    const viewportCenterY = 502 / 2  // 251px
+    
+    // A área da lens ampliada tem tamanho (160*2.5, 201*2.5) = (400, 502.5)
+    // Queremos que o centro desta área apareça no centro do viewport
+    const lensWidthInZoom = lensWidth * zoomFactor
+    const lensHeightInZoom = lensHeight * zoomFactor
+    
+    const lensCenterXInZoom = lensXInZoom + lensWidthInZoom / 2
+    const lensCenterYInZoom = lensYInZoom + lensHeightInZoom / 2
+    
+    // Calcular quanto mover o container para centralizar a lens no viewport
+    this.zoomTranslateX = viewportCenterX - lensCenterXInZoom
+    this.zoomTranslateY = viewportCenterY - lensCenterYInZoom
 
-    // Calcular o centro da lens em relação à imagem total
-    const lensCenterX = lensX + halfLensWidth
-    const lensCenterY = lensY + halfLensHeight
-
-    // Converter para porcentagem da imagem total
-    const percentX = (lensCenterX / rect.width) * 100
-    const percentY = (lensCenterY / rect.height) * 100
-
+    // Manter a implementação anterior para compatibilidade
+    const percentX = (lensX + halfLensWidth) / rect.width * 100
+    const percentY = (lensY + halfLensHeight) / rect.height * 100
     this.zoomBackgroundPosition = `${percentX}% ${percentY}%`
   }
 }
