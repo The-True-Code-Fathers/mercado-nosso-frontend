@@ -785,7 +785,7 @@
   border: 1px solid var(--color-border);
   border-top: none;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
 
   .description-loading {
     padding: var(--spacing-md) 0;
@@ -795,7 +795,7 @@
     color: var(--color-text-primary);
     line-height: 1.7;
     font-size: 1.1rem; // Aumentado de 1rem para 1.1rem
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
     white-space: pre-line;
     min-height: 60px; // Garantir altura mínima
 
@@ -1511,7 +1511,7 @@
       display: inline;
       font-size: 3rem;
       font-weight: 700;
-      color: var(--color-warning);
+      color: #ffd700;
       line-height: 1;
     }
 
@@ -1551,7 +1551,7 @@
 
         .bar-fill {
           height: 100%;
-          background: var(--color-warning);
+          background: #ffd700;
           border-radius: 4px;
           transition: width 0.3s ease;
         }
