@@ -1,4 +1,11 @@
+/* App Layout */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .main-content {
-  min-height: calc(100vh - 80px); // Assuming header height is ~80px
+  flex: 1;
   background-color: var(--color-bg);
 }

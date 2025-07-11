@@ -1,151 +1,250 @@
 <header class="header">
-  <div class="header-container">
-    <!-- Logo/Brand -->
-    <div class="brand" routerLink="/home">
-      <i class="pi pi-shopping-bag brand-icon"></i>
-      <span class="brand-text">Mercado Nosso</span>
-    </div>
-
-    <!-- Desktop Navigation -->
-    <div class="desktop-nav">
-      <!-- Categories Dropdown -->
-      <div class="categories-container">
-        <p-button
-          label="Categorias"
-          icon="pi pi-angle-down"
-          styleClass="p-button-outlined categories-button"
-          (click)="toggleCategoriesMenu($event)"
-          [attr.aria-expanded]="categoriesMenuVisible"
-          [attr.aria-haspopup]="true">
-        </p-button>
-        <p-overlayPanel #categoriesPanel>
-          <div class="categories-menu">
-            <div class="category-item" *ngFor="let category of categories">
-              <a [routerLink]="['/products']" [queryParams]="{category: category.key}">
-                <i [class]="category.icon"></i>
-                <span>{{ category.label }}</span>
-              </a>
-            </div>
-          </div>
-        </p-overlayPanel>
+  <!-- Top Bar -->
+  <div class="header-top">
+    <div class="header-top-container">
+      <div class="top-left">
+        <span class="delivery-info">
+          <i class="pi pi-map-marker"></i>
+          Entregamos em toda grande Londrina
+        </span>
       </div>
-
-      <!-- Search -->
-      <div class="search-container">
-        <p-iconField iconPosition="left">
-          <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
-          <input
-            type="text"
-            pInputText
-            placeholder="Buscar produtos..."
-            [(ngModel)]="searchTerm"
-            (keyup.enter)="onSearch()"
-            class="search-input"
-          />
-        </p-iconField>
+      <div class="top-right">
+        @if (username) {
+          <span class="user-greeting">Bem vindo de volta, {{ username }}!</span>
+        } @else {
+          <span class="user-greeting">Bem vido ao mercado nosso!</span>
+        }
       </div>
-    </div>
-
-    <!-- Mobile Menu Button -->
-    <div class="mobile-menu-button">
-      <p-button
-        icon="pi pi-bars"
-        styleClass="p-button-text p-button-rounded"
-        (click)="toggleMobileMenu()"
-        [attr.aria-expanded]="mobileMenuVisible">
-      </p-button>
-    </div>
-
-    <!-- Desktop User Actions -->
-    <div class="user-actions desktop-only">
-      <p-button
-        icon="pi pi-shopping-cart"
-        styleClass="p-button-text p-button-rounded"
-        pTooltip="Carrinho"
-        routerLink="/cart">
-        <p-badge value="3" severity="danger" class="cart-badge"></p-badge>
-      </p-button>
-
-      <p-button
-        icon="pi pi-user"
-        styleClass="p-button-text p-button-rounded"
-        pTooltip="Minha Conta"
-        routerLink="/user">
-      </p-button>
-
-      <p-button
-        icon="pi pi-moon"
-        styleClass="p-button-text p-button-rounded"
-        pTooltip="Alternar tema"
-        (click)="toggleTheme()">
-      </p-button>
     </div>
   </div>
 
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" [class.mobile-menu-active]="mobileMenuVisible">
-    <div class="mobile-search">
-      <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
-        <input
-          type="text"
-          pInputText
-          placeholder="Buscar produtos..."
-          [(ngModel)]="searchTerm"
-          (keyup.enter)="onSearch()"
-          class="search-input"
-        />
-      </p-iconField>
+  <!-- Main Header -->
+  <div class="header-main">
+    <!-- Mobile Search Header (replaces entire header when active) -->
+    <div class="mobile-search-header" [class.mobile-search-active]="mobileSearchVisible">
+      <div class="mobile-search-container">
+        <p-button
+          icon="pi pi-arrow-left"
+          styleClass="p-button-text p-button-rounded mobile-back-button"
+          (click)="closeMobileSearch()">
+        </p-button>
+
+        <div class="mobile-search-input-wrapper">
+          <input
+            type="text"
+            pInputText
+            placeholder="O que você procura ?"
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+            class="mobile-search-input-field"
+            #mobileSearchInput
+          />
+        </div>
+
+        <p-button
+          icon="pi pi-search"
+          styleClass="p-button-text p-button-rounded mobile-search-submit"
+          (click)="onSearch()">
+        </p-button>
+      </div>
     </div>
 
-    <div class="mobile-categories">
-      <p-button
-        label="Categorias"
-        icon="pi pi-angle-down"
-        styleClass="p-button-outlined mobile-categories-button"
-        (click)="toggleMobileCategoriesMenu()"
-        [attr.aria-expanded]="mobileCategoriesVisible">
-      </p-button>
+    <!-- Regular Header Content -->
+    <div class="header-container" [class.header-hidden]="mobileSearchVisible">
+      <!-- Logo/Brand -->
+      <div class="brand" routerLink="/home">
+        <i class="pi pi-shopping-bag brand-icon"></i>
+        <span class="brand-text">Mercado Nosso</span>
+      </div>
 
-      <div class="mobile-categories-menu" [class.mobile-categories-active]="mobileCategoriesVisible">
-        <div class="category-item" *ngFor="let category of categories">
-          <a [routerLink]="['/products']" [queryParams]="{category: category.key}" (click)="closeMobileMenu()">
+      <!-- Mobile Actions -->
+      <div class="mobile-actions">
+        <p-button
+          icon="pi pi-search"
+          styleClass="p-button-text p-button-rounded mobile-search-toggle"
+          (click)="toggleMobileSearch()">
+        </p-button>
+
+        <p-button
+          icon="pi pi-bars"
+          styleClass="p-button-text p-button-rounded mobile-menu-toggle"
+          (click)="toggleMobileMenu()"
+          [attr.aria-expanded]="mobileMenuVisible">
+        </p-button>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="desktop-nav">
+        <!-- Search Bar - More prominent -->
+        <div class="search-container">
+          <div class="search-wrapper">
+            <p-iconField iconPosition="left" class="search-field">
+              <input
+                type="text"
+                pInputText
+                placeholder="O que você procura?"
+                [(ngModel)]="searchTerm"
+                (keyup.enter)="onSearch()"
+                class="search-input"
+              />
+            </p-iconField>
+            <p-button
+              icon="pi pi-search"
+              styleClass="p-button-success search-button"
+              (click)="onSearch()"
+              pTooltip="Buscar">
+            </p-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Actions -->
+      <div class="user-actions desktop-only">
+        <!-- Categories Button -->
+        <div class="categories-container">
+          <p-button
+            label="Venda conosco"
+            icon="pi pi-shop"
+            styleClass="p-button-outlined categories-button"
+            [attr.aria-expanded]="categoriesMenuVisible"
+            [attr.aria-haspopup]="true" />
+        </div>
+
+        <div class="action-separator"></div>
+
+        <div class="cart-container">
+          <p-button
+            icon="pi pi-shopping-cart"
+            styleClass="p-button-text p-button-rounded cart-action"
+            pTooltip="Meu Carrinho"
+            routerLink="/cart">
+          </p-button>
+          <p-badge
+            *ngIf="cartItemsCount > 0"
+            [value]="cartItemsCount.toString()"
+            severity="danger"
+            class="cart-badge">
+          </p-badge>
+        </div>
+
+        <p-button
+          icon="pi pi-user"
+          styleClass="p-button-text p-button-rounded user-action"
+          pTooltip="Minha Conta"
+          routerLink="/user">
+        </p-button>
+
+        <p-button
+          [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
+          styleClass="p-button-text p-button-rounded theme-action"
+          [pTooltip]="isDarkMode ? 'Modo Claro' : 'Modo Escuro'"
+          (click)="toggleTheme()">
+        </p-button>
+      </div>
+    </div>
+      <div class="quick-categories">
+        <div class="all-categories-container">
+          <span class="category-link all-categories-trigger"
+                (mouseenter)="onCategoriesHover($event)"
+                (mouseleave)="onCategoriesLeave()">
+            <i class="pi pi-bars"></i>
+            {{ getCategoriesButtonLabel() }}
+          </span>
+
+          <p-overlayPanel
+            #categoriesPanel
+            styleClass="categories-overlay-panel"
+            (onHide)="categoriesMenuVisible = false"
+            (onShow)="categoriesMenuVisible = true"
+            [showCloseIcon]="false"
+            [dismissable]="false"
+            appendTo="body">
+            <div class="categories-mega-content"
+                 (mouseenter)="onOverlayPanelEnter()"
+                 (mouseleave)="onOverlayPanelLeave()">
+              <div class="categories-grid">
+                <a *ngFor="let category of categories"
+                   [routerLink]="['/products']"
+                   [queryParams]="{category: category.key}"
+                   class="category-item"
+                   (click)="onCategorySelected()">
+                  <i [class]="category.icon"></i>
+                  <span>{{ category.label }}</span>
+                </a>
+              </div>
+            </div>
+          </p-overlayPanel>
+        </div>
+
+        <!-- Responsive quick categories -->
+        <span class="category-link"
+              *ngFor="let category of getQuickCategoriesForScreen()"
+              [routerLink]="['/products']"
+              [queryParams]="{category: category.key}">
+          {{ category.label }}
+        </span>
+      </div>
+  </div>
+
+  <!-- Mobile Menu Button - Remove old structure -->
+
+  <!-- Mobile Menu (hamburger menu content) -->
+  <div class="mobile-menu" [class.mobile-menu-active]="mobileMenuVisible">
+    <!-- Main Navigation Actions -->
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-item" routerLink="/user" (click)="closeMobileMenu()">
+        <i class="pi pi-user"></i>
+        <span>Minha conta</span>
+      </div>
+
+      <div class="mobile-nav-item" routerLink="/cart" (click)="closeMobileMenu()">
+        <i class="pi pi-shopping-cart"></i>
+        <span>Meu carrinho</span>
+      </div>
+
+      <div class="mobile-nav-item">
+        <i class="pi pi-shop"></i>
+        <span>Venda conosco</span>
+      </div>
+    </div>
+
+    <!-- Quick Categories Section -->
+    <div class="mobile-quick-categories-section">
+      <div class="mobile-quick-category-item"
+           *ngFor="let category of quickCategories.slice(0, 4)"
+           [routerLink]="['/products']"
+           [queryParams]="{category: category.key}"
+           (click)="closeMobileMenu()">
+        <i [class]="category.icon"></i>
+        <span>{{ category.label }}</span>
+      </div>
+    </div>
+
+    <!-- All Categories Section -->
+    <div class="mobile-all-categories-section">
+      <div class="mobile-all-categories-header" (click)="toggleMobileCategoriesMenu()">
+        <span>Todas as categorias</span>
+        <i class="pi" [class.pi-angle-down]="!mobileCategoriesVisible" [class.pi-angle-up]="mobileCategoriesVisible"></i>
+      </div>
+
+      <div class="mobile-categories-dropdown" [class.mobile-categories-active]="mobileCategoriesVisible">
+        <div class="mobile-non-quick-categories">
+          <div class="mobile-category-item"
+               *ngFor="let category of getNonQuickCategories()"
+               [routerLink]="['/products']"
+               [queryParams]="{category: category.key}"
+               (click)="closeMobileMenu()">
             <i [class]="category.icon"></i>
             <span>{{ category.label }}</span>
-          </a>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="mobile-actions">
-      <div class="mobile-action-item">
-        <p-button
-          icon="pi pi-shopping-cart"
-          label="Carrinho"
-          styleClass="p-button-outlined mobile-action-button"
-          routerLink="/cart"
-          (click)="closeMobileMenu()">
-          <p-badge value="3" severity="danger" class="cart-badge"></p-badge>
-        </p-button>
-      </div>
-
-      <div class="mobile-action-item">
-        <p-button
-          icon="pi pi-user"
-          label="Minha Conta"
-          styleClass="p-button-outlined mobile-action-button"
-          routerLink="/user"
-          (click)="closeMobileMenu()">
-        </p-button>
-      </div>
-
-      <div class="mobile-action-item">
-        <p-button
-          icon="pi pi-moon"
-          label="Alternar tema"
-          styleClass="p-button-outlined mobile-action-button"
-          (click)="toggleTheme()">
-        </p-button>
+    <!-- Dark Mode Toggle -->
+    <div class="mobile-theme-toggle">
+      <div class="mobile-theme-item" (click)="toggleTheme()">
+        <i [class]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"></i>
       </div>
     </div>
   </div>
