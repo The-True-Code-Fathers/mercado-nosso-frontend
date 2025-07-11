@@ -39,6 +39,15 @@
 
   <!-- Main Content -->
   <div *ngIf="!isLoading() && !error()" class="content-container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
+      <p-breadcrumb 
+        [model]="breadcrumbItems" 
+        [home]="home"
+        styleClass="custom-breadcrumb">
+      </p-breadcrumb>
+    </div>
+
     <!-- Product Gallery and Info -->
     <div class="product-section">
       <!-- Gallery Section -->
@@ -297,5 +306,40 @@
         </p-card>
       </div>
     </div>
+
+    <!-- Product Description Section -->
+    <div class="description-section">
+      <div class="description-header">
+        <h2>Descrição do produto</h2>
+      </div>
+      
+      <div class="description-content">
+        <!-- Loading state -->
+        <div *ngIf="isLoading()" class="description-loading">
+          <p-skeleton width="100%" height="4rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="2rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="60%" height="2rem"></p-skeleton>
+        </div>
+        
+        <!-- Content -->
+        <div *ngIf="!isLoading()" 
+          class="description-text"
+          [class.expanded]="isDescriptionExpanded"
+          [class.has-overflow]="showExpandButton && !isDescriptionExpanded"
+        >{{ displayDescription }}</div>
+        
+        <div *ngIf="showExpandButton && !isLoading()" class="description-actions">
+            <p-button
+              (onClick)="toggleDescription()"
+              [label]="isDescriptionExpanded ? 'Mostrar menos' : 'Mostrar mais'"
+              [icon]="isDescriptionExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+              severity="secondary"
+              [text]="true"
+              styleClass="show-more-btn"
+            >
+            </p-button>
+          </div>
+        </div>
+      </div>
   </div>
 </div>

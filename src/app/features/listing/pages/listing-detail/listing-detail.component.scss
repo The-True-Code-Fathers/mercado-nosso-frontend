@@ -146,8 +146,8 @@
 
   &:hover {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>')
-        12 12,
-      zoom-in;
+      12 12,
+    zoom-in;
   }
 
   .main-image {
@@ -752,6 +752,162 @@
 .shipping-description {
   font-size: 0.8rem;
   color: var(--color-text-secondary);
+}
+
+/* Product Description Section */
+.description-section {
+  margin-top: var(--spacing-2xl);
+  width: calc(840px + 32px + 750px); // gallery + gap + info container
+  max-width: 100%;
+
+  .description-header {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary) 0%,
+      var(--color-primary-light) 100%
+    );
+    color: white;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin-bottom: 0;
+    
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+    }
+  }
+}
+
+.description-content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--spacing-xl);
+
+  .description-loading {
+    padding: var(--spacing-md) 0;
+  }
+
+  .description-text {
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    font-size: 1.1rem; // Aumentado de 1rem para 1.1rem
+    margin-bottom: var(--spacing-lg);
+    white-space: pre-line;
+    min-height: 60px; // Garantir altura mínima
+    
+    &:not(.expanded) {
+      position: relative;
+      
+      // Só aplicar o fade se realmente há overflow
+      &.has-overflow {
+        max-height: 150px; // Aumentado também a altura máxima
+        overflow: hidden;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 40px;
+          background: linear-gradient(transparent, var(--color-surface));
+        }
+      }
+    }
+  }
+  
+  .description-actions {
+    text-align: center;
+    
+    ::ng-deep .show-more-btn {
+      color: var(--color-primary);
+      font-weight: 600;
+      
+      &:hover {
+        background: var(--color-primary-light);
+        color: white;
+      }
+    }
+  }
+}
+
+// Breadcrumb Section
+.breadcrumb-section {
+  margin-bottom: var(--spacing-xl);
+
+  ::ng-deep .custom-breadcrumb {
+    background: transparent;
+    border: none;
+    padding: 0;
+
+    .p-breadcrumb-list {
+      background: transparent;
+
+      .p-menuitem-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+
+        &:hover {
+          color: var(--color-primary);
+        }
+      }
+
+      .p-menuitem-text {
+        font-weight: 500;
+      }
+
+      .p-menuitem-separator {
+        color: var(--color-text-muted);
+        margin: 0 var(--spacing-sm);
+      }
+    }
+  }
+}
+
+/* Responsive adjustments for description */
+@media (max-width: 1024px) {
+  .description-section {
+    max-width: 100%;
+    margin-top: var(--spacing-xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .description-section {
+    margin-top: var(--spacing-lg);
+
+    ::ng-deep .description-card {
+      .p-card-header {
+        padding: var(--spacing-md) var(--spacing-lg);
+
+        .description-header h2 {
+          font-size: 1.25rem;
+        }
+      }
+
+      .p-card-content {
+        padding: var(--spacing-lg);
+      }
+    }
+  }
+
+  .description-content .description-text {
+    max-height: 150px;
+
+    ::ng-deep {
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      h4 {
+        font-size: 1rem;
+      }
+    }
+  }
 }
 
 /* Responsive Design */

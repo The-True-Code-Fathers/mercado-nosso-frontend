@@ -15,6 +15,8 @@ import { DividerModule } from 'primeng/divider'
 import { BadgeModule } from 'primeng/badge'
 import { PanelModule } from 'primeng/panel'
 import { SkeletonModule } from 'primeng/skeleton'
+import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { MenuItem } from 'primeng/api'
 
 export interface ShippingOption {
   type: string
@@ -82,6 +84,7 @@ export interface ShippingCalculation {
     BadgeModule,
     PanelModule,
     SkeletonModule,
+    BreadcrumbModule,
   ],
 })
 export class ListingDetailComponent implements OnInit {
@@ -103,6 +106,17 @@ export class ListingDetailComponent implements OnInit {
   zoomTranslateX: number = 0
   zoomTranslateY: number = 0
 
+  // Breadcrumb
+  breadcrumbItems: MenuItem[] = []
+  home: MenuItem = { icon: 'pi pi-home', routerLink: '/' }
+
+  // Description
+  descriptionCharLimit: number = 500
+
+  // Description expansion properties
+  isDescriptionExpanded: boolean = false
+  maxDescriptionHeight: number = 200 // pixels
+
   // Using signal for reactive state management
   listing = signal<Listing | null>(null)
   isLoading = signal<boolean>(false)
@@ -122,6 +136,44 @@ export class ListingDetailComponent implements OnInit {
     shipping: 'Frete grátis para todo o Brasil',
     deliveryEstimate: 'Receba em até 5 dias úteis',
     installments: '12x de R$ 83,33 sem juros',
+    description: `
+      <h3>Processador Intel Core i7-12700K</h3>
+      <p>O processador Intel Core i7-12700K da 12ª geração oferece desempenho excepcional para jogos, criação de conteúdo e multitarefa intensiva. Com arquitetura híbrida inovadora, combina núcleos de performance e eficiência para otimizar cada tarefa.</p>
+      
+      <h4>Especificações Técnicas:</h4>
+      <ul>
+        <li><strong>Núcleos:</strong> 12 núcleos (8P + 4E)</li>
+        <li><strong>Threads:</strong> 20 threads</li>
+        <li><strong>Frequência Base:</strong> 3.6 GHz (P-cores) / 2.7 GHz (E-cores)</li>
+        <li><strong>Frequência Turbo:</strong> Até 5.0 GHz</li>
+        <li><strong>Cache:</strong> 25 MB Intel Smart Cache</li>
+        <li><strong>Socket:</strong> LGA 1700</li>
+        <li><strong>Processo:</strong> Intel 7 (10nm Enhanced SuperFin)</li>
+        <li><strong>TDP:</strong> 125W (Base) / 190W (Turbo)</li>
+      </ul>
+
+      <h4>Recursos Principais:</h4>
+      <ul>
+        <li>Suporte à memória DDR5-4800 e DDR4-3200</li>
+        <li>20 linhas PCIe 5.0 + 4 linhas PCIe 4.0</li>
+        <li>Gráficos Intel UHD 770 integrados</li>
+        <li>Tecnologia Intel Thread Director</li>
+        <li>Overclocking desbloqueado (multiplicador K)</li>
+        <li>Suporte a Intel Optane Memory</li>
+      </ul>
+
+      <h4>Compatibilidade:</h4>
+      <p>Compatible com placas-mãe chipset Z690, B660, H670 e H610. Para máximo desempenho, recomendamos placas Z690 com suporte a DDR5 e PCIe 5.0.</p>
+      
+      <h4>O que inclui:</h4>
+      <ul>
+        <li>1x Processador Intel Core i7-12700K</li>
+        <li>Manual de instalação</li>
+        <li>Garantia de 3 anos Intel</li>
+      </ul>
+
+      <p><strong>Importante:</strong> Este processador não inclui cooler. É necessário adquirir um sistema de refrigeração compatível com socket LGA 1700 separadamente.</p>
+    `,
     seller: {
       name: 'Loja Oficial Intel',
       reputation: 'Ótima',
@@ -139,6 +191,7 @@ export class ListingDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.listingId = this.route.snapshot.paramMap.get('id')
+    this.initializeBreadcrumb()
     if (this.listingId) {
       this.loadListing(this.listingId)
     }
@@ -160,6 +213,7 @@ export class ListingDetailComponent implements OnInit {
     this.listingService.getListingById(id).subscribe({
       next: listing => {
         this.listing.set(listing)
+        this.updateBreadcrumb(listing.title)
         this.isLoading.set(false)
       },
       error: err => {
@@ -168,6 +222,20 @@ export class ListingDetailComponent implements OnInit {
         console.error('Erro ao carregar listing:', err)
       },
     })
+  }
+
+  private initializeBreadcrumb(): void {
+    this.breadcrumbItems = [
+      { label: 'Produtos', routerLink: '/products' },
+      { label: 'Carregando...', disabled: true }
+    ]
+  }
+
+  private updateBreadcrumb(productTitle: string): void {
+    this.breadcrumbItems = [
+      { label: 'Produtos', routerLink: '/products' },
+      { label: productTitle, disabled: true }
+    ]
   }
 
   formatCep(event: any) {
@@ -551,7 +619,25 @@ export class ListingDetailComponent implements OnInit {
   }
 
   get displayDescription() {
-    return this.currentListing?.description || 'Carregando descrição...'
+    const description = this.listing()?.description || 'Carregando descrição do produto...'
+    
+    // Se não há dados do backend ainda, mostrar mensagem de carregamento
+    if (!this.listing()) {
+      return 'Carregando descrição do produto...'
+    }
+    
+    // Se não há descrição, mostrar mensagem padrão
+    if (!description || description.trim() === '') {
+      return 'Descrição não disponível para este produto.'
+    }
+    
+    // Se está expandido ou a descrição é pequena, mostrar completa
+    if (this.isDescriptionExpanded || description.length <= this.descriptionCharLimit) {
+      return description
+    }
+    
+    // Caso contrário, truncar
+    return description.substring(0, this.descriptionCharLimit) + '...'
   }
 
   get displayStock() {
@@ -573,6 +659,15 @@ export class ListingDetailComponent implements OnInit {
   // Zoom and Gallery Methods
   selectImage(index: number): void {
     this.selectedImageIndex = index
+  }
+
+  get showExpandButton(): boolean {
+    const description = this.listing()?.description || ''
+    return description.length > this.descriptionCharLimit && description.trim() !== ''
+  }
+
+  toggleDescription(): void {
+    this.isDescriptionExpanded = !this.isDescriptionExpanded
   }
 
   onMouseMove(event: MouseEvent): void {
