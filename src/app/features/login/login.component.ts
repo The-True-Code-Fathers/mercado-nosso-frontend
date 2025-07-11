@@ -2,10 +2,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { UserService } from '../user/services/user.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AuthService } from '../../core/services/auth.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
@@ -31,12 +30,12 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
     this.exampleForm = this.fb.group({
-      username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]] 
     });
@@ -53,6 +52,16 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    console.log('Formulário válido, dados:', this.exampleForm.value);
+    const {email, password} = this.exampleForm.value;
+
+    this.userService.login(email, password).subscribe({
+      next: (user) => {
+        console.log('Login sucesso:', user);
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.log('Erro', err);
+      }
+    })
   }
 }
