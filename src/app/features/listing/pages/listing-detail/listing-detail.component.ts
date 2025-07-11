@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
-import { DecimalPipe, CommonModule } from '@angular/common'
+import { ActivatedRoute, Router } from '@angular/router'
+import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
 import { ListingService, Listing } from '../../services/listing.service'
@@ -16,6 +16,7 @@ import { BadgeModule } from 'primeng/badge'
 import { PanelModule } from 'primeng/panel'
 import { SkeletonModule } from 'primeng/skeleton'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
+import { DialogModule } from 'primeng/dialog'
 import { MenuItem } from 'primeng/api'
 
 export interface ShippingOption {
@@ -72,7 +73,6 @@ export interface ShippingCalculation {
   styleUrls: ['./listing-detail.component.scss'],
   standalone: true,
   imports: [
-    DecimalPipe,
     CommonModule,
     FormsModule,
     ButtonModule,
@@ -85,6 +85,7 @@ export interface ShippingCalculation {
     PanelModule,
     SkeletonModule,
     BreadcrumbModule,
+    DialogModule,
   ],
 })
 export class ListingDetailComponent implements OnInit {
@@ -112,6 +113,16 @@ export class ListingDetailComponent implements OnInit {
 
   // Description
   descriptionCharLimit: number = 500
+
+  // Related Products
+  relatedProducts: any[] = []
+
+  // Reviews and Ratings
+  averageRating: number = 4.8
+  ratingBars: any[] = []
+  summaryText: string = ''
+  summaryHighlights: string[] = []
+  reviews: any[] = []
 
   // Description expansion properties
   isDescriptionExpanded: boolean = false
@@ -183,10 +194,13 @@ export class ListingDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private listingService: ListingService,
     private http: HttpClient,
   ) {
     this.initializeGalleryImages()
+    this.initializeRelatedProducts()
+    this.initializeReviews()
   }
 
   ngOnInit(): void {
@@ -227,14 +241,14 @@ export class ListingDetailComponent implements OnInit {
   private initializeBreadcrumb(): void {
     this.breadcrumbItems = [
       { label: 'Produtos', routerLink: '/products' },
-      { label: 'Carregando...', disabled: true }
+      { label: 'Carregando...', disabled: true },
     ]
   }
 
   private updateBreadcrumb(productTitle: string): void {
     this.breadcrumbItems = [
       { label: 'Produtos', routerLink: '/products' },
-      { label: productTitle, disabled: true }
+      { label: productTitle, disabled: true },
     ]
   }
 
@@ -599,6 +613,126 @@ export class ListingDetailComponent implements OnInit {
     this.freteCalculado = true
   }
 
+  private initializeRelatedProducts(): void {
+    this.relatedProducts = [
+      {
+        id: 2,
+        title: 'Placa-mãe ASUS Z690-A Prime',
+        price: 899.99,
+        originalPrice: 1199.99,
+        image: '/images/banner.png',
+        rating: 4.6,
+        reviews: 87,
+        installments: '12x de R$ 75,00 sem juros',
+      },
+      {
+        id: 3,
+        title: 'Memória DDR5 32GB Corsair',
+        price: 1299.99,
+        originalPrice: 1599.99,
+        image: '/images/banner-lg.jpg',
+        rating: 4.9,
+        reviews: 203,
+        installments: '12x de R$ 108,33 sem juros',
+      },
+      {
+        id: 4,
+        title: 'SSD NVMe 1TB Samsung 980 Pro',
+        price: 549.99,
+        originalPrice: 699.99,
+        image: '/images/banner.png',
+        rating: 4.7,
+        reviews: 156,
+        installments: '10x de R$ 55,00 sem juros',
+      },
+    ]
+  }
+
+  private initializeReviews(): void {
+    this.ratingBars = [
+      { stars: 5, count: 89, percentage: 74 },
+      { stars: 4, count: 21, percentage: 17 },
+      { stars: 3, count: 6, percentage: 5 },
+      { stars: 2, count: 3, percentage: 3 },
+      { stars: 1, count: 1, percentage: 1 },
+    ]
+
+    this.summaryText =
+      'Clientes relatam alta satisfação com o desempenho da placa de vídeo, destacando seu ótimo custo-benefício e capacidade de rodar jogos modernos com boa performance em resolução Full HD. Muitos clientes ressaltam a temperatura baixa de operação, mesmo em longas sessões de jogos. Apesar da maioria das avaliações positivas, alguns clientes mencionaram a ocorrência de ruídos Coil Whine em alguns casos e a necessidade de atenção aos requisitos mínimos do sistema para evitar gargalos.'
+
+    this.summaryHighlights = [
+      'Custo-Benefício Excelente',
+      'Desempenho em Full HD',
+      'Temperatura Baixa',
+    ]
+
+    this.reviews = [
+      {
+        id: 1,
+        userName: 'João Silva',
+        rating: 5,
+        title: 'Excelente processador!',
+        content:
+          'Produto chegou super rápido e bem embalado. Performance excepcional para games e trabalho. Recomendo demais!',
+        date: new Date('2024-12-15'),
+        helpful: 12,
+        images: ['/images/banner.png', '/images/banner-lg.jpg'],
+      },
+      {
+        id: 2,
+        userName: 'Maria Santos',
+        rating: 4,
+        title: 'Muito bom, recomendo',
+        content:
+          'Ótimo custo-benefício. Fácil instalação e funcionando perfeitamente. Única observação é que esquenta um pouco.',
+        date: new Date('2024-12-10'),
+        helpful: 8,
+        images: ['/images/banner.png'],
+      },
+      {
+        id: 3,
+        userName: 'Pedro Costa',
+        rating: 5,
+        title: 'Superou expectativas',
+        content:
+          'Processador top! Rodando todos os jogos no ultra sem problemas. Performance incrível.',
+        date: new Date('2024-12-05'),
+        helpful: 15,
+        images: [],
+      },
+      {
+        id: 4,
+        userName: 'Ana Oliveira',
+        rating: 4,
+        title: 'Boa qualidade',
+        content:
+          'Produto de qualidade, entrega rápida. Uso para edição de vídeo e está atendendo bem.',
+        date: new Date('2024-11-28'),
+        helpful: 6,
+        images: [],
+      },
+    ]
+  }
+
+  // Navigation Methods
+  goToProduct(productId: number): void {
+    // Navegar para o produto
+    console.log('Navegando para produto:', productId)
+    // Implementar navegação real quando roteamento estiver configurado
+    this.router.navigate(['/listing', productId]).catch(err => {
+      console.error('Erro na navegação:', err)
+      // Fallback: recarregar a página atual com novo ID
+      window.location.href = `/listing/${productId}`
+    })
+  }
+
+  openImageModal(image: string): void {
+    // Abrir modal com imagem
+    console.log('Abrindo imagem:', image)
+    this.selectedModalImage = image
+    this.showImageModal = true
+  }
+
   get currentListing() {
     return this.listing() || null
   }
@@ -619,25 +753,30 @@ export class ListingDetailComponent implements OnInit {
   }
 
   get displayDescription() {
-    const description = this.listing()?.description || 'Carregando descrição do produto...'
-    
+    const description =
+      this.listing()?.description || 'Carregando descrição do produto...'
+
     // Se não há dados do backend ainda, mostrar mensagem de carregamento
     if (!this.listing()) {
       return 'Carregando descrição do produto...'
     }
-    
+
     // Se não há descrição, mostrar mensagem padrão
     if (!description || description.trim() === '') {
       return 'Descrição não disponível para este produto.'
     }
-    
+
+    // Limite menor no mobile para melhor UX
+    const isMobile = window.innerWidth <= 768
+    const limit = isMobile ? 200 : this.descriptionCharLimit
+
     // Se está expandido ou a descrição é pequena, mostrar completa
-    if (this.isDescriptionExpanded || description.length <= this.descriptionCharLimit) {
+    if (this.isDescriptionExpanded || description.length <= limit) {
       return description
     }
-    
+
     // Caso contrário, truncar
-    return description.substring(0, this.descriptionCharLimit) + '...'
+    return description.substring(0, limit) + '...'
   }
 
   get displayStock() {
@@ -661,9 +800,23 @@ export class ListingDetailComponent implements OnInit {
     this.selectedImageIndex = index
   }
 
+  onMouseEnter(): void {
+    // Só ativar zoom em desktop
+    if (window.innerWidth > 1024) {
+      this.showZoom = true
+    }
+  }
+
+  onMouseLeave(): void {
+    this.showZoom = false
+  }
+
   get showExpandButton(): boolean {
     const description = this.listing()?.description || ''
-    return description.length > this.descriptionCharLimit && description.trim() !== ''
+    // Limite menor no mobile para melhor UX
+    const isMobile = window.innerWidth <= 768
+    const limit = isMobile ? 200 : this.descriptionCharLimit
+    return description.length > limit && description.trim() !== ''
   }
 
   toggleDescription(): void {
@@ -671,6 +824,11 @@ export class ListingDetailComponent implements OnInit {
   }
 
   onMouseMove(event: MouseEvent): void {
+    // Desativar zoom em dispositivos mobile/tablet
+    if (window.innerWidth <= 1024) {
+      return
+    }
+
     const container = event.currentTarget as HTMLElement
     const rect = container.getBoundingClientRect()
 
@@ -701,36 +859,69 @@ export class ListingDetailComponent implements OnInit {
     // Calcular posição para o preview de zoom
     // O preview viewport é 400x502px e mostra uma área ampliada 2.5x
     // O container ampliado é 1700x1260px (680x504 * 2.5)
-    
+
     const zoomFactor = 2.5
-    
+
     // A área da lens (160x201) no container original (680x504)
     // deve aparecer centralizada no viewport do preview (400x502)
-    
+
     // Posição onde a lens aparece no container ampliado
-    const lensXInZoom = lensX * zoomFactor  // posição da lens no container ampliado
+    const lensXInZoom = lensX * zoomFactor // posição da lens no container ampliado
     const lensYInZoom = lensY * zoomFactor
-    
+
     // Para centralizar a área da lens no viewport, precisamos mover o container ampliado
     // de forma que a área da lens apareça no centro do viewport (200, 251)
-    const viewportCenterX = 400 / 2  // 200px
-    const viewportCenterY = 502 / 2  // 251px
-    
+    const viewportCenterX = 400 / 2 // 200px
+    const viewportCenterY = 502 / 2 // 251px
+
     // A área da lens ampliada tem tamanho (160*2.5, 201*2.5) = (400, 502.5)
     // Queremos que o centro desta área apareça no centro do viewport
     const lensWidthInZoom = lensWidth * zoomFactor
     const lensHeightInZoom = lensHeight * zoomFactor
-    
+
     const lensCenterXInZoom = lensXInZoom + lensWidthInZoom / 2
     const lensCenterYInZoom = lensYInZoom + lensHeightInZoom / 2
-    
+
     // Calcular quanto mover o container para centralizar a lens no viewport
     this.zoomTranslateX = viewportCenterX - lensCenterXInZoom
     this.zoomTranslateY = viewportCenterY - lensCenterYInZoom
 
     // Manter a implementação anterior para compatibilidade
-    const percentX = (lensX + halfLensWidth) / rect.width * 100
-    const percentY = (lensY + halfLensHeight) / rect.height * 100
+    const percentX = ((lensX + halfLensWidth) / rect.width) * 100
+    const percentY = ((lensY + halfLensHeight) / rect.height) * 100
     this.zoomBackgroundPosition = `${percentX}% ${percentY}%`
+  }
+
+  // Reviews functionality
+  hasMoreReviews: boolean = true
+  showImageModal: boolean = false
+  selectedModalImage: string = ''
+
+  getTotalReviews(): number {
+    return this.ratingBars.reduce((total, bar) => total + bar.count, 0)
+  }
+
+  writeReview(): void {
+    // Implementar modal ou navegação para escrever avaliação
+    console.log('Abrir formulário de avaliação')
+  }
+
+  markHelpful(reviewId: number): void {
+    const review = this.reviews.find(r => r.id === reviewId)
+    if (review) {
+      review.helpful += 1
+      console.log('Avaliação marcada como útil:', reviewId)
+    }
+  }
+
+  reportReview(reviewId: number): void {
+    console.log('Denunciar avaliação:', reviewId)
+    // Implementar modal de denúncia
+  }
+
+  loadMoreReviews(): void {
+    console.log('Carregando mais avaliações...')
+    // Implementar carregamento de mais avaliações
+    this.hasMoreReviews = false // Temporário para demo
   }
 }
