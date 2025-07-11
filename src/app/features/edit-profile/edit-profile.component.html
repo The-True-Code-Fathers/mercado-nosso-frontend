@@ -1,0 +1,45 @@
+<div class="edit-profile-container">
+  <p-card class="edit-profile-card">
+    <div class="card-header">
+      <h2>Alterar Cadastro</h2>
+    </div>
+
+    <div class="user-avatar">
+      <div class="avatar-circle">
+        <i class="pi pi-user"></i>
+      </div>
+    </div>
+
+    <form [formGroup]="editProfileForm" (ngSubmit)="salvarAlteracoes()">
+      <div class="form-field">
+        <label class="field-label">Nome</label>
+        <input type="text" pInputText formControlName="nome" placeholder="NOME" class="form-input">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Sobrenome</label>
+        <input type="text" pInputText formControlName="sobrenome" placeholder="SOBRENOME" class="form-input">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">E-mail</label>
+        <input type="email" pInputText formControlName="email" placeholder="email@email.com" class="form-input">
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">Senha</label>
+        <p-password formControlName="senha" placeholder="Mínimo 8 dígitos e uma letra" [feedback]="false" [toggleMask]="true"
+          class="form-input">
+        </p-password>
+      </div>
+
+      <div class="form-buttons">
+        <p-button label="Salvar Alterações" type="submit" [disabled]="!editProfileForm.valid" class="save-btn">
+        </p-button>
+
+        <p-button label="Seja um vendedor" type="button" (click)="sejaVendedor()" class="seller-btn">
+        </p-button>
+      </div>
+    </form>
+  </p-card>
+</div>

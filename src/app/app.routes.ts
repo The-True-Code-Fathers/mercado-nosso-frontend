@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/login/login.component';
 
-
 export const routes: Routes = [
   {
     path: '',
@@ -55,9 +54,9 @@ export const routes: Routes = [
     title: 'Checkout',
   },
   {
-    path: 'signup',
+    path: 'edit-profile',
     loadChildren: () => 
-      import('./features/signup/signup.routes').then(m => m.signupRoutes),
-    title: 'SignUp'
+      import('./features/edit-profile/edit-profile.routes').then(m => m.editProfileRoutes),
+    title: 'Editar Perfil'
   }
 ];

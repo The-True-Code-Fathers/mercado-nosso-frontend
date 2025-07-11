@@ -8,20 +8,20 @@ import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-signup',
+  selector: 'app-edit-profile',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, CardModule],
-  templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss'
+  templateUrl: './edit-profile.component.html',
+  styleUrl: './edit-profile.component.scss'
 })
-export class SignupComponent {
-  signupForm: FormGroup;
+export class EditProfileComponent {
+  editProfileForm: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router
   ) {
-    this.signupForm = this.formBuilder.group({
+    this.editProfileForm = this.formBuilder.group({
       nome: ['', [Validators.required]],
       sobrenome: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -29,13 +29,13 @@ export class SignupComponent {
     });
   }
 
-  saveChanges() {
-    if (this.signupForm.valid) {
-      console.log('Dados do formulário:', this.signupForm.value);
+  salvarAlteracoes() {
+    if (this.editProfileForm.valid) {
+      console.log('Dados do formulário:', this.editProfileForm.value);
     }
   }
 
-  beASeller() {
+  sejaVendedor() {
     this.router.navigate(['/vendedor']);
   }
 }
