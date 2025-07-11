@@ -5,10 +5,12 @@
 /* Hero Carousel Section */
 .hero-section {
   overflow: hidden;
+  width: 100%;
 }
 
 ::ng-deep .hero-carousel {
   height: 100%;
+  width: 100%;
 
   .p-carousel-content {
     height: 100%;
@@ -24,6 +26,7 @@
 
   .p-carousel-item {
     height: 100%;
+    width: 100%;
   }
 
   /* Custom navigation buttons */
@@ -37,6 +40,7 @@
     border-radius: 50%;
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
+    z-index: 2;
 
     &:hover {
       background: rgba(255, 255, 255, 0.2);
@@ -56,6 +60,7 @@
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2;
 
     .p-carousel-indicator {
       button {
@@ -89,7 +94,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Removed background-color to eliminate the "black stroke" */
+
+  @media (max-width: 768px) {
+    min-height: 400px;
+  }
+
+  @media (max-width: 480px) {
+    min-height: 350px;
+  }
 }
 
 /* Section Headers */
@@ -381,7 +393,7 @@
   }
 
   .hero-section {
-    padding: var(--spacing-xl) var(--spacing-md);
+    padding: 0; // Remove padding for mobile to use full width
   }
 
   .categories-section,
@@ -390,6 +402,29 @@
   .cta-section {
     padding: var(--spacing-xl) var(--spacing-md);
   }
+
+  // Ensure carousel navigation is properly sized on mobile
+  ::ng-deep .hero-carousel {
+    .p-carousel-prev,
+    .p-carousel-next {
+      width: 40px;
+      height: 40px;
+
+      .p-carousel-prev-icon,
+      .p-carousel-next-icon {
+        font-size: 1rem;
+      }
+    }
+
+    .p-carousel-indicators {
+      bottom: 15px;
+
+      .p-carousel-indicator button {
+        width: 8px;
+        height: 8px;
+      }
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -397,11 +432,21 @@
     grid-template-columns: 1fr;
   }
 
-  .hero-content h1 {
-    font-size: 1.8rem;
-  }
-
   .section-header h2 {
     font-size: 1.5rem;
+  }
+
+  // Further optimize carousel navigation for very small screens
+  ::ng-deep .hero-carousel {
+    .p-carousel-prev,
+    .p-carousel-next {
+      width: 35px;
+      height: 35px;
+
+      .p-carousel-prev-icon,
+      .p-carousel-next-icon {
+        font-size: 0.9rem;
+      }
+    }
   }
 }
