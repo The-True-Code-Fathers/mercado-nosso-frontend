@@ -1,24 +1,26 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { DividerModule } from 'primeng/divider';
-import { BadgeModule } from 'primeng/badge';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
-import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { Component, inject, signal } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { RouterModule } from '@angular/router'
+import { FormsModule } from '@angular/forms'
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { InputNumberModule } from 'primeng/inputnumber'
+import { DividerModule } from 'primeng/divider'
+import { BadgeModule } from 'primeng/badge'
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
+import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
+import { CheckboxModule } from 'primeng/checkbox'
+import { ConfirmationService, MessageService } from 'primeng/api'
 
 export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  category: string;
+  id: string
+  name: string
+  price: number
+  quantity: number
+  image: string
+  category: string
+  selected: boolean
 }
 
 @Component({
@@ -36,13 +38,14 @@ export interface CartItem {
     ConfirmDialogModule,
     ToastModule,
     TooltipModule,
+    CheckboxModule,
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
 })
 export class CartComponent {
-  private confirmationService = inject(ConfirmationService);
-  private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService)
+  private messageService = inject(MessageService)
 
   // Using signals for reactive state management (Angular v19 feature)
   cartItems = signal<CartItem[]>([
@@ -53,6 +56,7 @@ export class CartComponent {
       quantity: 2,
       image: 'https://via.placeholder.com/80x80?text=🍎',
       category: 'Frutas',
+      selected: true,
     },
     {
       id: '2',
@@ -61,6 +65,7 @@ export class CartComponent {
       quantity: 1,
       image: 'https://via.placeholder.com/80x80?text=🥛',
       category: 'Laticínios',
+      selected: true,
     },
     {
       id: '3',
@@ -69,32 +74,54 @@ export class CartComponent {
       quantity: 6,
       image: 'https://via.placeholder.com/80x80?text=🍞',
       category: 'Padaria',
+      selected: false,
     },
-  ]);
+  ])
 
   // Computed signals for derived state
-  totalItems = signal(0);
-  subtotal = signal(0);
-  delivery = signal(5.99);
-  total = signal(0);
+  totalItems = signal(0)
+  subtotal = signal(0)
+  delivery = signal(5.99)
+  total = signal(0)
+
+  // Getter for selected items count
+  get selectedItemsCount(): number {
+    return this.cartItems()
+      .filter(item => item.selected)
+      .reduce((sum, item) => sum + item.quantity, 0)
+  }
+
+  // Getter for total items in cart (regardless of selection)
+  get totalItemsInCart(): number {
+    return this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+  }
 
   constructor() {
     // Update computed values when cart changes
-    this.updateTotals();
+    this.updateTotals()
   }
 
   updateQuantity(itemId: string, newQuantity: number) {
     if (newQuantity <= 0) {
-      this.removeItem(itemId);
-      return;
+      this.removeItem(itemId)
+      return
     }
 
-    this.cartItems.update((items) =>
-      items.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
-    this.updateTotals();
+    this.cartItems.update(items =>
+      items.map(item =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item,
+      ),
+    )
+    this.updateTotals()
+  }
+
+  toggleSelection(itemId: string) {
+    this.cartItems.update(items =>
+      items.map(item =>
+        item.id === itemId ? { ...item, selected: !item.selected } : item,
+      ),
+    )
+    this.updateTotals()
   }
 
   removeItem(itemId: string) {
@@ -105,17 +132,15 @@ export class CartComponent {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.cartItems.update((items) =>
-          items.filter((item) => item.id !== itemId)
-        );
-        this.updateTotals();
+        this.cartItems.update(items => items.filter(item => item.id !== itemId))
+        this.updateTotals()
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
           detail: 'Item removido do carrinho',
-        });
+        })
       },
-    });
+    })
   }
 
   clearCart() {
@@ -126,32 +151,34 @@ export class CartComponent {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.cartItems.set([]);
-        this.updateTotals();
+        this.cartItems.set([])
+        this.updateTotals()
         this.messageService.add({
           severity: 'info',
           summary: 'Carrinho Limpo',
           detail: 'Todos os itens foram removidos',
-        });
+        })
       },
-    });
+    })
   }
 
   proceedToCheckout() {
-    if (this.cartItems().length === 0) {
+    const selectedItems = this.cartItems().filter(item => item.selected)
+
+    if (selectedItems.length === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Carrinho Vazio',
-        detail: 'Adicione itens ao carrinho antes de finalizar',
-      });
-      return;
+        summary: 'Nenhum Item Selecionado',
+        detail: 'Selecione pelo menos um item para finalizar a compra',
+      })
+      return
     }
 
     this.messageService.add({
       severity: 'info',
       summary: 'Checkout',
-      detail: 'Redirecionando para finalização da compra...',
-    });
+      detail: `Processando ${selectedItems.length} item(s) selecionado(s)...`,
+    })
   }
 
   continueShopping() {
@@ -160,22 +187,28 @@ export class CartComponent {
       severity: 'info',
       summary: 'Redirecionando',
       detail: 'Voltando para a lista de produtos...',
-    });
+    })
   }
 
   private updateTotals() {
-    const items = this.cartItems();
-    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-    const subtotalValue = items.reduce(
+    const items = this.cartItems()
+    const selectedItems = items.filter(item => item.selected)
+
+    const itemCount = selectedItems.reduce(
+      (sum, item) => sum + item.quantity,
+      0,
+    )
+    const subtotalValue = selectedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+      0,
+    )
 
-    this.totalItems.set(itemCount);
-    this.subtotal.set(subtotalValue);
+    this.totalItems.set(itemCount)
+    this.subtotal.set(subtotalValue)
 
-    // Free delivery for orders over R$ 50
-    const deliveryFee = subtotalValue > 50 ? 0 : this.delivery();
-    this.total.set(subtotalValue + deliveryFee);
+    // Delivery fee is 5% of purchase value
+    const deliveryFee = subtotalValue * 0.05
+    this.delivery.set(deliveryFee)
+    this.total.set(subtotalValue + deliveryFee)
   }
 }

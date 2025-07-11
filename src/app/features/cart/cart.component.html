@@ -1,14 +1,9 @@
 <div class="cart-container">
   <div class="cart-header">
     <h1>
-      <i class="pi pi-shopping-cart mr-2"></i>
+      <i class="pi pi-shopping-cart cart-title-icon"></i>
       Meu Carrinho
     </h1>
-    <p-badge
-      [value]="totalItems()"
-      severity="info"
-      class="cart-count">
-    </p-badge>
   </div>
 
   <!-- Empty Cart State -->
@@ -22,7 +17,8 @@
         icon="pi pi-arrow-left"
         styleClass="p-button-lg"
         routerLink="/products"
-        (click)="continueShopping()">
+        (click)="continueShopping()"
+      >
       </p-button>
     </div>
   </div>
@@ -30,33 +26,38 @@
   <!-- Cart with Items -->
   <div *ngIf="cartItems().length > 0" class="cart-content">
     <div class="cart-items">
-      <div class="items-header">
-        <h2>Itens no Carrinho ({{ totalItems() }})</h2>
-        <p-button
-          label="Limpar Carrinho"
-          icon="pi pi-trash"
-          styleClass="p-button-outlined p-button-danger p-button-sm"
-          (click)="clearCart()">
-        </p-button>
-      </div>
+      <div class="items-header"></div>
 
       <div class="items-list">
-        <p-card
-          *ngFor="let item of cartItems()"
-          class="cart-item">
+        <p-card *ngFor="let item of cartItems()" class="cart-item">
           <div class="item-content">
+            <!-- Selection Checkbox -->
+            <div class="item-checkbox">
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="item.selected"
+                (ngModelChange)="toggleSelection(item.id)"
+                inputId="item-{{ item.id }}"
+              >
+              </p-checkbox>
+            </div>
+
             <!-- Product Image -->
             <div class="item-image">
-              <img [src]="item.image" [alt]="item.name">
-              <p-badge [value]="item.category" severity="secondary" class="category-badge"></p-badge>
+              <img [src]="item.image" [alt]="item.name" />
+              <p-badge
+                [value]="item.category"
+                severity="secondary"
+                class="category-badge"
+              ></p-badge>
             </div>
 
             <!-- Product Details -->
             <div class="item-details">
               <h3>{{ item.name }}</h3>
-              <p class="item-price">R$ {{ item.price | number:'1.2-2' }}</p>
-              <p class="item-subtotal">
-                Subtotal: R$ {{ (item.price * item.quantity) | number:'1.2-2' }}
+              <p class="item-price">R$ {{ item.price | number : '1.2-2' }}</p>
+              <p *ngIf="item.quantity > 1" class="item-subtotal">
+                Subtotal: R$ {{ item.price * item.quantity | number : '1.2-2' }}
               </p>
             </div>
 
@@ -73,7 +74,8 @@
                   buttonLayout="horizontal"
                   spinnerMode="horizontal"
                   decrementButtonClass="p-button-secondary"
-                  incrementButtonClass="p-button-secondary">
+                  incrementButtonClass="p-button-secondary"
+                >
                 </p-inputNumber>
               </div>
 
@@ -81,7 +83,8 @@
                 icon="pi pi-trash"
                 styleClass="p-button-danger p-button-outlined p-button-sm"
                 pTooltip="Remover item"
-                (click)="removeItem(item.id)">
+                (click)="removeItem(item.id)"
+              >
               </p-button>
             </div>
           </div>
@@ -91,35 +94,30 @@
 
     <!-- Cart Summary -->
     <div class="cart-summary">
-      <p-card class="summary-card">
-        <ng-template pTemplate="header">
-          <h3>Resumo do Pedido</h3>
-        </ng-template>
+      <div class="summary-card">
+        <div class="summary-header">
+          <h3>
+            <i class="pi pi-receipt summary-icon"></i>
+            Resumo do Pedido
+          </h3>
+        </div>
 
         <div class="summary-content">
           <div class="summary-line">
-            <span>Subtotal ({{ totalItems() }} itens):</span>
-            <span class="amount">R$ {{ subtotal() | number:'1.2-2' }}</span>
+            <span>Subtotal:</span>
+            <span class="amount">R$ {{ subtotal() | number : '1.2-2' }}</span>
           </div>
 
           <div class="summary-line">
             <span>Taxa de entrega:</span>
-            <span class="amount" [class.free]="subtotal() > 50">
-              <span *ngIf="subtotal() > 50; else deliveryFee">GRÁTIS</span>
-              <ng-template #deliveryFee>R$ {{ delivery() | number:'1.2-2' }}</ng-template>
-            </span>
+            <span class="amount">R$ {{ delivery() | number : '1.2-2' }}</span>
           </div>
 
-          <div *ngIf="subtotal() <= 50" class="free-delivery-info">
-            <i class="pi pi-info-circle"></i>
-            <span>Frete grátis para compras acima de R$ 50,00</span>
-          </div>
-
-          <p-divider></p-divider>
+          <div class="summary-divider"></div>
 
           <div class="summary-line total">
             <span>Total:</span>
-            <span class="amount">R$ {{ total() | number:'1.2-2' }}</span>
+            <span class="amount">R$ {{ total() | number : '1.2-2' }}</span>
           </div>
 
           <div class="summary-actions">
@@ -128,18 +126,30 @@
               icon="pi pi-arrow-left"
               styleClass="p-button-outlined w-full mb-2"
               routerLink="/products"
-              (click)="continueShopping()">
+              (click)="continueShopping()"
+            >
             </p-button>
 
-            <p-button
-              label="Finalizar Compra"
-              icon="pi pi-credit-card"
-              styleClass="p-button-lg w-full"
-              (click)="proceedToCheckout()">
-            </p-button>
+            <div class="action-buttons-row">
+              <p-button
+                label="Finalizar Compra"
+                icon="pi pi-credit-card"
+                styleClass="p-button-lg checkout-btn"
+                (click)="proceedToCheckout()"
+              >
+              </p-button>
+
+              <p-button
+                label="Limpar Carrinho"
+                icon="pi pi-trash"
+                styleClass="p-button-outlined p-button-danger p-button-lg clear-btn"
+                (click)="clearCart()"
+              >
+              </p-button>
+            </div>
           </div>
         </div>
-      </p-card>
+      </div>
     </div>
   </div>
 </div>
