@@ -1,45 +1,167 @@
-<div class="edit-profile-container">
-  <p-card class="edit-profile-card">
-    <div class="card-header">
-      <h2>Alterar Cadastro</h2>
-    </div>
-
-    <div class="user-avatar">
-      <div class="avatar-circle">
-        <i class="pi pi-user"></i>
+<div class="profile-container">
+  <!-- Seção de Branding (lado esquerdo) -->
+  <div class="branding-section">
+    <div class="branding-content">
+      <h1 class="brand-title">Mercado Nosso</h1>
+      <div class="brand-features">
+        <div class="feature-item">
+          <i class="pi pi-user"></i>
+          <span>Perfil Personalizado</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-shield"></i>
+          <span>Dados Seguros</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-bell"></i>
+          <span>Notificações</span>
+        </div>
       </div>
     </div>
+  </div>
 
-    <form [formGroup]="editProfileForm" (ngSubmit)="salvarAlteracoes()">
-      <div class="form-field">
-        <label class="field-label">Nome</label>
-        <input type="text" pInputText formControlName="nome" placeholder="NOME" class="form-input">
+  <!-- Seção do Formulário (lado direito) -->
+  <div class="form-section">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>Editar Perfil</h2>
+        <p>Mantenha suas informações sempre atualizadas</p>
       </div>
 
-      <div class="form-field">
-        <label class="field-label">Sobrenome</label>
-        <input type="text" pInputText formControlName="sobrenome" placeholder="SOBRENOME" class="form-input">
-      </div>
+      <form [formGroup]="editProfileForm" (ngSubmit)="onSubmit()">
+        <!-- Seção Informações Pessoais -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-user"></i>
+            Informações Pessoais
+          </h3>
+          <p-divider></p-divider>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome">Nome Completo</label>
+              <input 
+                pInputText 
+                id="nome" 
+                formControlName="nome" 
+                placeholder="Digite seu nome completo"
+                [class.ng-invalid]="editProfileForm.get('nome')?.invalid && editProfileForm.get('nome')?.touched"
+              />
+              <small class="error-message" *ngIf="editProfileForm.get('nome')?.invalid && editProfileForm.get('nome')?.touched">
+                Nome é obrigatório
+              </small>
+            </div>
+          </div>
 
-      <div class="form-field">
-        <label class="field-label">E-mail</label>
-        <input type="email" pInputText formControlName="email" placeholder="email@email.com" class="form-input">
-      </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input 
+                pInputText 
+                id="email" 
+                formControlName="email" 
+                placeholder="Digite seu e-mail"
+                [class.ng-invalid]="editProfileForm.get('email')?.invalid && editProfileForm.get('email')?.touched"
+              />
+              <small class="error-message" *ngIf="editProfileForm.get('email')?.invalid && editProfileForm.get('email')?.touched">
+                E-mail válido é obrigatório
+              </small>
+            </div>
+          </div>
 
-      <div class="form-field">
-        <label class="field-label">Senha</label>
-        <p-password formControlName="senha" placeholder="Mínimo 8 dígitos e uma letra" [feedback]="false" [toggleMask]="true"
-          class="form-input">
-        </p-password>
-      </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="telefone">Telefone</label>
+              <input 
+                pInputText 
+                id="telefone" 
+                formControlName="telefone" 
+                placeholder="(11) 99999-9999"
+                [class.ng-invalid]="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched"
+              />
+              <small class="error-message" *ngIf="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched">
+                Telefone é obrigatório
+              </small>
+            </div>
+          </div>
+        </div>
 
-      <div class="form-buttons">
-        <p-button label="Salvar Alterações" type="submit" [disabled]="!editProfileForm.valid" class="save-btn">
-        </p-button>
+        <!-- Seção Endereço -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-map-marker"></i>
+            Endereço
+          </h3>
+          <p-divider></p-divider>
 
-        <p-button label="Seja um vendedor" type="button" (click)="sejaVendedor()" class="seller-btn">
-        </p-button>
-      </div>
-    </form>
-  </p-card>
+          <div class="form-row">
+            <div class="form-group form-group-small">
+              <label for="cep">CEP</label>
+              <input 
+                pInputText 
+                id="cep" 
+                formControlName="cep" 
+                placeholder="00000-000"
+                (blur)="onCepBlur()"
+              />
+            </div>
+            <div class="form-group form-group-large">
+              <label for="endereco">Endereço</label>
+              <input 
+                pInputText 
+                id="endereco" 
+                formControlName="endereco" 
+                placeholder="Rua, número"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cidade">Cidade</label>
+              <input 
+                pInputText 
+                id="cidade" 
+                formControlName="cidade" 
+                placeholder="Cidade"
+              />
+            </div>
+            <div class="form-group form-group-small">
+              <label for="estado">Estado</label>
+              <input 
+                pInputText 
+                id="estado" 
+                formControlName="estado" 
+                placeholder="UF"
+              />
+            </div>
+          </div>
+        </div>
+
+                <!-- Botões de Ação -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="p-button p-button-secondary"
+            (click)="onCancel()"
+          >
+            <i class="pi pi-times"></i>
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="p-button p-button-primary"
+            [disabled]="editProfileForm.invalid"
+          >
+            <i class="pi pi-check"></i>
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog></p-confirmDialog>

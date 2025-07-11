@@ -1,153 +1,258 @@
-.edit-profile-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.profile-container {
   min-height: 100vh;
-  padding: 20px;
-  background-color: #f5f5f5;
+  display: flex;
+background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 50%, #81C784 100%);  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 
-.edit-profile-card {
-  width: 100%;
+.branding-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  color: white;
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+    min-height: 200px;
+    display: none;
+  }
+}
+
+.branding-content {
   max-width: 400px;
+  text-align: center;
+}
 
-  .card-header {
-    text-align: center;
-    margin-bottom: 20px;
-
-    h2 {
-      margin: 0;
-      color: #333;
-      font-weight: 600;
-    }
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: white;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
   }
+}
 
-  .user-avatar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
+.brand-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
 
-    .avatar-circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: #e0e0e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      i {
-        font-size: 40px;
-        color: #666;
-      }
-    }
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1rem;
+  opacity: 0.9;
+  
+  i {
+    font-size: 1.2rem;
+    color: var(--color-accent);
   }
+}
 
-  .form-field {
-    margin-bottom: 20px;
-
-    .field-label {
-      display: block;
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 5px;
-      font-weight: 500;
-      text-transform: uppercase;
-    }
-
-    .form-input {
-      width: 100%;
-
-      input {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 14px;
-
-        &::placeholder {
-          color: #999;
-          text-transform: uppercase;
-        }
-      }
-    }
-
-    // Estilo específico para o componente p-password
-    p-password {
-      width: 100%;
-      
-      ::ng-deep .p-password {
-        width: 100%;
-        
-        .p-inputtext {
-          width: 100%;
-          padding: 12px;
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          font-size: 14px;
-        }
-      }
-    }
+.form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
   }
+}
 
-  .form-buttons {
-    display: flex;
+.form-container {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-xl);
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+  }
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  p {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.form-group-section {
+  margin-bottom: var(--spacing-xl);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+  
+  i {
+    color: var(--color-primary);
+    font-size: 1.2rem;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  
+  @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 30px;
-    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
 
-    p-button {
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  
+  &.form-group-small {
+    flex: 0 0 150px;
+    
+    @media (max-width: 768px) {
+      flex: 1;
+    }
+  }
+  
+  &.form-group-large {
+    flex: 2;
+  }
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  &.ng-invalid.ng-touched {
+    border-color: var(--color-error);
+  }
+  
+  &::placeholder {
+    color: var(--color-text-light);
+  }
+}
+
+.error-message {
+  color: var(--color-error);
+  font-size: 0.8rem;
+  margin-top: var(--spacing-xs);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    button {
       width: 100%;
-      display: block;
-
-      ::ng-deep button {
-        width: 100% !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        text-align: center !important;
-        background: transparent;
-        border: none;
-        font-weight: 700;
-        color: var(--color-primary);
-        padding: var(--spacing-xs) var(--spacing-sm);
-
-        &:hover {
-          background: transparent;
-          color: var(--color-primary-dark);
-          text-decoration: underline;
-        }
-      }
+      justify-content: center;
     }
+  }
+}
 
-    .save-btn ::ng-deep button {
-      background-color: transparent !important;
-      border: 2px solid var(--p-button-outlined-primary-color) !important;
-      background: transparent;
-      font-weight: 700;
-      color: var(--p-button-outlined-primary-color);
-      padding: 10px;
-      cursor: pointer;
+.form-actions .p-button {
+  min-width: 140px;
+  height: 42px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
 
-      &:hover {
-        background: color-mix(in srgb, var(--p-button-outlined-primary-color) 20%, transparent);
-        color: var(--p-button-outlined-primary-color);
-        text-decoration: none;
-      }
-    }
+.form-actions .p-button-secondary {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
 
-    .seller-btn ::ng-deep button {
-      background-color: transparent !important;
-      border: 2px solid var(--p-button-outlined-primary-color) !important;
-      color: var(--p-button-outlined-primary-color) !important;
+.form-actions .p-button-secondary:hover {
+  background: #e9ecef;
+}
 
-      &:hover {
-        background-color: var(--p-button-outlined-primary-color) !important;
-        color: white !important;
-        text-decoration: none;
-      }
-    }
+.form-actions .p-button-primary {
+  background: #4CAF50;
+  color: white;
+  border: 1px solid #4CAF50;
+}
+
+.form-actions .p-button-primary:hover {
+  background: #45a049;
+}
+
+.form-actions .p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    margin: var(--spacing-md);
+    padding: var(--spacing-lg);
+  }
+  
+  .brand-title {
+    font-size: 1.8rem;
+  }
+  
+  .form-header h2 {
+    font-size: 1.5rem;
   }
 }
