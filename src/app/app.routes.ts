@@ -53,5 +53,11 @@ export const routes: Routes = [
     loadChildren: () => 
       import('./features/checkout/checkout.routes').then(m => m.checkoutRoutes),
     title: 'Checkout',
+  },
+  {
+    path: 'signup',
+    loadChildren: () => 
+      import('./features/signup/signup.routes').then(m => m.signupRoutes),
+    title: 'SignUp'
   }
 ];
