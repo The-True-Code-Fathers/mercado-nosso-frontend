@@ -42,5 +42,11 @@ export const routes: Routes = [
     loadChildren: () => 
       import('./features/login/login.routes').then(m => m.loginRoutes),
     title: 'Login',
+  },
+  {
+    path: 'checkout',
+    loadChildren: () => 
+      import('./features/checkout/checkout.routes').then(m => m.checkoutRoutes),
+    title: 'Checkout',
   }
 ];

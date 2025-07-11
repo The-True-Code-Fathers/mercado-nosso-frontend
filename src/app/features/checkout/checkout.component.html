@@ -1,0 +1,47 @@
+<div class="checkout-container">
+  <div class="checkout-card">
+    <div class="checkout-header">
+      <h1>Muito Obrigado por comprar conosco!!!</h1>
+      <p>O vendedor já foi notificado e seu pedido será logo enviado</p>
+    </div>
+
+    <p-divider></p-divider>
+
+    <div class="order-details">
+      <div class="order-info">
+        <span class="order-number">Pedido {{ orderData.orderNumber }} - {{ orderData.date }}</span>
+      </div>
+
+      <div class="order-content">
+        <div class="product-section">
+          <div class="product-image">
+            <img [src]="orderData.product.image" [alt]="orderData.product.name" />
+          </div>
+          <div class="product-info">
+            <h3>{{ orderData.product.name }}</h3>
+            <p class="product-price">{{ orderData.product.quantity }}x {{ orderData.product.price }}</p>
+          </div>
+        </div>
+
+        <div class="delivery-section">
+          <div class="delivery-icon">
+            <i class="pi pi-truck"></i>
+          </div>
+          <div class="delivery-info">
+            <p class="delivery-date">Chegará entre {{ orderData.delivery.estimatedDate }}</p>
+            <p class="delivery-type">{{ orderData.delivery.type }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout-actions">
+      <p-button 
+        label="Continuar comprando" 
+        (onClick)="continueShopping()"
+        [outlined]="true"
+        styleClass="continue-button">
+      </p-button>
+    </div>
+  </div>
+</div>
