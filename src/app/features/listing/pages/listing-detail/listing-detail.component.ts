@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core'
+import { Component, OnInit, OnDestroy, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
@@ -88,7 +88,7 @@ export interface ShippingCalculation {
     DialogModule,
   ],
 })
-export class ListingDetailComponent implements OnInit {
+export class ListingDetailComponent implements OnInit, OnDestroy {
   listingId: string | null = null
   cep: string = ''
   freteCalculado: boolean = false
@@ -106,6 +106,9 @@ export class ListingDetailComponent implements OnInit {
   zoomBackgroundPosition: string = '0% 0%'
   zoomTranslateX: number = 0
   zoomTranslateY: number = 0
+  private scrollListener?: () => void
+  private wheelListener?: () => void
+  private touchListener?: () => void
 
   // Breadcrumb
   breadcrumbItems: MenuItem[] = []
@@ -209,6 +212,7 @@ export class ListingDetailComponent implements OnInit {
     if (this.listingId) {
       this.loadListing(this.listingId)
     }
+    this.setupScrollListener()
   }
 
   private initializeGalleryImages(): void {
@@ -250,6 +254,41 @@ export class ListingDetailComponent implements OnInit {
       { label: 'Produtos', routerLink: '/products' },
       { label: productTitle, disabled: true },
     ]
+  }
+
+  private setupScrollListener(): void {
+    // Handler for hiding zoom preview during any scroll activity
+    const hideZoomPreview = () => {
+      if (this.showZoom) {
+        this.showZoom = false
+      }
+    }
+    
+    // Scroll events - triggers during scroll
+    this.scrollListener = hideZoomPreview
+    window.addEventListener('scroll', this.scrollListener, { passive: true })
+    
+    // Wheel events - triggers immediately when wheel starts
+    this.wheelListener = hideZoomPreview  
+    window.addEventListener('wheel', this.wheelListener, { passive: true })
+    
+    // Touch events for mobile scroll
+    this.touchListener = hideZoomPreview
+    window.addEventListener('touchmove', this.touchListener, { passive: true })
+    window.addEventListener('touchstart', this.touchListener, { passive: true })
+  }
+
+  ngOnDestroy(): void {
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener)
+    }
+    if (this.wheelListener) {
+      window.removeEventListener('wheel', this.wheelListener)
+    }
+    if (this.touchListener) {
+      window.removeEventListener('touchmove', this.touchListener)
+      window.removeEventListener('touchstart', this.touchListener)
+    }
   }
 
   formatCep(event: any) {
