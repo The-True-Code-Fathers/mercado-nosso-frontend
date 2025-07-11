@@ -41,10 +41,11 @@
   <div *ngIf="!isLoading() && !error()" class="content-container">
     <!-- Breadcrumb -->
     <div class="breadcrumb-section">
-      <p-breadcrumb 
-        [model]="breadcrumbItems" 
+      <p-breadcrumb
+        [model]="breadcrumbItems"
         [home]="home"
-        styleClass="custom-breadcrumb">
+        styleClass="custom-breadcrumb"
+      >
       </p-breadcrumb>
     </div>
 
@@ -93,14 +94,13 @@
         </div>
 
         <!-- Zoom Preview - Outside gallery container -->
-        <div
-          *ngIf="showZoom"
-          class="zoom-preview"
-        >
+        <div *ngIf="showZoom" class="zoom-preview">
           <div class="zoom-preview-viewport">
-            <div 
+            <div
               class="zoom-preview-container"
-              [style.transform]="'translate(' + zoomTranslateX + 'px, ' + zoomTranslateY + 'px)'"
+              [style.transform]="
+                'translate(' + zoomTranslateX + 'px, ' + zoomTranslateY + 'px)'
+              "
             >
               <img
                 [src]="defaultProduct.images[selectedImageIndex]"
@@ -312,7 +312,7 @@
       <div class="description-header">
         <h2>Descrição do produto</h2>
       </div>
-      
+
       <div class="description-content">
         <!-- Loading state -->
         <div *ngIf="isLoading()" class="description-loading">
@@ -320,34 +320,42 @@
           <p-skeleton width="80%" height="2rem" class="mb-2"></p-skeleton>
           <p-skeleton width="60%" height="2rem"></p-skeleton>
         </div>
-        
+
         <!-- Content -->
-        <div *ngIf="!isLoading()" 
+        <div
+          *ngIf="!isLoading()"
           class="description-text"
           [class.expanded]="isDescriptionExpanded"
           [class.has-overflow]="showExpandButton && !isDescriptionExpanded"
-        >{{ displayDescription }}</div>
-        
-        <div *ngIf="showExpandButton && !isLoading()" class="description-actions">
-            <p-button
-              (onClick)="toggleDescription()"
-              [label]="isDescriptionExpanded ? 'Mostrar menos' : 'Mostrar mais'"
-              [icon]="isDescriptionExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
-              severity="secondary"
-              [text]="true"
-              styleClass="show-more-btn"
-            >
-            </p-button>
-          </div>
+        >
+          {{ displayDescription }}
+        </div>
+
+        <div
+          *ngIf="showExpandButton && !isLoading()"
+          class="description-actions"
+        >
+          <p-button
+            (onClick)="toggleDescription()"
+            [label]="isDescriptionExpanded ? 'Mostrar menos' : 'Mostrar mais'"
+            [icon]="
+              isDescriptionExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'
+            "
+            severity="secondary"
+            [text]="true"
+            styleClass="show-more-btn"
+          >
+          </p-button>
         </div>
       </div>
+    </div>
 
     <!-- Aproveite e compre também Section -->
     <div class="related-products-section">
       <div class="section-header">
         <h2>Aproveite e compre também</h2>
       </div>
-      
+
       <div class="products-grid">
         <p-card
           *ngFor="let product of relatedProducts"
@@ -356,10 +364,14 @@
         >
           <ng-template pTemplate="header">
             <div class="product-image-container">
-              <img [src]="product.image" [alt]="product.title" class="product-image" />
+              <img
+                [src]="product.image"
+                [alt]="product.title"
+                class="product-image"
+              />
             </div>
           </ng-template>
-          
+
           <div class="product-content">
             <h3 class="product-title">{{ product.title }}</h3>
             <div class="product-rating">
@@ -373,7 +385,9 @@
               <span class="rating-count">({{ product.reviews }})</span>
             </div>
             <div class="product-pricing">
-              <div class="price-current">R$ {{ product.price | number : '1.2-2' }}</div>
+              <div class="price-current">
+                R$ {{ product.price | number : '1.2-2' }}
+              </div>
               <div class="price-original" *ngIf="product.originalPrice">
                 R$ {{ product.originalPrice | number : '1.2-2' }}
               </div>
@@ -394,57 +408,62 @@
           Avaliações dos usuários
         </h2>
       </div>
-      
-      <!-- Rating Overview and Summary in horizontal layout -->
-      <div class="reviews-overview-container">
-        <!-- Rating Summary - Left Side -->
-        <div class="rating-overview">
-          <div class="rating-score">
-            <span class="score-number">{{ averageRating }}</span>
-            <span class="score-denominator">/5</span>
-            <p-rating
-              [ngModel]="averageRating"
-              [readonly]="true"
-              [stars]="5"
-              styleClass="rating-large"
-            >
-            </p-rating>
-            <span class="total-reviews">({{ getTotalReviews() }} avaliações)</span>
-          </div>
-          <div class="rating-bars">
-            <div class="rating-bar" *ngFor="let bar of ratingBars">
-              <span class="bar-label">{{ bar.stars }}</span>
-              <div class="bar-container">
-                <div class="bar-fill" [style.width.%]="bar.percentage"></div>
-              </div>
-              <span class="bar-count">{{ bar.count }}</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Summary Card - Right Side -->
-        <div class="summary-card">
 
-          <div class="summary-footer">
-            <i class="pi pi-sparkles summary-icon"></i>
-            <h3>   Resumo com base nas opiniões de usuários</h3>
+      <div class="reviews-container">
+        <!-- Rating Summary -->
+        <div class="rating-summary">
+          <div class="rating-overview">
+            <div class="rating-score">
+              <span class="score-number">{{ averageRating }}</span>
+              <span class="score-denominator">/5</span>
+              <p-rating
+                [ngModel]="averageRating"
+                [readonly]="true"
+                [stars]="5"
+                styleClass="rating-large"
+              >
+              </p-rating>
+              <span class="total-reviews"
+                >({{ getTotalReviews() }} avaliações)</span
+              >
+            </div>
+            <div class="rating-bars">
+              <div class="rating-bar" *ngFor="let bar of ratingBars">
+                <span class="bar-label">{{ bar.stars }}</span>
+                <div class="bar-container">
+                  <div class="bar-fill" [style.width.%]="bar.percentage"></div>
+                </div>
+                <span class="bar-count">{{ bar.count }}</span>
+              </div>
+            </div>
           </div>
-          <br>
-          <div class="summary-header">
-            <h3>O que outros clientes acharam desse produto:</h3>
-          </div>
-          <p class="summary-text">{{ summaryText }}</p>
-          <div class="summary-highlights">
-            <div class="highlight-item" *ngFor="let highlight of summaryHighlights">
-              <span class="highlight-text">{{ highlight }}</span>
+
+          <!-- Summary Card -->
+          <div class="summary-card">
+            <div class="summary-header">
+              <h3>O que outros clientes acharam desse produto:</h3>
+            </div>
+            <p class="summary-text">{{ summaryText }}</p>
+            <div class="summary-highlights">
+              <div
+                class="highlight-item"
+                *ngFor="let highlight of summaryHighlights"
+              >
+                <span class="highlight-text">{{ highlight }}</span>
+              </div>
+            </div>
+            <div class="summary-footer">
+              <i class="pi pi-sparkles summary-icon"></i>
+              <span class="summary-note"
+                >Resumo com base nas opiniões de usuários</span
+              >
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- Individual Reviews -->
-      <div class="reviews-list">
-        <div class="review-item" *ngFor="let review of reviews">
+
+        <!-- Individual Reviews -->
+        <div class="reviews-list">
+          <div class="review-item" *ngFor="let review of reviews">
             <div class="review-header">
               <div class="reviewer-info">
                 <div class="reviewer-avatar">
@@ -452,7 +471,9 @@
                 </div>
                 <div class="reviewer-details">
                   <span class="reviewer-name">{{ review.userName }}</span>
-                  <span class="review-date">{{ review.date | date : 'dd/MM/yyyy' }}</span>
+                  <span class="review-date">{{
+                    review.date | date : 'dd/MM/yyyy'
+                  }}</span>
                 </div>
               </div>
               <div class="review-rating">
@@ -465,13 +486,18 @@
                 </p-rating>
               </div>
             </div>
-            
+
             <div class="review-content">
-              <h4 class="review-title" *ngIf="review.title">{{ review.title }}</h4>
+              <h4 class="review-title" *ngIf="review.title">
+                {{ review.title }}
+              </h4>
               <p class="review-text">{{ review.content }}</p>
-              
+
               <!-- Review Images -->
-              <div class="review-images" *ngIf="review.images && review.images.length > 0">
+              <div
+                class="review-images"
+                *ngIf="review.images && review.images.length > 0"
+              >
                 <img
                   *ngFor="let image of review.images"
                   [src]="image"
@@ -481,7 +507,7 @@
                 />
               </div>
             </div>
-            
+
             <div class="review-actions">
               <p-button
                 icon="pi pi-thumbs-up"
@@ -497,6 +523,7 @@
         </div>
       </div>
     </div>
+  </div>
 
   <!-- Image Modal -->
   <p-dialog
@@ -511,7 +538,7 @@
     <ng-template pTemplate="header">
       <span>Imagem da avaliação</span>
     </ng-template>
-    
+
     <div class="modal-image-container">
       <img
         [src]="selectedModalImage"
