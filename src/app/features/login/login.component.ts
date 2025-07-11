@@ -22,7 +22,6 @@ import { InputNumber } from "primeng/inputnumber";
     InputTextModule,
     ButtonModule,
     MessageModule,
-    InputNumber
 ]
 })
 export class LoginComponent implements OnInit {
@@ -53,6 +52,11 @@ export class LoginComponent implements OnInit {
     }
 
     const {email, password} = this.exampleForm.value;
+
+    console.log('=== LOGIN FRONTEND ===');
+    console.log('Email:', email, '| typeof:', typeof email);
+    console.log('Password:', password, '| typeof:', typeof password);
+    console.log('======================');
 
     this.userService.login(email, password).subscribe({
       next: (user) => {

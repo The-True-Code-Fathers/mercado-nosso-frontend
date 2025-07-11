@@ -3,9 +3,6 @@ import { LoginComponent } from './features/login/login.component';
 
 
 export const routes: Routes = [
-  { 
-    path: 'login', component: LoginComponent
-  },
   {
     path: '',
     redirectTo: '/home',
@@ -40,4 +37,10 @@ export const routes: Routes = [
       import('./features/listing/listing.routes').then(m => m.listingRoutes),
     title: 'Anúncios',
   },
-]
+  {
+    path: 'login',
+    loadChildren: () => 
+      import('./features/login/login.routes').then(m => m.loginRoutes),
+    title: 'Login',
+  }
+];
