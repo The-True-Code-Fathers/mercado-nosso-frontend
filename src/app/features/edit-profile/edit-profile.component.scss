@@ -256,3 +256,22 @@ background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 50%, #81C784 100%);  @me
     font-size: 1.5rem;
   }
 }
+
+.seller-cta {
+  margin-top: var(--spacing-lg);
+  text-align: left;
+}
+
+.seller-button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid white !important;
+  color: white !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: white !important;
+    color: #2E7D32 !important;
+  }
+}
