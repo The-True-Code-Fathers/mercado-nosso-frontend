@@ -58,5 +58,11 @@ export const routes: Routes = [
     loadChildren: () => 
       import('./features/edit-profile/edit-profile.routes').then(m => m.editProfileRoutes),
     title: 'Editar Perfil'
-  }
+  },
+  {
+    path: 'register',
+    loadChildren: () => 
+      import('./features/create-account/create-account.routes').then(m => m.createAccountRoutes),
+      title: 'Criar conta'
+    }
 ];

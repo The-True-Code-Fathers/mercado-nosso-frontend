@@ -1,0 +1,146 @@
+<div class="account-container">
+  <div class="branding-section">
+    <div class="branding-content">
+      <h1 class="brand-title">Mercado Nosso</h1>
+      <div class="brand-features">
+        <div class="feature-item">
+          <i class="pi pi-shopping-cart"></i>
+          <span>Compras Seguras</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-heart"></i>
+          <span>Produtos Favoritos</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-truck"></i>
+          <span>Entrega Rápida</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>Criar Conta</h2>
+        <p>Cadastre-se para começar suas compras</p>
+      </div>
+
+      <form [formGroup]="createAccountForm" (ngSubmit)="onSubmit()">
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-user"></i>
+            Informações Pessoais
+          </h3>
+          <p-divider></p-divider>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome">Nome</label>
+              <input 
+                pInputText 
+                id="nome" 
+                formControlName="nome" 
+                placeholder="Digite seu nome"
+                [class.ng-invalid]="createAccountForm.get('nome')?.invalid && createAccountForm.get('nome')?.touched"
+              />
+              <small class="error-message" *ngIf="createAccountForm.get('nome')?.invalid && createAccountForm.get('nome')?.touched">
+                Nome é obrigatório
+              </small>
+            </div>
+            <div class="form-group">
+              <label for="sobrenome">Sobrenome</label>
+              <input 
+                pInputText 
+                id="sobrenome" 
+                formControlName="sobrenome" 
+                placeholder="Digite seu sobrenome"
+                [class.ng-invalid]="createAccountForm.get('sobrenome')?.invalid && createAccountForm.get('sobrenome')?.touched"
+              />
+              <small class="error-message" *ngIf="createAccountForm.get('sobrenome')?.invalid && createAccountForm.get('sobrenome')?.touched">
+                Sobrenome é obrigatório
+              </small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dataNascimento">Data de Nascimento</label>
+              <input 
+                pInputText 
+                id="dataNascimento" 
+                formControlName="dataNascimento" 
+                placeholder="DD/MM/AAAA"
+                [class.ng-invalid]="createAccountForm.get('dataNascimento')?.invalid && createAccountForm.get('dataNascimento')?.touched"
+              />
+              <small class="error-message" *ngIf="createAccountForm.get('dataNascimento')?.invalid && createAccountForm.get('dataNascimento')?.touched">
+                Data de nascimento é obrigatória
+              </small>
+            </div>
+            <div class="form-group">
+              <label for="cpf">CPF</label>
+              <input 
+                pInputText 
+                id="cpf" 
+                formControlName="cpf" 
+                placeholder="000.000.000-00"
+                [class.ng-invalid]="createAccountForm.get('cpf')?.invalid && createAccountForm.get('cpf')?.touched"
+              />
+              <small class="error-message" *ngIf="createAccountForm.get('cpf')?.invalid && createAccountForm.get('cpf')?.touched">
+                CPF é obrigatório
+              </small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input 
+                pInputText 
+                id="email" 
+                formControlName="email" 
+                placeholder="Digite seu e-mail"
+                [class.ng-invalid]="createAccountForm.get('email')?.invalid && createAccountForm.get('email')?.touched"
+              />
+              <small class="error-message" *ngIf="createAccountForm.get('email')?.invalid && createAccountForm.get('email')?.touched">
+                E-mail válido é obrigatório
+              </small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="senha">Senha</label>
+              <input 
+                pInputText 
+                type="password"
+                id="senha" 
+                formControlName="senha" 
+                placeholder="Digite sua senha"
+                [class.ng-invalid]="createAccountForm.get('senha')?.invalid && createAccountForm.get('senha')?.touched"
+              />
+              <small class="error-message" *ngIf="createAccountForm.get('senha')?.invalid && createAccountForm.get('senha')?.touched">
+                Senha é obrigatória (mínimo 6 caracteres)
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="p-button p-button-primary cadastrar-button"
+            [disabled]="createAccountForm.invalid"
+          >
+            <i class="pi pi-user-plus"></i>
+            Cadastrar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog></p-confirmDialog>
