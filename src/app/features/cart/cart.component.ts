@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core'
+import { Component, inject, signal, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { FormsModule } from '@angular/forms'
@@ -12,15 +12,17 @@ import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 import { CheckboxModule } from 'primeng/checkbox'
 import { ConfirmationService, MessageService } from 'primeng/api'
+import { CartService, CartResponse } from './services/cart.service'
 
 export interface CartItem {
-  id: string
+  listingId: string
   name: string
   price: number
   quantity: number
   image: string
   category: string
   selected: boolean
+  shippingPrice: number
 }
 
 @Component({
@@ -43,45 +45,20 @@ export interface CartItem {
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
   private confirmationService = inject(ConfirmationService)
   private messageService = inject(MessageService)
+  private cartService = inject(CartService)
 
-  // Using signals for reactive state management (Angular v19 feature)
-  cartItems = signal<CartItem[]>([
-    {
-      id: '1',
-      name: 'Maçã Gala',
-      price: 4.99,
-      quantity: 2,
-      image: 'https://via.placeholder.com/80x80?text=🍎',
-      category: 'Frutas',
-      selected: true,
-    },
-    {
-      id: '2',
-      name: 'Leite Integral',
-      price: 3.5,
-      quantity: 1,
-      image: 'https://via.placeholder.com/80x80?text=🥛',
-      category: 'Laticínios',
-      selected: true,
-    },
-    {
-      id: '3',
-      name: 'Pão Francês',
-      price: 0.8,
-      quantity: 6,
-      image: 'https://via.placeholder.com/80x80?text=🍞',
-      category: 'Padaria',
-      selected: false,
-    },
-  ])
+  // Using signals for reactive state management
+  cartItems = signal<CartItem[]>([])
+  isLoading = signal<boolean>(false)
+  error = signal<string | null>(null)
 
   // Computed signals for derived state
   totalItems = signal(0)
   subtotal = signal(0)
-  delivery = signal(5.99)
+  delivery = signal(0)
   total = signal(0)
 
   // Getter for selected items count
@@ -97,7 +74,88 @@ export class CartComponent {
   }
 
   constructor() {
-    // Update computed values when cart changes
+    // Initialize totals
+    this.updateTotals()
+  }
+
+  ngOnInit(): void {
+    this.loadCart()
+  }
+
+  loadCart(): void {
+    this.isLoading.set(true)
+    this.error.set(null)
+
+    this.cartService.getCart().subscribe({
+      next: (cartResponse) => {
+        this.mapCartResponseToItems(cartResponse)
+        this.isLoading.set(false)
+      },
+      error: (err) => {
+        this.error.set('Erro ao carregar o carrinho')
+        this.isLoading.set(false)
+        console.error('Erro ao carregar carrinho:', err)
+        
+        // Fallback para dados mocados em caso de erro
+        this.loadMockData()
+      },
+    })
+  }
+
+  private mapCartResponseToItems(cartResponse: CartResponse): void {
+    // Mapear os itens do backend para o formato do frontend
+    // Como o backend não retorna dados completos do produto, vamos usar dados mocados
+    const mockItems: CartItem[] = cartResponse.items.map((item, index) => ({
+      listingId: item.listingId,
+      name: `Produto ${index + 1}`, // Você precisará buscar do products service
+      price: item.price,
+      quantity: item.quantity,
+      image: 'https://via.placeholder.com/80x80?text=📦',
+      category: 'Categoria',
+      selected: true, // Por padrão, todos vêm selecionados
+      shippingPrice: item.shippingPrice,
+    }))
+
+    this.cartItems.set(mockItems)
+    this.updateTotalsFromBackend(cartResponse)
+  }
+
+  private updateTotalsFromBackend(cartResponse: CartResponse): void {
+    this.subtotal.set(cartResponse.subTotal)
+    this.delivery.set(cartResponse.shippingPriceTotal)
+    this.total.set(cartResponse.grandTotal)
+    
+    // Calcular total de itens
+    const itemCount = cartResponse.items.reduce((sum, item) => sum + item.quantity, 0)
+    this.totalItems.set(itemCount)
+  }
+
+  private loadMockData(): void {
+    // Dados mocados para desenvolvimento
+    const mockItems: CartItem[] = [
+      {
+        listingId: '1',
+        name: 'Maçã Gala',
+        price: 4.99,
+        quantity: 2,
+        image: 'https://via.placeholder.com/80x80?text=🍎',
+        category: 'Frutas',
+        selected: true,
+        shippingPrice: 0.25,
+      },
+      {
+        listingId: '2',
+        name: 'Leite Integral',
+        price: 3.5,
+        quantity: 1,
+        image: 'https://via.placeholder.com/80x80?text=🥛',
+        category: 'Laticínios',
+        selected: true,
+        shippingPrice: 0.18,
+      },
+    ]
+
+    this.cartItems.set(mockItems)
     this.updateTotals()
   }
 
@@ -107,9 +165,34 @@ export class CartComponent {
       return
     }
 
+    // Atualizar no backend
+    this.cartService.updateItemQuantity(itemId, newQuantity).subscribe({
+      next: (cartResponse) => {
+        this.mapCartResponseToItems(cartResponse)
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Quantidade atualizada',
+        })
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar quantidade:', err)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao atualizar quantidade',
+        })
+        
+        // Fallback: atualizar localmente
+        this.updateQuantityLocally(itemId, newQuantity)
+      },
+    })
+  }
+
+  private updateQuantityLocally(itemId: string, newQuantity: number) {
     this.cartItems.update(items =>
       items.map(item =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item,
+        item.listingId === itemId ? { ...item, quantity: newQuantity } : item,
       ),
     )
     this.updateTotals()
@@ -118,7 +201,7 @@ export class CartComponent {
   toggleSelection(itemId: string) {
     this.cartItems.update(items =>
       items.map(item =>
-        item.id === itemId ? { ...item, selected: !item.selected } : item,
+        item.listingId === itemId ? { ...item, selected: !item.selected } : item,
       ),
     )
     this.updateTotals()
@@ -132,15 +215,34 @@ export class CartComponent {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.cartItems.update(items => items.filter(item => item.id !== itemId))
-        this.updateTotals()
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Item removido do carrinho',
+        this.cartService.removeItemFromCart([itemId]).subscribe({
+          next: () => {
+            this.loadCart() // Recarregar carrinho após remoção
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Item removido do carrinho',
+            })
+          },
+          error: (err) => {
+            console.error('Erro ao remover item:', err)
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao remover item do carrinho',
+            })
+            
+            // Fallback: remover localmente
+            this.removeItemLocally(itemId)
+          },
         })
       },
     })
+  }
+
+  private removeItemLocally(itemId: string) {
+    this.cartItems.update(items => items.filter(item => item.listingId !== itemId))
+    this.updateTotals()
   }
 
   clearCart() {
@@ -151,12 +253,28 @@ export class CartComponent {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.cartItems.set([])
-        this.updateTotals()
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Carrinho Limpo',
-          detail: 'Todos os itens foram removidos',
+        this.cartService.clearCart().subscribe({
+          next: () => {
+            this.cartItems.set([])
+            this.updateTotals()
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Carrinho Limpo',
+              detail: 'Todos os itens foram removidos',
+            })
+          },
+          error: (err) => {
+            console.error('Erro ao limpar carrinho:', err)
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao limpar carrinho',
+            })
+            
+            // Fallback: limpar localmente
+            this.cartItems.set([])
+            this.updateTotals()
+          },
         })
       },
     })
@@ -210,5 +328,27 @@ export class CartComponent {
     const deliveryFee = subtotalValue * 0.05
     this.delivery.set(deliveryFee)
     this.total.set(subtotalValue + deliveryFee)
+  }
+
+  // Método público para adicionar itens ao carrinho (pode ser chamado de outros componentes)
+  addItemToCart(listingId: string, quantity: number = 1): void {
+    this.cartService.addItemToCart(listingId, quantity).subscribe({
+      next: (cartResponse) => {
+        this.mapCartResponseToItems(cartResponse)
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Item adicionado ao carrinho',
+        })
+      },
+      error: (err) => {
+        console.error('Erro ao adicionar item:', err)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao adicionar item ao carrinho',
+        })
+      },
+    })
   }
 }

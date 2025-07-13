@@ -6,8 +6,33 @@
     </h1>
   </div>
 
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="loading-content">
+      <i class="pi pi-spin pi-spinner loading-icon"></i>
+      <h2>Carregando carrinho...</h2>
+      <p>Aguarde enquanto buscamos seus itens</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !isLoading()" class="error-state">
+    <div class="error-content">
+      <i class="pi pi-exclamation-triangle error-icon"></i>
+      <h2>Erro ao carregar carrinho</h2>
+      <p>{{ error() }}</p>
+      <p-button
+        label="Tentar Novamente"
+        icon="pi pi-refresh"
+        styleClass="p-button-outlined"
+        (click)="loadCart()"
+      >
+      </p-button>
+    </div>
+  </div>
+
   <!-- Empty Cart State -->
-  <div *ngIf="cartItems().length === 0" class="empty-cart">
+  <div *ngIf="cartItems().length === 0 && !isLoading() && !error()" class="empty-cart">
     <div class="empty-cart-content">
       <i class="pi pi-shopping-cart empty-icon"></i>
       <h2>Seu carrinho está vazio</h2>
@@ -24,7 +49,7 @@
   </div>
 
   <!-- Cart with Items -->
-  <div *ngIf="cartItems().length > 0" class="cart-content">
+  <div *ngIf="cartItems().length > 0 && !isLoading() && !error()" class="cart-content">
     <div class="cart-items">
       <div class="items-header"></div>
 
@@ -36,8 +61,8 @@
               <p-checkbox
                 [binary]="true"
                 [ngModel]="item.selected"
-                (ngModelChange)="toggleSelection(item.id)"
-                inputId="item-{{ item.id }}"
+                (ngModelChange)="toggleSelection(item.listingId)"
+                inputId="item-{{ item.listingId }}"
               >
               </p-checkbox>
             </div>
@@ -67,7 +92,7 @@
                 <label>Quantidade:</label>
                 <p-inputNumber
                   [ngModel]="item.quantity"
-                  (ngModelChange)="updateQuantity(item.id, $event)"
+                  (ngModelChange)="updateQuantity(item.listingId, $event)"
                   [min]="0"
                   [max]="99"
                   [showButtons]="true"
@@ -83,7 +108,7 @@
                 icon="pi pi-trash"
                 styleClass="p-button-danger p-button-outlined p-button-sm"
                 pTooltip="Remover item"
-                (click)="removeItem(item.id)"
+                (click)="removeItem(item.listingId)"
               >
               </p-button>
             </div>

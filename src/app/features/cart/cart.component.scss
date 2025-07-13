@@ -35,13 +35,21 @@
   min-height: 400px;
 }
 
-.empty-cart-content {
+/* Loading State */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.loading-content {
   text-align: center;
   max-width: 400px;
 
-  .empty-icon {
-    font-size: 4rem;
-    color: var(--color-text-secondary);
+  .loading-icon {
+    font-size: 3rem;
+    color: var(--color-primary);
     margin-bottom: var(--spacing-lg);
   }
 
@@ -52,8 +60,36 @@
 
   p {
     color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-xl);
-    font-size: 1.1rem;
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 400px;
+
+  .error-icon {
+    font-size: 3rem;
+    color: var(--color-error);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  h2 {
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
   }
 }
 
