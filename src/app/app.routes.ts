@@ -64,5 +64,11 @@ export const routes: Routes = [
     loadChildren: () => 
       import('./features/create-account/create-account.routes').then(m => m.createAccountRoutes),
       title: 'Criar conta'
+    },
+    {
+      path: 'sellerRegister',
+      loadChildren: () => 
+        import('./features/be-a-seller/be-a-seller.routes').then(m => m.createAccountRoutes),
+      title: 'Seja um vendedor'
     }
 ];
