@@ -6,7 +6,7 @@ export const DEVELOPMENT_CONFIG = {
   // URLs da API
   API_BASE_URL: 'http://localhost:8080',
   API_ENDPOINTS: {
-    CARTS: '/api/carts/carts',
+    CARTS: '/api/carts',
     LISTINGS: '/api/listings',
     PRODUCTS: '/api/products',
   },

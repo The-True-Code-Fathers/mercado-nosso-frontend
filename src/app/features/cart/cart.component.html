@@ -32,7 +32,10 @@
   </div>
 
   <!-- Empty Cart State -->
-  <div *ngIf="cartItems().length === 0 && !isLoading() && !error()" class="empty-cart">
+  <div
+    *ngIf="cartItems().length === 0 && !isLoading() && !error()"
+    class="empty-cart"
+  >
     <div class="empty-cart-content">
       <i class="pi pi-shopping-cart empty-icon"></i>
       <h2>Seu carrinho está vazio</h2>
@@ -49,7 +52,10 @@
   </div>
 
   <!-- Cart with Items -->
-  <div *ngIf="cartItems().length > 0 && !isLoading() && !error()" class="cart-content">
+  <div
+    *ngIf="cartItems().length > 0 && !isLoading() && !error()"
+    class="cart-content"
+  >
     <div class="cart-items">
       <div class="items-header"></div>
 
