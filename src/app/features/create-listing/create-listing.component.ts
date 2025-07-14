@@ -18,6 +18,7 @@ import { CardModule } from 'primeng/card'
 import { MessageModule } from 'primeng/message'
 import { ToastModule } from 'primeng/toast'
 import { MessageService } from 'primeng/api'
+import { ListingService } from '../listing/services/listing.service'
 
 interface Category {
   label: string
@@ -54,6 +55,7 @@ export class CreateListingComponent {
   private fb = inject(FormBuilder)
   private router = inject(Router)
   private messageService = inject(MessageService)
+  private listingService = inject(ListingService)
 
   createListingForm!: FormGroup
   isLoading = signal(false)
@@ -72,9 +74,7 @@ export class CreateListingComponent {
 
   conditions: Condition[] = [
     { label: 'Novo', value: 'new' },
-    { label: 'Usado - Como Novo', value: 'like-new' },
-    { label: 'Usado - Bom Estado', value: 'good' },
-    { label: 'Usado - Estado Regular', value: 'fair' },
+    { label: 'Usado', value: 'used' },
   ]
 
   ngOnInit() {
@@ -89,7 +89,6 @@ export class CreateListingComponent {
       description: ['', [Validators.required, Validators.minLength(10)]],
       price: [null, [Validators.required, Validators.min(0.01)]],
       quantity: [1, [Validators.required, Validators.min(1)]],
-      shippingDeadline: ['', Validators.required],
     })
   }
 
@@ -109,21 +108,42 @@ export class CreateListingComponent {
     if (this.createListingForm.valid) {
       this.isLoading.set(true)
 
-      // Simular envio
-      setTimeout(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Anúncio criado com sucesso!',
-        })
+      const formData = this.createListingForm.value
+      const listing = {
+        title: formData.productName,
+        description: formData.description,
+        price: formData.price,
+        stock: formData.quantity,
+        productCondition: formData.condition,
+        active: true,
+      }
 
-        this.isLoading.set(false)
+      // Criar anúncio usando o backend real
+      this.listingService.createListing(listing).subscribe({
+        next: createdListing => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Anúncio criado com sucesso!',
+          })
 
-        // Redirecionar após 2 segundos
-        setTimeout(() => {
-          this.router.navigate(['/user/listings'])
-        }, 2000)
-      }, 2000)
+          this.isLoading.set(false)
+
+          // Redirecionar para a página do anúncio criado após 2 segundos
+          setTimeout(() => {
+            this.router.navigate(['/listing', createdListing.listingId])
+          }, 2000)
+        },
+        error: error => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao criar anúncio. Tente novamente.',
+          })
+          this.isLoading.set(false)
+          console.error('Erro ao criar listing:', error)
+        },
+      })
     } else {
       this.markFormGroupTouched()
     }
@@ -134,9 +154,5 @@ export class CreateListingComponent {
       const control = this.createListingForm.get(key)
       control?.markAsTouched()
     })
-  }
-
-  goBack() {
-    this.router.navigate(['/user'])
   }
 }

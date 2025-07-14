@@ -284,7 +284,7 @@
 .form-actions {
   display: flex;
   gap: var(--spacing-lg);
-  justify-content: space-between;
+  justify-content: center; // Centralizar o botão único
   margin-top: var(--spacing-xl);
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--color-border);
@@ -311,6 +311,41 @@
       @media (max-width: 768px) {
         width: 100%;
       }
+    }
+  }
+}
+
+// Controle de quantidade - mesmo padrão do carrinho
+.quantity-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  align-items: flex-start; // Alinhado à esquerda
+  margin-top: var(--spacing-xs);
+
+  ::ng-deep .p-inputnumber {
+    .p-inputnumber-input {
+      width: 120px; // Aumentando largura
+      text-align: center;
+      border-radius: 0 !important; // Borda quadrada
+      border: 1px solid var(--color-border) !important; // Mesma cor e espessura do padrão
+    }
+
+    .p-inputnumber-button {
+      width: 2.5rem; // Aumentando largura dos botões
+      border-radius: 0 !important; // Borda quadrada
+      border: 1px solid var(--color-border) !important; // Mesma cor e espessura do padrão
+
+      .pi {
+        font-size: 0.8rem;
+      }
+    }
+
+    // Garantir que todos os elementos tenham bordas quadradas
+    .p-inputnumber-button-up,
+    .p-inputnumber-button-down {
+      border-radius: 0 !important;
+      border: 1px solid var(--color-border) !important; // Mesma cor e espessura do padrão
     }
   }
 }
@@ -349,6 +384,13 @@
       animation: spin 1s linear infinite;
     }
   }
+}
+
+// Asterisco vermelho para campos obrigatórios
+.required {
+  color: var(--color-error, #f44336);
+  font-weight: bold;
+  margin-left: 2px;
 }
 
 @keyframes spin {
