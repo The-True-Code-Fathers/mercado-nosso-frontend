@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { RouterModule } from '@angular/router'
+import { RouterModule, Router } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
 import { CardModule } from 'primeng/card'
@@ -20,7 +20,8 @@ import { catchError } from 'rxjs/operators'
 export interface CartItem {
   listingId: string
   name: string
-  price: number
+  unitPrice: number // Preço unitário do produto (não muda)
+  price: number // Preço total (unitPrice * quantity)
   quantity: number
   image: string
   category: string
@@ -78,6 +79,7 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private listingService: ListingService,
+    private router: Router,
   ) {
     // Initialize totals
     this.updateTotals()
@@ -141,11 +143,14 @@ export class CartComponent implements OnInit {
         const cartItems: CartItem[] = cartResponse.items.map(
           (cartItem, index) => {
             const listing = listings[index]
+            const unitPrice =
+              listing.price || cartItem.price / cartItem.quantity || 0
 
             return {
               listingId: cartItem.listingId,
               name: listing.title || `Produto ${cartItem.listingId}`,
-              price: cartItem.price || listing.price || 0,
+              unitPrice: unitPrice, // Preço unitário fixo
+              price: cartItem.price || listing.price || 0, // Preço total do backend
               quantity: cartItem.quantity || 1,
               image: 'https://via.placeholder.com/80x80?text=📦', // Placeholder até implementar imagens
               category: 'Produto', // Categoria padrão até implementar categorias
@@ -199,7 +204,8 @@ export class CartComponent implements OnInit {
       {
         listingId: '1',
         name: 'Maçã Gala',
-        price: 4.99,
+        unitPrice: 2.49, // Preço unitário
+        price: 4.98, // Preço total (2.49 * 2)
         quantity: 2,
         image: 'https://via.placeholder.com/80x80?text=🍎',
         category: 'Frutas',
@@ -209,7 +215,8 @@ export class CartComponent implements OnInit {
       {
         listingId: '2',
         name: 'Leite Integral',
-        price: 3.5,
+        unitPrice: 3.5, // Preço unitário
+        price: 3.5, // Preço total (3.5 * 1)
         quantity: 1,
         image: 'https://via.placeholder.com/80x80?text=🥛',
         category: 'Laticínios',
@@ -224,11 +231,56 @@ export class CartComponent implements OnInit {
 
   updateQuantity(itemId: string, newQuantity: number) {
     if (newQuantity <= 0) {
-      this.removeItem(itemId)
+      // Quando quantidade for 0, usar o método de remoção com confirmação
+      this.confirmationService.confirm({
+        message: 'Tem certeza que deseja remover este item do carrinho?',
+        header: 'Confirmar Remoção',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Sim',
+        rejectLabel: 'Não',
+        accept: () => {
+          // Usar o método de remoção múltipla (mesmo que removeSelectedItems)
+          this.cartService.removeMultipleItemsFromCart([itemId]).subscribe({
+            next: () => {
+              // Como é assíncrono via Kafka, remover localmente
+              this.cartItems.update(items =>
+                items.filter(item => item.listingId !== itemId),
+              )
+              this.updateTotals()
+
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Item removido do carrinho',
+              })
+
+              // Recarregar após delay para sincronizar com backend
+              setTimeout(() => {
+                this.loadCart()
+              }, 1000)
+            },
+            error: err => {
+              console.error('Erro ao remover item:', err)
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Erro ao remover item do carrinho',
+              })
+
+              // Restaurar quantidade para 1 em caso de erro
+              this.restoreQuantityToOne(itemId)
+            },
+          })
+        },
+        reject: () => {
+          // Se usuário cancelar, restaurar quantidade para 1
+          this.restoreQuantityToOne(itemId)
+        },
+      })
       return
     }
 
-    // Atualizar no backend
+    // Atualizar no backend normalmente para quantidades > 0
     this.cartService.updateItemQuantity(itemId, newQuantity).subscribe({
       next: cartResponse => {
         this.mapCartResponseToItems(cartResponse)
@@ -255,7 +307,13 @@ export class CartComponent implements OnInit {
   private updateQuantityLocally(itemId: string, newQuantity: number) {
     this.cartItems.update(items =>
       items.map(item =>
-        item.listingId === itemId ? { ...item, quantity: newQuantity } : item,
+        item.listingId === itemId
+          ? {
+              ...item,
+              quantity: newQuantity,
+              price: item.unitPrice * newQuantity, // Recalcular preço total
+            }
+          : item,
       ),
     )
     this.updateTotals()
@@ -273,6 +331,51 @@ export class CartComponent implements OnInit {
   }
 
   removeItem(itemId: string) {
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja remover este item do carrinho?',
+      header: 'Confirmar Remoção',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        // Usar o mesmo método dos itens selecionados (removeMultipleItemsFromCart)
+        this.cartService.removeMultipleItemsFromCart([itemId]).subscribe({
+          next: () => {
+            // Como é assíncrono via Kafka, remover localmente
+            this.cartItems.update(items =>
+              items.filter(item => item.listingId !== itemId),
+            )
+            this.updateTotals()
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Item removido do carrinho',
+            })
+
+            // Recarregar após delay para sincronizar com backend
+            setTimeout(() => {
+              this.loadCart()
+            }, 1000)
+          },
+          error: err => {
+            console.error('Erro ao remover item:', err)
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao remover item do carrinho',
+            })
+
+            // Fallback: remover localmente
+            this.removeItemLocally(itemId)
+          },
+        })
+      },
+    })
+  }
+
+  // Método alternativo usando remoção direta (caso necessário)
+  removeItemDirectly(itemId: string) {
     this.confirmationService.confirm({
       message: 'Tem certeza que deseja remover este item do carrinho?',
       header: 'Confirmar Remoção',
@@ -384,8 +487,9 @@ export class CartComponent implements OnInit {
       (sum, item) => sum + item.quantity,
       0,
     )
+    // Usar o preço total já calculado ou calcular baseado no unitPrice
     const subtotalValue = selectedItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, item) => sum + item.unitPrice * item.quantity,
       0,
     )
 
@@ -445,10 +549,10 @@ export class CartComponent implements OnInit {
           next: () => {
             // Como é assíncrono via Kafka, vamos remover localmente e recarregar
             this.cartItems.update(items =>
-              items.filter(item => !selectedIds.includes(item.listingId))
+              items.filter(item => !selectedIds.includes(item.listingId)),
             )
             this.updateTotals()
-            
+
             this.messageService.add({
               severity: 'success',
               summary: 'Sucesso',
@@ -470,6 +574,31 @@ export class CartComponent implements OnInit {
           },
         })
       },
+    })
+  }
+
+  navigateToProduct(listingId: string): void {
+    this.router.navigate(['/product', listingId])
+  }
+
+  private restoreQuantityToOne(itemId: string) {
+    this.cartItems.update(items =>
+      items.map(item =>
+        item.listingId === itemId
+          ? {
+              ...item,
+              quantity: 1,
+              price: item.unitPrice * 1, // Recalcular preço para quantidade 1
+            }
+          : item,
+      ),
+    )
+    this.updateTotals()
+
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Cancelado',
+      detail: 'Quantidade restaurada para 1',
     })
   }
 }

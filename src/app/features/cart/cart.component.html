@@ -85,12 +85,20 @@
 
             <!-- Product Details -->
             <div class="item-details">
-              <h3 [pTooltip]="item.name" tooltipPosition="top">
+              <h3
+                [pTooltip]="item.name"
+                tooltipPosition="top"
+                class="product-title-link"
+                (click)="navigateToProduct(item.listingId)"
+              >
                 {{ item.name }}
               </h3>
-              <p class="item-price">R$ {{ item.price | number : '1.2-2' }}</p>
+              <p class="item-price">
+                R$ {{ item.unitPrice | number : '1.2-2' }}
+              </p>
               <p *ngIf="item.quantity > 1" class="item-subtotal">
-                Subtotal: R$ {{ item.price * item.quantity | number : '1.2-2' }}
+                Subtotal: R$
+                {{ item.unitPrice * item.quantity | number : '1.2-2' }}
               </p>
             </div>
 
@@ -111,14 +119,6 @@
                 >
                 </p-inputNumber>
               </div>
-
-              <p-button
-                icon="pi pi-trash"
-                styleClass="p-button-danger p-button-outlined p-button-sm"
-                pTooltip="Remover item"
-                (click)="removeItem(item.listingId)"
-              >
-              </p-button>
             </div>
           </div>
         </p-card>
@@ -162,7 +162,7 @@
               (click)="removeSelectedItems()"
             >
             </p-button>
-            
+
             <p-button
               label="Continuar Comprando"
               icon="pi pi-arrow-left"

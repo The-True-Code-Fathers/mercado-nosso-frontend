@@ -126,8 +126,19 @@
 
 /* Cart Item */
 .cart-item {
+  transition: all 0.3s ease;
+
   ::ng-deep .p-card-content {
     padding: var(--spacing-lg);
+  }
+
+  // Garantir que o card não quebre com conteúdo longo
+  overflow: hidden;
+  word-wrap: break-word;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
 }
 
@@ -196,6 +207,16 @@
     // -webkit-box-orient: vertical;
     // overflow: hidden;
     // text-overflow: ellipsis;
+
+    &.product-title-link {
+      cursor: pointer;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--color-primary);
+        text-decoration: underline;
+      }
+    }
   }
 
   .item-price {
@@ -423,14 +444,6 @@
 }
 
 /* Loading and Animation States */
-.cart-item {
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-}
 
 /* Custom PrimeNG Overrides */
 ::ng-deep {
