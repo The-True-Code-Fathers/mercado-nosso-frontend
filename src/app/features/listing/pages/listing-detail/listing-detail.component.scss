@@ -540,6 +540,43 @@
   font-size: 0.9rem;
 }
 
+/* Quantity Selector */
+.quantity-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+
+  .quantity-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    .quantity-display {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      min-width: 40px;
+      text-align: center;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .quantity-btn {
+      min-width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+
 /* Action Buttons */
 .actions-section {
   display: flex;
@@ -785,7 +822,7 @@
   border: 1px solid var(--color-border);
   border-top: none;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
 
   .description-loading {
     padding: var(--spacing-md) 0;
@@ -795,7 +832,7 @@
     color: var(--color-text-primary);
     line-height: 1.7;
     font-size: 1.1rem; // Aumentado de 1rem para 1.1rem
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
     white-space: pre-line;
     min-height: 60px; // Garantir altura mínima
 
@@ -1511,7 +1548,7 @@
       display: inline;
       font-size: 3rem;
       font-weight: 700;
-      color: var(--color-warning);
+      color: #ffd700;
       line-height: 1;
     }
 
@@ -1551,7 +1588,7 @@
 
         .bar-fill {
           height: 100%;
-          background: var(--color-warning);
+          background: #ffd700;
           border-radius: 4px;
           transition: width 0.3s ease;
         }
