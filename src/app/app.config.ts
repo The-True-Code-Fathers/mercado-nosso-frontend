@@ -11,6 +11,8 @@ import Aura from '@primeng/themes/aura'
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideRouter(routes),
+    provideHttpClient(),
     provideAnimationsAsync(),
     providePrimeNG({
       ripple: true,
