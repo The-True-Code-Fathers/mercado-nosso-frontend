@@ -19,6 +19,8 @@ import { MessageModule } from 'primeng/message'
 import { ToastModule } from 'primeng/toast'
 import { MessageService } from 'primeng/api'
 import { ListingService } from '../listing/services/listing.service'
+import { ProductService, Product } from '../product/services/product.service'
+import { DEVELOPMENT_CONFIG } from '../../shared/config/development.config'
 
 interface Category {
   label: string
@@ -56,11 +58,16 @@ export class CreateListingComponent {
   private router = inject(Router)
   private messageService = inject(MessageService)
   private listingService = inject(ListingService)
+  private productService = inject(ProductService)
 
   createListingForm!: FormGroup
   isLoading = signal(false)
   uploadedFiles = signal<File[]>([])
+  products = signal<Product[]>([])
+  isLoadingProducts = signal(false)
 
+  // Usar o sellerId da configuração de desenvolvimento
+  private readonly sellerId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID
   categories: Category[] = [
     { label: 'Eletrônicos', value: 'electronics' },
     { label: 'Roupas e Acessórios', value: 'clothing' },
@@ -79,10 +86,12 @@ export class CreateListingComponent {
 
   ngOnInit() {
     this.initForm()
+    this.loadProducts()
   }
 
   private initForm() {
     this.createListingForm = this.fb.group({
+      productId: ['', Validators.required],
       productName: ['', [Validators.required, Validators.minLength(3)]],
       category: ['', Validators.required],
       condition: ['', Validators.required],
@@ -90,6 +99,40 @@ export class CreateListingComponent {
       price: [null, [Validators.required, Validators.min(0.01)]],
       quantity: [1, [Validators.required, Validators.min(1)]],
     })
+  }
+
+  private loadProducts() {
+    this.isLoadingProducts.set(true)
+    this.productService.getAllProducts().subscribe({
+      next: products => {
+        this.products.set(products)
+        this.isLoadingProducts.set(false)
+      },
+      error: error => {
+        console.error('Erro ao carregar produtos:', error)
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Aviso',
+          detail:
+            'Não foi possível carregar os produtos. Você pode prosseguir mesmo assim.',
+        })
+        this.isLoadingProducts.set(false)
+      },
+    })
+  }
+
+  onProductSelect(event: any) {
+    const selectedProduct = this.products().find(
+      p => p.productId === event.value,
+    )
+    if (selectedProduct) {
+      // Auto-preencher alguns campos baseado no produto selecionado
+      this.createListingForm.patchValue({
+        productName: selectedProduct.name,
+        category: selectedProduct.category,
+        description: selectedProduct.description,
+      })
+    }
   }
 
   onFileSelect(event: any) {
@@ -116,7 +159,11 @@ export class CreateListingComponent {
         stock: formData.quantity,
         productCondition: formData.condition,
         active: true,
+        sellerId: this.sellerId, // Incluir o sellerId
+        productId: formData.productId, // Incluir o productId
       }
+
+      console.log('Criando listing com sellerId:', this.sellerId)
 
       // Criar anúncio usando o backend real
       this.listingService.createListing(listing).subscribe({

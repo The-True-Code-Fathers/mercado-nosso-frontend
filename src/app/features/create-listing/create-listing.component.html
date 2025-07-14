@@ -22,7 +22,7 @@
   <div class="form-section">
     <div class="form-container">
       <div class="form-header">
-        <h2>Novos Anúncios</h2>
+        <h2>Novo Anúncio</h2>
         <p>Crie seu anúncio e comece a vender</p>
       </div>
 
@@ -80,15 +80,65 @@
           </h3>
           <p-divider></p-divider>
 
+          <!-- Seleção de Produto -->
+          <div class="form-group">
+            <label for="productId">
+              Selecionar Produto <span class="required">*</span>
+            </label>
+            <p-dropdown
+              id="productId"
+              formControlName="productId"
+              [options]="products()"
+              placeholder="Selecione um produto existente"
+              optionLabel="name"
+              optionValue="productId"
+              (onChange)="onProductSelect($event)"
+              [loading]="isLoadingProducts()"
+              [class.ng-invalid]="
+                createListingForm.get('productId')?.invalid &&
+                createListingForm.get('productId')?.touched
+              "
+            >
+              <ng-template pTemplate="selectedItem" let-selectedOption>
+                <div *ngIf="selectedOption">
+                  <span>{{ selectedOption.name }}</span>
+                  <small class="product-category">{{
+                    selectedOption.category
+                  }}</small>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="item" let-product>
+                <div class="product-option">
+                  <span class="product-name">{{ product.name }}</span>
+                  <small class="product-details"
+                    >{{ product.category }} • {{ product.brand }}</small
+                  >
+                </div>
+              </ng-template>
+            </p-dropdown>
+            <small
+              class="error-message"
+              *ngIf="
+                createListingForm.get('productId')?.invalid &&
+                createListingForm.get('productId')?.touched
+              "
+            >
+              Seleção de produto é obrigatória
+            </small>
+            <small class="field-help">
+              Selecione o produto para o qual você está criando este anúncio
+            </small>
+          </div>
+
           <div class="form-group">
             <label for="productName"
-              >Nome do Produto <span class="required">*</span></label
+              >Nome do Anúncio <span class="required">*</span></label
             >
             <input
               pInputText
               id="productName"
               formControlName="productName"
-              placeholder="Digite o nome do produto"
+              placeholder="Digite o nome do anúncio"
               [class.ng-invalid]="
                 createListingForm.get('productName')?.invalid &&
                 createListingForm.get('productName')?.touched

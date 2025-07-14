@@ -11,6 +11,8 @@ export interface Listing {
   active: boolean
   productCondition: string
   createdAt: string
+  sellerId?: string
+  productId?: string
 }
 
 @Injectable({

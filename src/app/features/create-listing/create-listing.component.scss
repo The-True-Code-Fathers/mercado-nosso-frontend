@@ -393,6 +393,54 @@
   margin-left: 2px;
 }
 
+/* Product Selection Styles */
+.product-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+}
+
+.product-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.product-details {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.product-category {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  margin-top: var(--spacing-xs);
+}
+
+.field-help {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  margin-top: var(--spacing-xs);
+  font-style: italic;
+}
+
+/* Improved dropdown styling */
+::ng-deep .p-dropdown {
+  width: 100%;
+
+  .p-dropdown-label {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  &.p-dropdown-loading .p-dropdown-trigger {
+    .pi-chevron-down::before {
+      content: '\e924'; // spinner icon
+      animation: spin 2s linear infinite;
+    }
+  }
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
