@@ -36,7 +36,6 @@
       </div>
 
       <form [formGroup]="editProfileForm" (ngSubmit)="onSubmit()">
-        <!-- Seção Informações Pessoais -->
         <div class="form-group-section">
           <h3 class="section-title">
             <i class="pi pi-user"></i>
@@ -88,6 +87,35 @@
               />
               <small class="error-message" *ngIf="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched">
                 Telefone é obrigatório
+              </small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+               <label for="profile-picture">Foto de Perfil</label>
+              <div class="file-upload-container">
+                <input 
+                  type="file" 
+                  id="profile-picture" 
+                  accept="image/*"
+                  (change)="onFileSelect($event)"
+                  #fileInput
+                  style="display: none;"
+                />
+                <button 
+                  type="button" 
+                  class="p-button p-button-outlined file-upload-btn"
+                  (click)="fileInput.click()"
+                >
+                  <i class="pi pi-upload"></i>
+                  Escolher Foto
+                </button>
+                <span class="file-name" *ngIf="selectedFileName">
+                  {{ selectedFileName }}
+                </span>
+              </div>
+              <small class="file-info">
+                Formatos aceitos: JPG, PNG, GIF (máx. 5MB)
               </small>
             </div>
           </div>
