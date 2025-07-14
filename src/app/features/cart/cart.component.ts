@@ -99,12 +99,19 @@ export class CartComponent implements OnInit {
         this.isLoading.set(false)
       },
       error: (err: any) => {
-        this.error.set('Erro ao carregar o carrinho')
-        this.isLoading.set(false)
+        // Em vez de mostrar erro, mostrar carrinho vazio
         console.error('Erro ao carregar carrinho:', err)
+        this.cartItems.set([]) // Carrinho vazio
+        this.isLoading.set(false)
+        this.updateTotals()
 
-        // Fallback para dados mocados em caso de erro
-        this.loadMockData()
+        // Opcional: mostrar toast informativo (sem bloquear a UI)
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Carrinho',
+          detail: 'Seu carrinho está vazio',
+          life: 3000,
+        })
       },
     })
   }
@@ -166,8 +173,16 @@ export class CartComponent implements OnInit {
       },
       error: error => {
         console.error('Erro ao buscar detalhes dos produtos:', error)
-        // Fallback para dados mocados
-        this.loadMockData()
+        // Em vez de dados mocados, mostrar carrinho vazio
+        this.cartItems.set([])
+        this.updateTotals()
+
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Carrinho',
+          detail: 'Seu carrinho está vazio',
+          life: 3000,
+        })
       },
     })
   }

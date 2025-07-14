@@ -15,27 +15,8 @@
     </div>
   </div>
 
-  <!-- Error State -->
-  <div *ngIf="error() && !isLoading()" class="error-state">
-    <div class="error-content">
-      <i class="pi pi-exclamation-triangle error-icon"></i>
-      <h2>Erro ao carregar carrinho</h2>
-      <p>{{ error() }}</p>
-      <p-button
-        label="Tentar Novamente"
-        icon="pi pi-refresh"
-        styleClass="p-button-outlined"
-        (click)="loadCart()"
-      >
-      </p-button>
-    </div>
-  </div>
-
   <!-- Empty Cart State -->
-  <div
-    *ngIf="cartItems().length === 0 && !isLoading() && !error()"
-    class="empty-cart"
-  >
+  <div *ngIf="cartItems().length === 0 && !isLoading()" class="empty-cart">
     <div class="empty-cart-content">
       <i class="pi pi-shopping-cart empty-icon"></i>
       <h2>Seu carrinho está vazio</h2>
