@@ -593,7 +593,7 @@ export class CartComponent implements OnInit {
   }
 
   navigateToProduct(listingId: string): void {
-    this.router.navigate(['/product', listingId])
+    window.open(`/listing/${listingId}`, '_blank')
   }
 
   private restoreQuantityToOne(itemId: string) {

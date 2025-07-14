@@ -1,8 +1,15 @@
 .cart-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--spacing-xl) var(--spacing-lg);
-  min-height: calc(100vh - 80px);
+  padding: var(--spacing-md) var(--spacing-sm);
+  min-height: 60vh; // Altura mínima para centralização
+
+  // Centralizar apenas quando há poucos elementos (carrinho vazio ou carregando)
+  &.centered-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 /* Header */
@@ -29,38 +36,61 @@
 
 /* Empty Cart */
 .empty-cart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-
-/* Loading State */
-.loading-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-
-.loading-content {
   text-align: center;
-  max-width: 400px;
+  padding: var(--spacing-lg) var(--spacing-md); // Padding controlado
+}
 
-  .loading-icon {
-    font-size: 3rem;
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-lg);
+.empty-cart-content {
+  margin: 0 auto;
+  max-width: 350px;
+  max-width: 350px;
+
+  .empty-icon {
+    font-size: 3rem; // Reduzindo emoji
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm); // Menos espaçamento
   }
 
   h2 {
     color: var(--color-text-primary);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-xs); // Menos espaçamento
+    font-size: 1.5rem; // Título menor
   }
 
   p {
     color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm); // Menos espaçamento
+    font-size: 0.95rem; // Texto menor e mais compacto
+  }
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: var(--spacing-lg) var(--spacing-md); // Padding controlado, sem flex que força altura
+}
+
+.loading-content {
+  text-align: center;
+  max-width: 350px;
+  margin: 0 auto; // Centralizar horizontalmente
+
+  .loading-icon {
+    font-size: 2.5rem; // Reduzindo spinner
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm); // Menos espaçamento
+  }
+
+  h2 {
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs); // Menos espaçamento
+    font-size: 1.3rem; // Título menor
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm); // Menos espaçamento
+    font-size: 0.95rem; // Texto menor
   }
 }
 
@@ -399,6 +429,53 @@
 
     .summary-icon {
       font-size: 1.125rem;
+    }
+  }
+}
+
+/* Compactação para telas pequenas */
+@media (max-height: 600px) {
+  .cart-container {
+    padding: var(--spacing-xs) var(--spacing-xs);
+  }
+
+  .empty-cart-content,
+  .loading-content {
+    .empty-icon,
+    .loading-icon {
+      font-size: 2rem; // Ainda menor em telas baixas
+      margin-bottom: var(--spacing-xs);
+    }
+
+    h2 {
+      font-size: 1.2rem; // Título compacto
+      margin-bottom: var(--spacing-xs);
+    }
+
+    p {
+      font-size: 0.9rem; // Texto compacto
+      margin-bottom: var(--spacing-xs);
+    }
+  }
+}
+
+@media (max-height: 500px) {
+  .empty-cart-content,
+  .loading-content {
+    .empty-icon,
+    .loading-icon {
+      font-size: 1.5rem; // Ultra compacto
+      margin-bottom: 0.25rem;
+    }
+
+    h2 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
     }
   }
 }

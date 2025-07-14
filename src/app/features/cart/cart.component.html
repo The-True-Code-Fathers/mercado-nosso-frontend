@@ -1,5 +1,9 @@
-<div class="cart-container">
-  <div class="cart-header">
+<div
+  class="cart-container"
+  [class.centered-content]="cartItems().length === 0 || isLoading()"
+>
+  <!-- Header só aparece quando há items -->
+  <div *ngIf="cartItems().length > 0" class="cart-header">
     <h1>
       <i class="pi pi-shopping-cart cart-title-icon"></i>
       Meu Carrinho
