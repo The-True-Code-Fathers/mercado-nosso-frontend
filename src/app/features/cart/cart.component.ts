@@ -13,6 +13,9 @@ import { TooltipModule } from 'primeng/tooltip'
 import { CheckboxModule } from 'primeng/checkbox'
 import { ConfirmationService, MessageService } from 'primeng/api'
 import { CartService, CartResponse } from './services/cart.service'
+import { ListingService, Listing } from '../listing/services/listing.service'
+import { forkJoin, of } from 'rxjs'
+import { catchError } from 'rxjs/operators'
 
 export interface CartItem {
   listingId: string
@@ -72,7 +75,10 @@ export class CartComponent implements OnInit {
     return this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
   }
 
-  constructor(private cartService: CartService) {
+  constructor(
+    private cartService: CartService,
+    private listingService: ListingService,
+  ) {
     // Initialize totals
     this.updateTotals()
   }
@@ -104,26 +110,61 @@ export class CartComponent implements OnInit {
   private mapCartResponseToItems(cartResponse: CartResponse): void {
     console.log('CartResponse recebido:', cartResponse)
 
-    // Mapear os itens do backend para o formato do frontend
-    // Como o backend não retorna dados completos do produto, vamos usar dados mocados
-    const mockItems: CartItem[] = cartResponse.items.map((item, index) => {
-      console.log(`Item ${index}:`, item)
+    if (!cartResponse.items || cartResponse.items.length === 0) {
+      this.cartItems.set([])
+      this.updateTotalsFromBackend(cartResponse)
+      return
+    }
 
-      return {
-        listingId: item.listingId,
-        name: `Produto ${index + 1}`, // Você precisará buscar do products service
-        price: item.price || 0, // Fallback para 0 se price for null/undefined
-        quantity: item.quantity || 1,
-        image: 'https://via.placeholder.com/80x80?text=📦',
-        category: 'Categoria',
-        selected: true, // Por padrão, todos vêm selecionados
-        shippingPrice: item.shippingPrice || 0,
-      }
+    // Buscar detalhes de todos os produtos em paralelo
+    const listingRequests = cartResponse.items.map(item =>
+      this.listingService.getListingById(item.listingId).pipe(
+        catchError(error => {
+          console.error(`Erro ao buscar listing ${item.listingId}:`, error)
+          // Retorna um listing mocado em caso de erro
+          return of({
+            listingId: item.listingId,
+            title: `Produto ${item.listingId}`,
+            description: 'Produto não encontrado',
+            price: item.price || 0,
+            stock: 0,
+            active: true,
+            productCondition: 'Novo',
+            createdAt: new Date().toISOString(),
+          } as Listing)
+        }),
+      ),
+    )
+
+    forkJoin(listingRequests).subscribe({
+      next: (listings: Listing[]) => {
+        const cartItems: CartItem[] = cartResponse.items.map(
+          (cartItem, index) => {
+            const listing = listings[index]
+
+            return {
+              listingId: cartItem.listingId,
+              name: listing.title || `Produto ${cartItem.listingId}`,
+              price: cartItem.price || listing.price || 0,
+              quantity: cartItem.quantity || 1,
+              image: 'https://via.placeholder.com/80x80?text=📦', // Placeholder até implementar imagens
+              category: 'Produto', // Categoria padrão até implementar categorias
+              selected: true,
+              shippingPrice: cartItem.shippingPrice || 0,
+            }
+          },
+        )
+
+        console.log('Items mapeados com detalhes:', cartItems)
+        this.cartItems.set(cartItems)
+        this.updateTotalsFromBackend(cartResponse)
+      },
+      error: error => {
+        console.error('Erro ao buscar detalhes dos produtos:', error)
+        // Fallback para dados mocados
+        this.loadMockData()
+      },
     })
-
-    console.log('Items mapeados:', mockItems)
-    this.cartItems.set(mockItems)
-    this.updateTotalsFromBackend(cartResponse)
   }
 
   private updateTotalsFromBackend(cartResponse: CartResponse): void {
@@ -239,9 +280,10 @@ export class CartComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.cartService.removeItemFromCart([itemId]).subscribe({
-          next: () => {
-            this.loadCart() // Recarregar carrinho após remoção
+        this.cartService.removeItemFromCart(itemId).subscribe({
+          next: (updatedCart: CartResponse) => {
+            // Atualizar carrinho com a resposta do servidor
+            this.mapCartResponseToItems(updatedCart)
             this.messageService.add({
               severity: 'success',
               summary: 'Sucesso',
@@ -256,7 +298,7 @@ export class CartComponent implements OnInit {
               detail: 'Erro ao remover item do carrinho',
             })
 
-            // Fallback: remover localmente
+            // Fallback: remover localmente se o servidor falhar
             this.removeItemLocally(itemId)
           },
         })
@@ -373,6 +415,59 @@ export class CartComponent implements OnInit {
           severity: 'error',
           summary: 'Erro',
           detail: 'Erro ao adicionar item ao carrinho',
+        })
+      },
+    })
+  }
+
+  removeSelectedItems() {
+    const selectedIds = this.cartItems()
+      .filter(item => item.selected)
+      .map(item => item.listingId)
+
+    if (selectedIds.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Nenhum item selecionado',
+      })
+      return
+    }
+
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja remover ${selectedIds.length} item(s) selecionado(s)?`,
+      header: 'Confirmar Remoção',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept: () => {
+        this.cartService.removeMultipleItemsFromCart(selectedIds).subscribe({
+          next: () => {
+            // Como é assíncrono via Kafka, vamos remover localmente e recarregar
+            this.cartItems.update(items =>
+              items.filter(item => !selectedIds.includes(item.listingId))
+            )
+            this.updateTotals()
+            
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: `${selectedIds.length} item(s) removido(s) do carrinho`,
+            })
+
+            // Recarregar após um pequeno delay para sincronizar com o backend
+            setTimeout(() => {
+              this.loadCart()
+            }, 1000)
+          },
+          error: err => {
+            console.error('Erro ao remover itens selecionados:', err)
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Erro ao remover itens selecionados',
+            })
+          },
         })
       },
     })

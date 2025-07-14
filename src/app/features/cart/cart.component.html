@@ -85,7 +85,9 @@
 
             <!-- Product Details -->
             <div class="item-details">
-              <h3>{{ item.name }}</h3>
+              <h3 [pTooltip]="item.name" tooltipPosition="top">
+                {{ item.name }}
+              </h3>
               <p class="item-price">R$ {{ item.price | number : '1.2-2' }}</p>
               <p *ngIf="item.quantity > 1" class="item-subtotal">
                 Subtotal: R$ {{ item.price * item.quantity | number : '1.2-2' }}
@@ -152,6 +154,15 @@
           </div>
 
           <div class="summary-actions">
+            <p-button
+              *ngIf="selectedItemsCount > 0"
+              label="Remover Selecionados ({{ selectedItemsCount }})"
+              icon="pi pi-trash"
+              styleClass="p-button-outlined p-button-danger w-full mb-2"
+              (click)="removeSelectedItems()"
+            >
+            </p-button>
+            
             <p-button
               label="Continuar Comprando"
               icon="pi pi-arrow-left"
