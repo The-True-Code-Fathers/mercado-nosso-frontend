@@ -48,7 +48,7 @@ export class EditProfileComponent {
   }
 
   sejaVendedor() {
-    this.router.navigate(['/vendedor']);
+    this.router.navigate(['/sellerRegister']);
   }
 
   salvarAlteracoes() {
