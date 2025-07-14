@@ -1,9 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core'
+import { Component, OnInit, OnDestroy, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
 import { ListingService, Listing } from '../../services/listing.service'
+import { CartService } from '../../../cart/services/cart.service'
 
 // PrimeNG imports
 import { ButtonModule } from 'primeng/button'
@@ -17,7 +18,8 @@ import { PanelModule } from 'primeng/panel'
 import { SkeletonModule } from 'primeng/skeleton'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { DialogModule } from 'primeng/dialog'
-import { MenuItem } from 'primeng/api'
+import { ToastModule } from 'primeng/toast'
+import { MenuItem, MessageService } from 'primeng/api'
 
 export interface ShippingOption {
   type: string
@@ -86,15 +88,21 @@ export interface ShippingCalculation {
     SkeletonModule,
     BreadcrumbModule,
     DialogModule,
+    ToastModule,
   ],
+  providers: [MessageService],
 })
-export class ListingDetailComponent implements OnInit {
+export class ListingDetailComponent implements OnInit, OnDestroy {
   listingId: string | null = null
   cep: string = ''
   freteCalculado: boolean = false
   freteError: string | null = null
   shippingOptions: ShippingOption[] = []
   productRating: number = 4.8
+
+  // Cart functionality
+  addingToCart: boolean = false
+  quantity: number = 1
 
   // Gallery images for PrimeNG Galleria
   galleriaImages: any[] = []
@@ -106,6 +114,9 @@ export class ListingDetailComponent implements OnInit {
   zoomBackgroundPosition: string = '0% 0%'
   zoomTranslateX: number = 0
   zoomTranslateY: number = 0
+  private scrollListener?: () => void
+  private wheelListener?: () => void
+  private touchListener?: () => void
 
   // Breadcrumb
   breadcrumbItems: MenuItem[] = []
@@ -197,6 +208,8 @@ export class ListingDetailComponent implements OnInit {
     private router: Router,
     private listingService: ListingService,
     private http: HttpClient,
+    private cartService: CartService,
+    private messageService: MessageService,
   ) {
     this.initializeGalleryImages()
     this.initializeRelatedProducts()
@@ -209,6 +222,7 @@ export class ListingDetailComponent implements OnInit {
     if (this.listingId) {
       this.loadListing(this.listingId)
     }
+    this.setupScrollListener()
   }
 
   private initializeGalleryImages(): void {
@@ -250,6 +264,41 @@ export class ListingDetailComponent implements OnInit {
       { label: 'Produtos', routerLink: '/products' },
       { label: productTitle, disabled: true },
     ]
+  }
+
+  private setupScrollListener(): void {
+    // Handler for hiding zoom preview during any scroll activity
+    const hideZoomPreview = () => {
+      if (this.showZoom) {
+        this.showZoom = false
+      }
+    }
+
+    // Scroll events - triggers during scroll
+    this.scrollListener = hideZoomPreview
+    window.addEventListener('scroll', this.scrollListener, { passive: true })
+
+    // Wheel events - triggers immediately when wheel starts
+    this.wheelListener = hideZoomPreview
+    window.addEventListener('wheel', this.wheelListener, { passive: true })
+
+    // Touch events for mobile scroll
+    this.touchListener = hideZoomPreview
+    window.addEventListener('touchmove', this.touchListener, { passive: true })
+    window.addEventListener('touchstart', this.touchListener, { passive: true })
+  }
+
+  ngOnDestroy(): void {
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener)
+    }
+    if (this.wheelListener) {
+      window.removeEventListener('wheel', this.wheelListener)
+    }
+    if (this.touchListener) {
+      window.removeEventListener('touchmove', this.touchListener)
+      window.removeEventListener('touchstart', this.touchListener)
+    }
   }
 
   formatCep(event: any) {
@@ -923,5 +972,68 @@ export class ListingDetailComponent implements OnInit {
     console.log('Carregando mais avaliações...')
     // Implementar carregamento de mais avaliações
     this.hasMoreReviews = false // Temporário para demo
+  }
+
+  // Cart functionality methods
+  addToCart(): void {
+    if (!this.listingId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Produto não encontrado',
+        life: 3000,
+      })
+      return
+    }
+
+    this.addingToCart = true
+
+    // Obter o preço do produto atual
+    const productPrice = this.displayPrice
+
+    console.log('Adicionando ao carrinho:', {
+      listingId: this.listingId,
+      quantity: this.quantity,
+      price: productPrice,
+    })
+
+    this.cartService
+      .addItemToCart(this.listingId, this.quantity, productPrice)
+      .subscribe({
+        next: cartResponse => {
+          this.addingToCart = false
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `${this.quantity} item(s) adicionado(s) ao carrinho!`,
+            life: 3000,
+          })
+        },
+        error: error => {
+          this.addingToCart = false
+          console.error('Erro ao adicionar item ao carrinho:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail:
+              'Não foi possível adicionar o item ao carrinho. Tente novamente.',
+            life: 5000,
+          })
+        },
+      })
+  }
+
+  goToCart(): void {
+    this.router.navigate(['/cart'])
+  }
+
+  increaseQuantity(): void {
+    this.quantity++
+  }
+
+  decreaseQuantity(): void {
+    if (this.quantity > 1) {
+      this.quantity--
+    }
   }
 }
