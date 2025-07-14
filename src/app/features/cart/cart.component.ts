@@ -48,7 +48,6 @@ export interface CartItem {
 export class CartComponent implements OnInit {
   private confirmationService = inject(ConfirmationService)
   private messageService = inject(MessageService)
-  private cartService = inject(CartService)
 
   // Using signals for reactive state management
   cartItems = signal<CartItem[]>([])
@@ -73,7 +72,7 @@ export class CartComponent implements OnInit {
     return this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
   }
 
-  constructor() {
+  constructor(private cartService: CartService) {
     // Initialize totals
     this.updateTotals()
   }
@@ -87,15 +86,15 @@ export class CartComponent implements OnInit {
     this.error.set(null)
 
     this.cartService.getCart().subscribe({
-      next: (cartResponse) => {
+      next: (cartResponse: CartResponse) => {
         this.mapCartResponseToItems(cartResponse)
         this.isLoading.set(false)
       },
-      error: (err) => {
+      error: (err: any) => {
         this.error.set('Erro ao carregar o carrinho')
         this.isLoading.set(false)
         console.error('Erro ao carregar carrinho:', err)
-        
+
         // Fallback para dados mocados em caso de erro
         this.loadMockData()
       },
@@ -103,31 +102,54 @@ export class CartComponent implements OnInit {
   }
 
   private mapCartResponseToItems(cartResponse: CartResponse): void {
+    console.log('CartResponse recebido:', cartResponse)
+
     // Mapear os itens do backend para o formato do frontend
     // Como o backend não retorna dados completos do produto, vamos usar dados mocados
-    const mockItems: CartItem[] = cartResponse.items.map((item, index) => ({
-      listingId: item.listingId,
-      name: `Produto ${index + 1}`, // Você precisará buscar do products service
-      price: item.price,
-      quantity: item.quantity,
-      image: 'https://via.placeholder.com/80x80?text=📦',
-      category: 'Categoria',
-      selected: true, // Por padrão, todos vêm selecionados
-      shippingPrice: item.shippingPrice,
-    }))
+    const mockItems: CartItem[] = cartResponse.items.map((item, index) => {
+      console.log(`Item ${index}:`, item)
 
+      return {
+        listingId: item.listingId,
+        name: `Produto ${index + 1}`, // Você precisará buscar do products service
+        price: item.price || 0, // Fallback para 0 se price for null/undefined
+        quantity: item.quantity || 1,
+        image: 'https://via.placeholder.com/80x80?text=📦',
+        category: 'Categoria',
+        selected: true, // Por padrão, todos vêm selecionados
+        shippingPrice: item.shippingPrice || 0,
+      }
+    })
+
+    console.log('Items mapeados:', mockItems)
     this.cartItems.set(mockItems)
     this.updateTotalsFromBackend(cartResponse)
   }
 
   private updateTotalsFromBackend(cartResponse: CartResponse): void {
-    this.subtotal.set(cartResponse.subTotal)
-    this.delivery.set(cartResponse.shippingPriceTotal)
-    this.total.set(cartResponse.grandTotal)
-    
+    console.log('Atualizando totais do backend:', {
+      subTotal: cartResponse.subTotal,
+      shippingPriceTotal: cartResponse.shippingPriceTotal,
+      grandTotal: cartResponse.grandTotal,
+    })
+
+    this.subtotal.set(cartResponse.subTotal || 0)
+    this.delivery.set(cartResponse.shippingPriceTotal || 0)
+    this.total.set(cartResponse.grandTotal || 0)
+
     // Calcular total de itens
-    const itemCount = cartResponse.items.reduce((sum, item) => sum + item.quantity, 0)
+    const itemCount = cartResponse.items.reduce(
+      (sum, item) => sum + (item.quantity || 0),
+      0,
+    )
     this.totalItems.set(itemCount)
+
+    console.log('Totais definidos:', {
+      subtotal: this.subtotal(),
+      delivery: this.delivery(),
+      total: this.total(),
+      totalItems: this.totalItems(),
+    })
   }
 
   private loadMockData(): void {
@@ -167,7 +189,7 @@ export class CartComponent implements OnInit {
 
     // Atualizar no backend
     this.cartService.updateItemQuantity(itemId, newQuantity).subscribe({
-      next: (cartResponse) => {
+      next: cartResponse => {
         this.mapCartResponseToItems(cartResponse)
         this.messageService.add({
           severity: 'success',
@@ -175,14 +197,14 @@ export class CartComponent implements OnInit {
           detail: 'Quantidade atualizada',
         })
       },
-      error: (err) => {
+      error: err => {
         console.error('Erro ao atualizar quantidade:', err)
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
           detail: 'Erro ao atualizar quantidade',
         })
-        
+
         // Fallback: atualizar localmente
         this.updateQuantityLocally(itemId, newQuantity)
       },
@@ -201,7 +223,9 @@ export class CartComponent implements OnInit {
   toggleSelection(itemId: string) {
     this.cartItems.update(items =>
       items.map(item =>
-        item.listingId === itemId ? { ...item, selected: !item.selected } : item,
+        item.listingId === itemId
+          ? { ...item, selected: !item.selected }
+          : item,
       ),
     )
     this.updateTotals()
@@ -224,14 +248,14 @@ export class CartComponent implements OnInit {
               detail: 'Item removido do carrinho',
             })
           },
-          error: (err) => {
+          error: err => {
             console.error('Erro ao remover item:', err)
             this.messageService.add({
               severity: 'error',
               summary: 'Erro',
               detail: 'Erro ao remover item do carrinho',
             })
-            
+
             // Fallback: remover localmente
             this.removeItemLocally(itemId)
           },
@@ -241,7 +265,9 @@ export class CartComponent implements OnInit {
   }
 
   private removeItemLocally(itemId: string) {
-    this.cartItems.update(items => items.filter(item => item.listingId !== itemId))
+    this.cartItems.update(items =>
+      items.filter(item => item.listingId !== itemId),
+    )
     this.updateTotals()
   }
 
@@ -263,14 +289,14 @@ export class CartComponent implements OnInit {
               detail: 'Todos os itens foram removidos',
             })
           },
-          error: (err) => {
+          error: err => {
             console.error('Erro ao limpar carrinho:', err)
             this.messageService.add({
               severity: 'error',
               summary: 'Erro',
               detail: 'Erro ao limpar carrinho',
             })
-            
+
             // Fallback: limpar localmente
             this.cartItems.set([])
             this.updateTotals()
@@ -333,7 +359,7 @@ export class CartComponent implements OnInit {
   // Método público para adicionar itens ao carrinho (pode ser chamado de outros componentes)
   addItemToCart(listingId: string, quantity: number = 1): void {
     this.cartService.addItemToCart(listingId, quantity).subscribe({
-      next: (cartResponse) => {
+      next: cartResponse => {
         this.mapCartResponseToItems(cartResponse)
         this.messageService.add({
           severity: 'success',
@@ -341,7 +367,7 @@ export class CartComponent implements OnInit {
           detail: 'Item adicionado ao carrinho',
         })
       },
-      error: (err) => {
+      error: err => {
         console.error('Erro ao adicionar item:', err)
         this.messageService.add({
           severity: 'error',

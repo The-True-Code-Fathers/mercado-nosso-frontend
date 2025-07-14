@@ -540,6 +540,43 @@
   font-size: 0.9rem;
 }
 
+/* Quantity Selector */
+.quantity-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+
+  .quantity-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    .quantity-display {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      min-width: 40px;
+      text-align: center;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .quantity-btn {
+      min-width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+
 /* Action Buttons */
 .actions-section {
   display: flex;

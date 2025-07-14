@@ -22,6 +22,7 @@ export interface CartResponse {
 export interface AddItemRequest {
   listingId: string
   quantity: number
+  price?: number // Preço opcional para desenvolvimento
 }
 
 export interface UpdateItemQuantityRequest {
@@ -57,8 +58,12 @@ export class CartService {
     })
   }
 
-  addItemToCart(listingId: string, quantity: number): Observable<CartResponse> {
-    const request: AddItemRequest = { listingId, quantity }
+  addItemToCart(
+    listingId: string,
+    quantity: number,
+    price?: number,
+  ): Observable<CartResponse> {
+    const request: AddItemRequest = { listingId, quantity, price }
     return this.http.post<CartResponse>(`${this.apiUrl}/items`, request, {
       headers: this.getHeaders(),
     })

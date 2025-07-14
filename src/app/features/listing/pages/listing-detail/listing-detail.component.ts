@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
 import { ListingService, Listing } from '../../services/listing.service'
+import { CartService } from '../../../cart/services/cart.service'
 
 // PrimeNG imports
 import { ButtonModule } from 'primeng/button'
@@ -17,7 +18,8 @@ import { PanelModule } from 'primeng/panel'
 import { SkeletonModule } from 'primeng/skeleton'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { DialogModule } from 'primeng/dialog'
-import { MenuItem } from 'primeng/api'
+import { ToastModule } from 'primeng/toast'
+import { MenuItem, MessageService } from 'primeng/api'
 
 export interface ShippingOption {
   type: string
@@ -86,7 +88,9 @@ export interface ShippingCalculation {
     SkeletonModule,
     BreadcrumbModule,
     DialogModule,
+    ToastModule,
   ],
+  providers: [MessageService],
 })
 export class ListingDetailComponent implements OnInit, OnDestroy {
   listingId: string | null = null
@@ -95,6 +99,10 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   freteError: string | null = null
   shippingOptions: ShippingOption[] = []
   productRating: number = 4.8
+
+  // Cart functionality
+  addingToCart: boolean = false
+  quantity: number = 1
 
   // Gallery images for PrimeNG Galleria
   galleriaImages: any[] = []
@@ -200,6 +208,8 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private listingService: ListingService,
     private http: HttpClient,
+    private cartService: CartService,
+    private messageService: MessageService,
   ) {
     this.initializeGalleryImages()
     this.initializeRelatedProducts()
@@ -962,5 +972,68 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     console.log('Carregando mais avaliações...')
     // Implementar carregamento de mais avaliações
     this.hasMoreReviews = false // Temporário para demo
+  }
+
+  // Cart functionality methods
+  addToCart(): void {
+    if (!this.listingId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Produto não encontrado',
+        life: 3000,
+      })
+      return
+    }
+
+    this.addingToCart = true
+
+    // Obter o preço do produto atual
+    const productPrice = this.displayPrice
+
+    console.log('Adicionando ao carrinho:', {
+      listingId: this.listingId,
+      quantity: this.quantity,
+      price: productPrice,
+    })
+
+    this.cartService
+      .addItemToCart(this.listingId, this.quantity, productPrice)
+      .subscribe({
+        next: cartResponse => {
+          this.addingToCart = false
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `${this.quantity} item(s) adicionado(s) ao carrinho!`,
+            life: 3000,
+          })
+        },
+        error: error => {
+          this.addingToCart = false
+          console.error('Erro ao adicionar item ao carrinho:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail:
+              'Não foi possível adicionar o item ao carrinho. Tente novamente.',
+            life: 5000,
+          })
+        },
+      })
+  }
+
+  goToCart(): void {
+    this.router.navigate(['/cart'])
+  }
+
+  increaseQuantity(): void {
+    this.quantity++
+  }
+
+  decreaseQuantity(): void {
+    if (this.quantity > 1) {
+      this.quantity--
+    }
   }
 }
