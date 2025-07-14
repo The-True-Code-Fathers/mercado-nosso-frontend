@@ -10,6 +10,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DividerModule } from 'primeng/divider';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-edit-profile',
@@ -31,11 +32,15 @@ export class EditProfileComponent {
   editProfileForm: FormGroup;
   selectedFileName: string = '';
   selectedFile: File | null = null;
+  cepLoading: boolean = false;
+  cepError: string | null = null;
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private http: HttpClient
   ) {
     this.editProfileForm = this.formBuilder.group({
       nome: ['', [Validators.required]],
@@ -72,12 +77,10 @@ export class EditProfileComponent {
     }
   }
 
-  // ADICIONE ESTES MÉTODOS:
   onCepBlur() {
     const cep = this.editProfileForm.get('cep')?.value;
-    if (cep && cep.length === 8) {
-      console.log('Buscando CEP:', cep);
-      // Aqui você pode integrar com ViaCEP depois
+    if (cep && cep.length >= 8) {
+      this.buscarCepAutomatico(cep);
     }
   }
 
@@ -93,7 +96,7 @@ export class EditProfileComponent {
   }
 
   onSubmit() {
-    this.salvarAlteracoes(); // Chama seu método existente
+    this.salvarAlteracoes();
   }
 
   onFileSelect(event: any) {
@@ -123,5 +126,75 @@ export class EditProfileComponent {
     this.selectedFileName = file.name;
 
     console.log('Arquivo selecionado:', file);
+  }
+
+  formatCep(event: any) {
+    let value = event.target.value.replace(/\D/g, '');
+
+    if (value.length > 8) {
+      value = value.substring(0,8);
+    }
+
+    if (value.length > 5) {
+      value = value.substring(0,5) + '-' + value.substring(5);
+    }
+
+    event.target.value = value;
+
+
+    if (value.replace('-','').length === 8) {
+      this.buscarCepAutomatico(value);
+    }
+  }
+
+  private buscarCepAutomatico(cep: string) {
+    const cepLimpo = cep.replace(/\D/g, '');
+
+    if (cepLimpo.length != 8) {
+      return;
+    }
+
+    this.cepLoading = true;
+    this.cepError = null;
+
+    this.http.get<any>(`https://brasilapi.com.br/api/cep/v2/${cepLimpo}`)
+      .subscribe({
+        next: (cepData) => {
+          this.cepLoading = false;
+          
+          console.log('CEP encontrado:', cepData);
+          
+          // Preenche automaticamente os campos
+          this.editProfileForm.patchValue({
+            endereco: cepData.street || '',
+            cidade: cepData.city || '',
+            estado: cepData.state || ''
+          });
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'CEP encontrado',
+            detail: `${cepData.city} - ${cepData.state}`,
+            life: 3000
+          });
+        },
+        error: (error) => {
+          this.cepLoading = false;
+          console.error('Erro ao buscar CEP:', error);
+          
+          if (error.status === 404) {
+            this.cepError = 'CEP não encontrado';
+          } else {
+            this.cepError = 'Erro ao consultar CEP';
+          }
+          
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: this.cepError,
+            life: 3000
+          });
+        }
+      });
   }
 }
