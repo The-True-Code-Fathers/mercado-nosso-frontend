@@ -136,10 +136,13 @@
                 pInputText 
                 id="cep" 
                 formControlName="cep" 
+                pInputMask="00000-000"
                 placeholder="00000-000"
                 (blur)="onCepBlur()"
                 maxlength="9"
                 [disabled]="cepLoading"
+                (onComplete)="onCepComplete($event)"
+                slotchar="0"
               />
               <i class="pi pi-spinner pi-spin cep-loading" *ngIf="cepLoading"></i>
               <small class="error-message" *ngIf="cepError">{{cepError}}</small>

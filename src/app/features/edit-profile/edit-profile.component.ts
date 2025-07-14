@@ -11,6 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DividerModule } from 'primeng/divider';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
+import { InputMaskModule } from 'primeng/inputmask'
 
 @Component({
   selector: 'app-edit-profile',
@@ -23,7 +24,9 @@ import { HttpClient } from '@angular/common/http';
     CardModule,
     ToastModule,
     ConfirmDialogModule,
-    DividerModule],
+    DividerModule,
+    InputMaskModule
+  ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './edit-profile.component.html',
   styleUrl: './edit-profile.component.scss'
@@ -61,14 +64,12 @@ export class EditProfileComponent {
     if (this.editProfileForm.valid) {
       console.log('Dados do formulário:', this.editProfileForm.value);
 
-      // ADICIONE ESTA MENSAGEM DE SUCESSO:
       this.messageService.add({
         severity: 'success',
         summary: 'Sucesso',
         detail: 'Perfil atualizado com sucesso!'
       });
     } else {
-      // ADICIONE ESTA MENSAGEM DE ERRO:
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
@@ -83,6 +84,16 @@ export class EditProfileComponent {
       this.buscarCepAutomatico(cep);
     }
   }
+
+  onCepComplete(event: any) {
+    const cep = event.target.value;
+    console.log('CEP completo:', cep);
+
+    if (cep && cep.replace(/\D/g, '').length === 8) {
+      this.buscarCepAutomatico(cep);
+    }
+  }
+
 
   onCancel() {
     this.confirmationService.confirm({
@@ -132,17 +143,17 @@ export class EditProfileComponent {
     let value = event.target.value.replace(/\D/g, '');
 
     if (value.length > 8) {
-      value = value.substring(0,8);
+      value = value.substring(0, 8);
     }
 
     if (value.length > 5) {
-      value = value.substring(0,5) + '-' + value.substring(5);
+      value = value.substring(0, 5) + '-' + value.substring(5);
     }
 
     event.target.value = value;
 
 
-    if (value.replace('-','').length === 8) {
+    if (value.replace('-', '').length === 8) {
       this.buscarCepAutomatico(value);
     }
   }
@@ -150,7 +161,7 @@ export class EditProfileComponent {
   private buscarCepAutomatico(cep: string) {
     const cepLimpo = cep.replace(/\D/g, '');
 
-    if (cepLimpo.length != 8) {
+    if (cepLimpo.length !== 8) {
       return;
     }
 
@@ -161,16 +172,13 @@ export class EditProfileComponent {
       .subscribe({
         next: (cepData) => {
           this.cepLoading = false;
-          
-          console.log('CEP encontrado:', cepData);
-          
-          // Preenche automaticamente os campos
+
           this.editProfileForm.patchValue({
             endereco: cepData.street || '',
             cidade: cepData.city || '',
             estado: cepData.state || ''
           });
-          
+
           this.messageService.add({
             severity: 'success',
             summary: 'CEP encontrado',
@@ -180,14 +188,8 @@ export class EditProfileComponent {
         },
         error: (error) => {
           this.cepLoading = false;
-          console.error('Erro ao buscar CEP:', error);
-          
-          if (error.status === 404) {
-            this.cepError = 'CEP não encontrado';
-          } else {
-            this.cepError = 'Erro ao consultar CEP';
-          }
-          
+          this.cepError = error.status === 404 ? 'CEP não encontrado' : 'Erro ao consultar CEP';
+
           this.messageService.add({
             severity: 'error',
             summary: 'Erro',
