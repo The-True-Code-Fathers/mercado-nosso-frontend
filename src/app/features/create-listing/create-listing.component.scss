@@ -1,0 +1,361 @@
+.listing-container {
+  min-height: 100vh;
+  display: flex;
+  background: linear-gradient(135deg, #2e7d32 0%, #4caf50 50%, #81c784 100%);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.branding-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  color: white;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+    min-height: 200px;
+    display: none;
+  }
+}
+
+.branding-content {
+  max-width: 400px;
+  text-align: center;
+}
+
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: white;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.brand-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1.1rem;
+
+  i {
+    font-size: 1.5rem;
+    color: #c8e6c9;
+  }
+}
+
+.form-section {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background: white;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+}
+
+.form-container {
+  width: 100%;
+  max-width: 600px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+
+  h2 {
+    color: var(--color-text-primary);
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 600;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+  }
+}
+
+.form-group-section {
+  margin-bottom: var(--spacing-xl);
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+
+    i {
+      color: var(--color-primary);
+      font-size: 1.3rem;
+    }
+  }
+
+  ::ng-deep .p-divider {
+    margin: var(--spacing-sm) 0 var(--spacing-lg);
+
+    .p-divider-content {
+      background: white;
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+
+  label {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+  }
+
+  ::ng-deep .p-inputtext,
+  ::ng-deep .p-dropdown,
+  ::ng-deep .p-inputnumber input,
+  ::ng-deep .p-inputtextarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    &.ng-invalid.ng-touched {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
+    }
+  }
+
+  ::ng-deep .p-dropdown {
+    .p-dropdown-trigger {
+      width: 2.5rem;
+    }
+  }
+
+  ::ng-deep .p-inputnumber {
+    .p-inputnumber-buttons-horizontal {
+      .p-button {
+        width: 2.5rem;
+      }
+    }
+  }
+}
+
+.error-message {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  margin-top: var(--spacing-xs);
+  display: block;
+}
+
+// Upload de arquivos
+.upload-container {
+  ::ng-deep .p-fileupload {
+    .p-fileupload-content {
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      padding: var(--spacing-lg);
+      text-align: center;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: var(--color-primary);
+        background: rgba(76, 175, 80, 0.05);
+      }
+    }
+
+    .p-fileupload-choose {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+
+      &:hover {
+        background: var(--color-primary-dark);
+        border-color: var(--color-primary-dark);
+      }
+    }
+  }
+}
+
+.upload-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-text-secondary);
+
+  .upload-icon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  small {
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+}
+
+.uploaded-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: white;
+  min-width: 200px;
+
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+
+    i {
+      color: var(--color-primary);
+      font-size: 1.2rem;
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: var(--color-text-primary);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 150px;
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--spacing-lg);
+  justify-content: space-between;
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    gap: var(--spacing-md);
+  }
+
+  ::ng-deep .p-button {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-weight: 600;
+
+    &.p-button-lg {
+      padding: var(--spacing-md) var(--spacing-xl);
+      font-size: 1.1rem;
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+
+    &.p-button-secondary {
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Responsividade adicional
+@media (max-width: 480px) {
+  .listing-container {
+    min-height: auto;
+  }
+
+  .form-section {
+    padding: var(--spacing-md);
+  }
+
+  .form-header {
+    margin-bottom: var(--spacing-lg);
+
+    h2 {
+      font-size: 1.6rem;
+    }
+  }
+
+  .form-group-section {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+}
+
+// Estados de loading
+::ng-deep .p-button {
+  &.p-button-loading {
+    .p-button-icon {
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
