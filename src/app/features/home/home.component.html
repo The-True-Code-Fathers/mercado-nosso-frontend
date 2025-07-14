@@ -62,7 +62,7 @@
     <div class="categories-grid">
       <div class="category-card"
            *ngFor="let category of categories"
-           [routerLink]="['/products']"
+           [routerLink]="['/listing']"
            [queryParams]="{category: category.key}">
         <div class="category-header">
           <i [class]="category.icon + ' category-icon'"></i>

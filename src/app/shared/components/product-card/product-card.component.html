@@ -1,0 +1,99 @@
+<p-card
+  styleClass="product-card"
+  (click)="onViewDetails()"
+  [routerLink]="[linkPath, product.id]">
+
+  <ng-template pTemplate="header">
+    <div class="product-image-container">
+      <img
+        [src]="getImageUrl()"
+        [alt]="product.title"
+        class="product-image"
+        loading="lazy"
+      />
+
+      <!-- Discount Badge -->
+      <p-badge
+        *ngIf="hasDiscount()"
+        [value]="getDiscountPercentage() + '% OFF'"
+        severity="danger"
+        styleClass="discount-badge">
+      </p-badge>
+
+      <!-- Category Badge -->
+      <p-badge
+        *ngIf="product.category"
+        [value]="product.category"
+        severity="secondary"
+        styleClass="category-badge">
+      </p-badge>
+    </div>
+  </ng-template>
+
+  <div class="product-content">
+    <!-- Product Title -->
+    <h3 class="product-title">{{ product.title }}</h3>
+
+    <!-- Rating Section -->
+    <div class="product-rating" *ngIf="showRating && product.rating">
+      <p-rating
+        [ngModel]="product.rating"
+        [readonly]="true"
+        [stars]="5"
+        styleClass="rating-stars">
+      </p-rating>
+      <span class="rating-text" *ngIf="product.reviews">
+        ({{ product.reviews }})
+      </span>
+    </div>
+
+    <!-- Condition -->
+    <div class="product-condition" *ngIf="showCondition && product.condition">
+      <p-tag
+        [value]="product.condition"
+        [severity]="getConditionSeverity()"
+        styleClass="condition-tag">
+      </p-tag>
+    </div>
+
+    <!-- Stock Info -->
+    <div class="stock-info" *ngIf="showStock && product.stock !== undefined">
+      <span
+        class="stock-text"
+        [class.low-stock]="isLowStock()">
+        Estoque: {{ product.stock }}
+      </span>
+    </div>
+
+    <!-- Price Section -->
+    <div class="price-section">
+      <div class="original-price" *ngIf="hasDiscount()">
+        R$ {{ product.originalPrice | number:'1.2-2' }}
+      </div>
+      <div class="current-price">
+        R$ {{ product.price | number:'1.2-2' }}
+      </div>
+      <div class="installments" *ngIf="product.installments">
+        {{ product.installments }}
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="product-actions">
+      <p-button
+        *ngIf="showAddToCart"
+        label="Adicionar ao Carrinho"
+        icon="pi pi-shopping-cart"
+        styleClass="p-button-sm add-to-cart-btn"
+        (click)="onAddToCart($event)">
+      </p-button>
+
+      <p-button
+        label="Ver Detalhes"
+        icon="pi pi-eye"
+        styleClass="p-button-sm p-button-outlined view-details-btn"
+        [routerLink]="[linkPath, product.id]">
+      </p-button>
+    </div>
+  </div>
+</p-card>

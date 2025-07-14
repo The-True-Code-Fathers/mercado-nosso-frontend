@@ -1,5 +1,5 @@
-import { Routes } from '@angular/router';
-import { LoginComponent } from './features/login/login.component';
+import { Routes } from '@angular/router'
+import { LoginComponent } from './features/login/login.component'
 
 export const routes: Routes = [
   {
@@ -14,9 +14,8 @@ export const routes: Routes = [
   },
   {
     path: 'products',
-    loadChildren: () =>
-      import('./features/product/product.routes').then(m => m.productRoutes),
-    title: 'Produtos',
+    redirectTo: '/listing',
+    pathMatch: 'full',
   },
   {
     path: 'cart',
@@ -33,7 +32,7 @@ export const routes: Routes = [
   {
     path: 'finish',
     loadComponent: () =>
-      import('./features/finish/finish.component').then((m) => m.FinishComponent),
+      import('./features/finish/finish.component').then(m => m.FinishComponent),
   },
   {
     path: 'listing',
@@ -43,32 +42,38 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => 
+    loadChildren: () =>
       import('./features/login/login.routes').then(m => m.loginRoutes),
     title: 'Login',
   },
   {
     path: 'checkout',
-    loadChildren: () => 
+    loadChildren: () =>
       import('./features/checkout/checkout.routes').then(m => m.checkoutRoutes),
     title: 'Checkout',
   },
   {
     path: 'edit-profile',
-    loadChildren: () => 
-      import('./features/edit-profile/edit-profile.routes').then(m => m.editProfileRoutes),
-    title: 'Editar Perfil'
+    loadChildren: () =>
+      import('./features/edit-profile/edit-profile.routes').then(
+        m => m.editProfileRoutes,
+      ),
+    title: 'Editar Perfil',
   },
   {
     path: 'register',
-    loadChildren: () => 
-      import('./features/create-account/create-account.routes').then(m => m.createAccountRoutes),
-      title: 'Criar conta'
-    },
-    {
-      path: 'sellerRegister',
-      loadChildren: () => 
-        import('./features/be-a-seller/be-a-seller.routes').then(m => m.createAccountRoutes),
-      title: 'Seja um vendedor'
-    }
-];
+    loadChildren: () =>
+      import('./features/create-account/create-account.routes').then(
+        m => m.createAccountRoutes,
+      ),
+    title: 'Criar conta',
+  },
+  {
+    path: 'sellerRegister',
+    loadChildren: () =>
+      import('./features/be-a-seller/be-a-seller.routes').then(
+        m => m.createAccountRoutes,
+      ),
+    title: 'Seja um vendedor',
+  },
+]

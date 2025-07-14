@@ -1,0 +1,223 @@
+<div class="listing-container">
+  <div class="listing-layout">
+    <!-- Mobile Filter Toggle -->
+    <div class="mobile-filter-toggle" [class.mobile-only]="true">
+      <p-button
+        [label]="showMobileFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'"
+        [icon]="showMobileFilters ? 'pi pi-chevron-up' : 'pi pi-filter'"
+        styleClass="p-button-outlined mobile-filter-btn"
+        (click)="toggleMobileFilters()">
+      </p-button>
+    </div>
+
+    <!-- Left Sidebar - Filters -->
+    <aside class="filters-sidebar" [class.mobile-hidden]="!showMobileFilters">
+      <div class="sidebar-header">
+        <h3 class="sidebar-title">Filtros</h3>
+        <p-button
+          *ngIf="hasActiveFilters()"
+          icon="pi pi-times"
+          styleClass="p-button-text p-button-sm clear-all-btn"
+          (click)="clearFilters()"
+          pTooltip="Limpar todos os filtros">
+        </p-button>
+      </div>
+
+      <div class="sidebar-content">
+        <!-- Condition Filter -->
+        <div class="filter-section">
+          <label class="filter-section-title">
+            <i class="pi pi-tag"></i>
+            Condição
+          </label>
+          <div class="condition-buttons">
+            <p-button
+              *ngFor="let condition of conditionOptions"
+              [label]="condition.label"
+              [outlined]="selectedCondition !== condition.value"
+              [severity]="selectedCondition === condition.value ? 'success' : 'secondary'"
+              styleClass="condition-btn"
+              (click)="selectCondition(condition.value)">
+            </p-button>
+          </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="filter-section">
+          <label class="filter-section-title">
+            <i class="pi pi-dollar"></i>
+            Faixa de preço
+          </label>
+          <div class="price-range-container">
+            <div class="price-inputs">
+              <div class="price-input-group">
+                <label>Mín</label>
+                <p-inputNumber
+                  [(ngModel)]="minPrice"
+                  (onInput)="onFilterChange()"
+                  mode="currency"
+                  currency="BRL"
+                  locale="pt-BR"
+                  placeholder="R$ 0"
+                  styleClass="price-input">
+                </p-inputNumber>
+              </div>
+              <div class="price-input-group">
+                <label>Máx</label>
+                <p-inputNumber
+                  [(ngModel)]="maxPrice"
+                  (onInput)="onFilterChange()"
+                  mode="currency"
+                  currency="BRL"
+                  locale="pt-BR"
+                  placeholder="R$ 1000"
+                  styleClass="price-input">
+                </p-inputNumber>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Filters -->
+        <div class="filter-section" *ngIf="hasActiveFilters()">
+          <label class="filter-section-title">
+            <i class="pi pi-filter"></i>
+            Filtros ativos ({{ getActiveFiltersCount() }})
+          </label>
+          <div class="active-filters-list">
+            <p-chip
+              *ngIf="selectedCondition"
+              [label]="'Condição: ' + getConditionLabel(selectedCondition)"
+              [removable]="true"
+              (onRemove)="clearCondition()"
+              styleClass="active-filter-chip">
+            </p-chip>
+            <p-chip
+              *ngIf="minPrice"
+              [label]="'Mín: R$ ' + (minPrice | number:'1.2-2')"
+              [removable]="true"
+              (onRemove)="clearMinPrice()"
+              styleClass="active-filter-chip">
+            </p-chip>
+            <p-chip
+              *ngIf="maxPrice"
+              [label]="'Máx: R$ ' + (maxPrice | number:'1.2-2')"
+              [removable]="true"
+              (onRemove)="clearMaxPrice()"
+              styleClass="active-filter-chip">
+            </p-chip>
+            <p-chip
+              *ngIf="selectedCategory"
+              [label]="'Categoria: ' + selectedCategory"
+              [removable]="true"
+              (onRemove)="clearCategory()"
+              styleClass="active-filter-chip">
+            </p-chip>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Results Header -->
+      <div class="results-header">
+        <div class="results-info">
+          <h2 class="results-title">
+            {{ totalItems }} Resultados
+          </h2>
+          <span class="results-subtitle" *ngIf="totalItems !== listings().length">
+            de {{ listings().length }} produtos disponíveis
+          </span>
+        </div>
+
+        <div class="results-controls">
+          <div class="sort-control">
+            <label for="sortSelect">Ordenar por</label>
+            <p-dropdown
+              id="sortSelect"
+              [options]="sortOptions"
+              [(ngModel)]="sortBy"
+              (onChange)="onSortChange()"
+              optionLabel="label"
+              optionValue="value"
+              styleClass="sort-dropdown">
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading()" class="loading-section">
+        <div class="loading-content">
+          <p-progressSpinner strokeWidth="3" animationDuration="1s"></p-progressSpinner>
+          <h3>Carregando produtos...</h3>
+          <p>Aguarde enquanto buscamos os melhores produtos para você.</p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <p-card *ngIf="error()" styleClass="error-card">
+        <div class="error-content">
+          <i class="pi pi-exclamation-triangle error-icon"></i>
+          <h3>Ops! Algo deu errado</h3>
+          <p>{{ error() }}</p>
+          <p-button
+            label="Tentar Novamente"
+            icon="pi pi-refresh"
+            (click)="loadListings()">
+          </p-button>
+        </div>
+      </p-card>
+
+      <!-- Products Grid -->
+      <div *ngIf="!isLoading() && !error() && paginatedListings().length > 0" class="products-container">
+        <div class="products-grid" [ngClass]="'view-' + selectedView">
+          <app-product-card
+            *ngFor="let listing of paginatedListings(); trackBy: trackByListingId"
+            [product]="mapListingToProductCard(listing)"
+            [linkPath]="'/listing'"
+            [showAddToCart]="true"
+            [showRating]="false"
+            [showCondition]="true"
+            [showStock]="true"
+            (addToCart)="onAddToCart($event)"
+            (viewDetails)="onViewDetails($event)"
+            class="product-card-wrapper">
+          </app-product-card>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-section" *ngIf="totalItems > itemsPerPage">
+          <p-paginator
+            [rows]="itemsPerPage"
+            [totalRecords]="totalItems"
+            [first]="currentPage * itemsPerPage"
+            [rowsPerPageOptions]="[12, 24, 36, 48]"
+            (onPageChange)="onPageChange($event)"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} produtos"
+            [showFirstLastIcon]="true"
+            [showPageLinks]="true"
+            styleClass="custom-paginator">
+          </p-paginator>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <p-card *ngIf="!isLoading() && !error() && totalItems === 0" styleClass="empty-state-card">
+        <div class="empty-state">
+          <i class="pi pi-search empty-icon"></i>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente ajustar os filtros ou fazer uma nova busca.</p>
+          <p-button
+            label="Ver Todos os Produtos"
+            icon="pi pi-list"
+            styleClass="p-button-outlined"
+            (click)="clearFilters()">
+          </p-button>
+        </div>
+      </p-card>
+    </main>
+  </div>
+</div>

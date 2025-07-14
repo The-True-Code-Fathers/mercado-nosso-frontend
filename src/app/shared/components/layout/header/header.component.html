@@ -164,7 +164,7 @@
                  (mouseleave)="onOverlayPanelLeave()">
               <div class="categories-grid">
                 <a *ngFor="let category of categories"
-                   [routerLink]="['/products']"
+                   [routerLink]="['/listing']"
                    [queryParams]="{category: category.key}"
                    class="category-item"
                    (click)="onCategorySelected()">
@@ -179,7 +179,7 @@
         <!-- Responsive quick categories -->
         <span class="category-link"
               *ngFor="let category of getQuickCategoriesForScreen()"
-              [routerLink]="['/products']"
+              [routerLink]="['/listing']"
               [queryParams]="{category: category.key}">
           {{ category.label }}
         </span>
@@ -212,7 +212,7 @@
     <div class="mobile-quick-categories-section">
       <div class="mobile-quick-category-item"
            *ngFor="let category of quickCategories.slice(0, 4)"
-           [routerLink]="['/products']"
+           [routerLink]="['/listing']"
            [queryParams]="{category: category.key}"
            (click)="closeMobileMenu()">
         <i [class]="category.icon"></i>
@@ -231,7 +231,7 @@
         <div class="mobile-non-quick-categories">
           <div class="mobile-category-item"
                *ngFor="let category of getNonQuickCategories()"
-               [routerLink]="['/products']"
+               [routerLink]="['/listing']"
                [queryParams]="{category: category.key}"
                (click)="closeMobileMenu()">
             <i [class]="category.icon"></i>
