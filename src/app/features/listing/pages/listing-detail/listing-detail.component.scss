@@ -413,13 +413,108 @@
 
     .p-rating-icon {
       font-size: 1.8rem !important;
-      color: #ffb300 !important;
+      color: #ddd !important; /* Cor das estrelas não preenchidas */
+      transition: all 0.2s ease;
+      position: relative;
+
+      &.p-rating-icon-active {
+        color: #ffb300 !important; /* Cor das estrelas preenchidas */
+      }
+    }
+
+    /* Para suporte a half stars, vamos usar um pseudo-elemento */
+    .p-rating-icon[data-pc-section='onicon'] {
+      &::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        overflow: hidden;
+        color: #ffb300;
+      }
+    }
+  }
+}
+
+/* Custom Rating Stars */
+.custom-rating {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  .rating-star {
+    font-size: 1.8rem;
+    transition: all 0.2s ease;
+    position: relative;
+    color: #ddd; /* Cor padrão (vazia) */
+
+    &.star-full {
+      color: #ffb300; /* Estrela cheia */
+    }
+
+    &.star-half {
+      color: #ddd; /* Base cinza */
+
+      &::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        overflow: hidden;
+        color: #ffb300; /* Metade dourada */
+      }
+    }
+
+    &.star-empty {
+      color: #ddd; /* Estrela vazia */
+    }
+  }
+
+  /* Tamanho menor para seção de reviews */
+  &.rating-large .rating-star {
+    font-size: 1.5rem;
+  }
+}
+
+/* Rating para seção de reviews */
+::ng-deep .rating-large {
+  .p-rating {
+    gap: 4px;
+
+    .p-rating-icon {
+      font-size: 1.5rem !important;
+      color: #ddd !important; /* Cor das estrelas não preenchidas */
       transition: all 0.2s ease;
 
       &.p-rating-icon-active {
-        color: #ffb300 !important;
+        color: #ffb300 !important; /* Cor das estrelas preenchidas */
       }
     }
+  }
+}
+
+/* Estilo para half stars customizado */
+::ng-deep .rating-half-star {
+  position: relative;
+  display: inline-block;
+
+  &::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #ffb300;
+    z-index: 1;
+  }
+
+  &::after {
+    content: '★';
+    color: #ddd;
+    z-index: 0;
   }
 }
 
