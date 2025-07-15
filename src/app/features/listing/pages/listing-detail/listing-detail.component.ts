@@ -98,7 +98,10 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   freteCalculado: boolean = false
   freteError: string | null = null
   shippingOptions: ShippingOption[] = []
-  productRating: number = 4.8
+  // Usar getter para o rating do produto
+  get productRating(): number {
+    return this.displayRating
+  }
 
   // Cart functionality
   addingToCart: boolean = false
@@ -129,7 +132,10 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   relatedProducts: any[] = []
 
   // Reviews and Ratings
-  averageRating: number = 4.8
+  // Usar getter para o rating médio
+  get averageRating(): number {
+    return this.displayRating
+  }
   ratingBars: any[] = []
   summaryText: string = ''
   summaryHighlights: string[] = []
@@ -149,7 +155,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     id: 1,
     images: ['/images/banner.png', '/images/banner-lg.jpg'],
     rating: 4.8,
-    reviews: 120,
     comments: [
       { user: 'João', comment: 'Produto excelente!' },
       { user: 'Maria', comment: 'Chegou rápido e bem embalado.' },
@@ -242,6 +247,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
       next: listing => {
         this.listing.set(listing)
         this.updateBreadcrumb(listing.title)
+        this.initializeReviews() // Inicializar reviews com dados reais
         this.isLoading.set(false)
       },
       error: err => {
@@ -698,22 +704,80 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   }
 
   private initializeReviews(): void {
-    this.ratingBars = [
-      { stars: 5, count: 89, percentage: 74 },
-      { stars: 4, count: 21, percentage: 17 },
-      { stars: 3, count: 6, percentage: 5 },
-      { stars: 2, count: 3, percentage: 3 },
-      { stars: 1, count: 1, percentage: 1 },
-    ]
+    // Se não há reviews reais, criar dados baseados no rating atual
+    const totalReviews = this.displayReviewsCount
+    const currentRating = this.displayRating
+
+    if (totalReviews === 0) {
+      // Se não há reviews, deixar vazio
+      this.ratingBars = [
+        { stars: 5, count: 0, percentage: 0 },
+        { stars: 4, count: 0, percentage: 0 },
+        { stars: 3, count: 0, percentage: 0 },
+        { stars: 2, count: 0, percentage: 0 },
+        { stars: 1, count: 0, percentage: 0 },
+      ]
+    } else {
+      // Simular distribuição baseada no rating médio
+      // Para um rating de 4.8, a maioria seria 5 estrelas
+      const fiveStarPercent = Math.round((currentRating - 4) * 100)
+      const fourStarPercent = Math.round((5 - currentRating) * 80)
+      const threeStarPercent = Math.max(
+        0,
+        100 - fiveStarPercent - fourStarPercent - 10,
+      )
+      const twoStarPercent = Math.max(0, 5 - fiveStarPercent / 20)
+      const oneStarPercent = Math.max(
+        0,
+        100 -
+          fiveStarPercent -
+          fourStarPercent -
+          threeStarPercent -
+          twoStarPercent,
+      )
+
+      this.ratingBars = [
+        {
+          stars: 5,
+          count: Math.round((totalReviews * fiveStarPercent) / 100),
+          percentage: fiveStarPercent,
+        },
+        {
+          stars: 4,
+          count: Math.round((totalReviews * fourStarPercent) / 100),
+          percentage: fourStarPercent,
+        },
+        {
+          stars: 3,
+          count: Math.round((totalReviews * threeStarPercent) / 100),
+          percentage: threeStarPercent,
+        },
+        {
+          stars: 2,
+          count: Math.round((totalReviews * twoStarPercent) / 100),
+          percentage: twoStarPercent,
+        },
+        {
+          stars: 1,
+          count: Math.round((totalReviews * oneStarPercent) / 100),
+          percentage: oneStarPercent,
+        },
+      ]
+    }
 
     this.summaryText =
-      'Clientes relatam alta satisfação com o desempenho da placa de vídeo, destacando seu ótimo custo-benefício e capacidade de rodar jogos modernos com boa performance em resolução Full HD. Muitos clientes ressaltam a temperatura baixa de operação, mesmo em longas sessões de jogos. Apesar da maioria das avaliações positivas, alguns clientes mencionaram a ocorrência de ruídos Coil Whine em alguns casos e a necessidade de atenção aos requisitos mínimos do sistema para evitar gargalos.'
+      totalReviews > 0
+        ? 'Avaliações baseadas nas experiências reais dos clientes que compraram este produto.'
+        : 'Este produto ainda não possui avaliações. Seja o primeiro a avaliar!'
 
-    this.summaryHighlights = [
-      'Custo-Benefício Excelente',
-      'Desempenho em Full HD',
-      'Temperatura Baixa',
-    ]
+    this.summaryHighlights =
+      totalReviews > 0
+        ? [
+            'Produto Avaliado',
+            `${totalReviews} Avaliações`,
+            `Rating ${currentRating}/5`,
+          ]
+        : ['Produto Novo', 'Sem Avaliações', 'Avalie Primeiro!']
 
     this.reviews = [
       {
@@ -787,7 +851,11 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   }
 
   get displayImages() {
-    return this.defaultProduct.images
+    // Usar imagens do backend se disponíveis, senão usar as padrão
+    return this.currentListing?.imagesUrl &&
+      this.currentListing.imagesUrl.length > 0
+      ? this.currentListing.imagesUrl
+      : this.defaultProduct.images
   }
 
   get displayTitle() {
@@ -799,6 +867,26 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   get displayPrice() {
     return this.currentListing?.price || 1000
+  }
+
+  get displayRating() {
+    return this.currentListing?.rating || 0
+  }
+
+  get displayReviewsCount() {
+    return this.currentListing?.reviewsId?.length || 0
+  }
+
+  get displaySku() {
+    return this.currentListing?.sku || 'SKU-INDISPONÍVEL'
+  }
+
+  get displayCategory() {
+    return this.currentListing?.category || 'OUTROS'
+  }
+
+  get displayProductRecommendations() {
+    return this.currentListing?.productRecommendation || []
   }
 
   get displayDescription() {
@@ -841,7 +929,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   }
 
   get filledStars() {
-    return Math.round(this.defaultProduct.rating)
+    return Math.round(this.displayRating)
   }
 
   // Zoom and Gallery Methods
@@ -947,7 +1035,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   selectedModalImage: string = ''
 
   getTotalReviews(): number {
-    return this.ratingBars.reduce((total, bar) => total + bar.count, 0)
+    return this.displayReviewsCount
   }
 
   writeReview(): void {

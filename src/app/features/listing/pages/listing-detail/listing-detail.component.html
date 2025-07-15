@@ -61,7 +61,7 @@
           <!-- Thumbnails -->
           <div class="thumbnails-container">
             <div
-              *ngFor="let image of defaultProduct.images; let i = index"
+              *ngFor="let image of displayImages; let i = index"
               class="thumbnail-item"
               [class.active]="selectedImageIndex === i"
               (click)="selectImage(i)"
@@ -80,7 +80,7 @@
             >
               <img
                 #mainImage
-                [src]="defaultProduct.images[selectedImageIndex]"
+                [src]="displayImages[selectedImageIndex]"
                 alt="Imagem principal"
                 class="main-image"
               />
@@ -106,7 +106,7 @@
               "
             >
               <img
-                [src]="defaultProduct.images[selectedImageIndex]"
+                [src]="displayImages[selectedImageIndex]"
                 alt="Zoom preview"
                 class="zoom-preview-image"
               />
@@ -176,9 +176,9 @@
                 styleClass="product-rating-large"
               >
               </p-rating>
-              <span class="rating-score">{{ defaultProduct.rating }}</span>
+              <span class="rating-score">{{ displayRating }}</span>
               <a href="#" class="reviews-link"
-                >({{ defaultProduct.reviews }} avaliações)</a
+                >({{ displayReviewsCount }} avaliações)</a
               >
               <p-tag
                 [value]="displayCondition"

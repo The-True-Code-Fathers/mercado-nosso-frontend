@@ -443,6 +443,8 @@
 .sales-info {
   display: flex;
   align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 ::ng-deep .sales-badge {
