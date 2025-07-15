@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -12,6 +12,8 @@ import { DividerModule } from 'primeng/divider';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { InputMaskModule } from 'primeng/inputmask'
+import { UpdateUserRequest } from '../user/services/user.service';
+import { UserService } from '../user/services/user.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -31,23 +33,27 @@ import { InputMaskModule } from 'primeng/inputmask'
   templateUrl: './edit-profile.component.html',
   styleUrl: './edit-profile.component.scss'
 })
-export class EditProfileComponent {
+export class EditProfileComponent implements OnInit {
   editProfileForm: FormGroup;
   selectedFileName: string = '';
   selectedFile: File | null = null;
   cepLoading: boolean = false;
   cepError: string | null = null;
+  currentUserId: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) {
     this.editProfileForm = this.formBuilder.group({
       nome: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
+      telefone: [''],
       senha: ['', [Validators.required, Validators.minLength(8)]],
       cep: [''],
       endereco: [''],
@@ -55,6 +61,40 @@ export class EditProfileComponent {
       estado: ['']
     });
   }
+
+  ngOnInit() {
+    this.currentUserId = this.getUserIdFromStorage();
+
+    if (this.currentUserId) {
+      this.loadUserData();
+    }
+  }
+
+  private getUserIdFromStorage(): string {
+    return localStorage.getItem('currentUserId') || '';
+  }
+
+  private loadUserData() {
+    this.isLoading = true;
+    this.userService.getUserById(this.currentUserId).subscribe({
+        next: (userData) => {
+            this.isLoading = false;
+            this.editProfileForm.patchValue({
+                nome: userData.fullName,
+                email: userData.email,
+                telefone: userData.telephoneNumber || '', 
+              });
+        },
+        error: (error) => {
+            this.isLoading = false;
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Erro ao carregar dados do usuário'
+            });
+        }
+    });
+}
 
   sejaVendedor() {
     this.router.navigate(['/sellerRegister']);
@@ -94,7 +134,6 @@ export class EditProfileComponent {
     }
   }
 
-
   onCancel() {
     this.confirmationService.confirm({
       message: 'Deseja realmente cancelar? As alterações não salvas serão perdidas.',
@@ -107,7 +146,37 @@ export class EditProfileComponent {
   }
 
   onSubmit() {
-    this.salvarAlteracoes();
+    if (this.editProfileForm.valid) {
+      this.isLoading = true;
+      const formData = this.editProfileForm.value;
+
+      const updatePayload: UpdateUserRequest = {
+        fullName: formData.nome,
+        email: formData.email,
+        telephoneNumber: formData.telefone,
+        profilePictureUrl: this.selectedFile ? 'URL_DA_IMAGEM': undefined
+      };
+
+      this.userService.updateUser(this.currentUserId, updatePayload).subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Sucesso',
+                    detail: 'Perfil atualizado com sucesso!'
+                });
+            },
+            error: (error) => {
+                this.isLoading = false;
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Erro ao atualizar perfil'
+                });
+            }
+        });
+      
+    }    
   }
 
   onFileSelect(event: any) {
