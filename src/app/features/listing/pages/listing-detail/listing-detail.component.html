@@ -169,16 +169,24 @@
           <!-- Rating and Reviews - MAIOR -->
           <div class="rating-section">
             <div class="rating-main">
-              <p-rating
-                [(ngModel)]="productRating"
-                [readonly]="true"
-                [stars]="5"
-                styleClass="product-rating-large"
-              >
-              </p-rating>
-              <span class="rating-score">{{ displayRating }}</span>
+              <div class="custom-rating">
+                <span
+                  *ngFor="let star of getStarsArray(); let i = index"
+                  class="rating-star"
+                  [ngClass]="{
+                    'star-full': i < mathFloor(averageRating),
+                    'star-half':
+                      i === mathFloor(averageRating) &&
+                      averageRating % 1 >= 0.5,
+                    'star-empty': i >= mathCeil(averageRating)
+                  }"
+                >
+                  ★
+                </span>
+              </div>
+              <span class="rating-score">{{ averageRating.toFixed(1) }}</span>
               <a href="#" class="reviews-link"
-                >({{ displayReviewsCount }} avaliações)</a
+                >({{ getTotalReviews() }} avaliações)</a
               >
               <p-tag
                 [value]="displayCondition"
@@ -188,7 +196,7 @@
             </div>
             <div class="sales-info">
               <p-badge
-                [value]="defaultProduct.sold + ' vendidos'"
+                [value]="displaySalesCount + ' vendidos'"
                 severity="info"
                 styleClass="sales-badge"
               ></p-badge>
@@ -217,14 +225,14 @@
               <a href="#" class="seller-name">{{
                 defaultProduct.seller.name
               }}</a>
-              <div class="seller-stats">
+              <div
+                class="seller-stats"
+                *ngIf="defaultProduct.seller.reputation"
+              >
                 <p-tag
                   [value]="defaultProduct.seller.reputation"
                   severity="success"
                 ></p-tag>
-                <span class="seller-sales"
-                  >{{ defaultProduct.seller.sales }} vendas</span
-                >
               </div>
             </div>
           </div>
@@ -443,15 +451,22 @@
         <!-- Rating Summary - Left Side -->
         <div class="rating-overview">
           <div class="rating-score">
-            <span class="score-number">{{ averageRating }}</span>
+            <span class="score-number">{{ averageRating.toFixed(1) }}</span>
             <span class="score-denominator">/5</span>
-            <p-rating
-              [ngModel]="averageRating"
-              [readonly]="true"
-              [stars]="5"
-              styleClass="rating-large"
-            >
-            </p-rating>
+            <div class="custom-rating rating-large">
+              <span
+                *ngFor="let star of getStarsArray(); let i = index"
+                class="rating-star"
+                [ngClass]="{
+                  'star-full': i < mathFloor(averageRating),
+                  'star-half':
+                    i === mathFloor(averageRating) && averageRating % 1 >= 0.5,
+                  'star-empty': i >= mathCeil(averageRating)
+                }"
+              >
+                ★
+              </span>
+            </div>
             <span class="total-reviews"
               >({{ getTotalReviews() }} avaliações)</span
             >
@@ -498,9 +513,11 @@
                 <i class="pi pi-user"></i>
               </div>
               <div class="reviewer-details">
-                <span class="reviewer-name">{{ review.userName }}</span>
+                <span class="reviewer-name"
+                  >Comprador {{ review.buyerId.substring(0, 8) }}</span
+                >
                 <span class="review-date">{{
-                  review.date | date : 'dd/MM/yyyy'
+                  review.createdAt | date : 'dd/MM/yyyy HH:mm'
                 }}</span>
               </div>
             </div>
@@ -516,18 +533,15 @@
           </div>
 
           <div class="review-content">
-            <h4 class="review-title" *ngIf="review.title">
-              {{ review.title }}
-            </h4>
-            <p class="review-text">{{ review.content }}</p>
+            <p class="review-text">{{ review.message }}</p>
 
             <!-- Review Images -->
             <div
               class="review-images"
-              *ngIf="review.images && review.images.length > 0"
+              *ngIf="review.imagesUrls && review.imagesUrls.length > 0"
             >
               <img
-                *ngFor="let image of review.images"
+                *ngFor="let image of review.imagesUrls"
                 [src]="image"
                 [alt]="'Imagem da avaliação'"
                 class="review-image"
