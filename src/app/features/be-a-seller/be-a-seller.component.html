@@ -33,49 +33,35 @@
             Informações Pessoais
           </h3>
           <p-divider></p-divider>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label for="nome">Nome</label>
-              <input 
-                pInputText 
-                id="nome" 
-                formControlName="nome" 
-                placeholder="Digite seu nome"
-                [class.ng-invalid]="beASellerForm.get('nome')?.invalid && beASellerForm.get('nome')?.touched"
-              />
-              <small class="error-message" *ngIf="beASellerForm.get('nome')?.invalid && beASellerForm.get('nome')?.touched">
+              <input pInputText id="nome" formControlName="nome" placeholder="Digite seu nome"
+                [class.ng-invalid]="beASellerForm.get('nome')?.invalid && beASellerForm.get('nome')?.touched" />
+              <small class="error-message"
+                *ngIf="beASellerForm.get('nome')?.invalid && beASellerForm.get('nome')?.touched">
                 Nome é obrigatório
               </small>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="socialReason">Razão social</label>
-              <input 
-                pInputText 
-                id="socialReason" 
-                formControlName="socialReason" 
-                placeholder="Razão social"
-                [class.ng-invalid]="beASellerForm.get('socialReason')?.invalid && beASellerForm.get('socialReason')?.touched"
-              />
-              <small class="error-message" *ngIf="beASellerForm.get('socialReason')?.invalid && beASellerForm.get('socialReason')?.touched">
-                Razão social é obrigatória.
+              <label for="socialReason">Razão Social</label>
+              <input pInputText id="socialReason" formControlName="socialReason" placeholder="Nome da empresa"
+                [class.ng-invalid]="beASellerForm.get('socialReason')?.invalid && beASellerForm.get('socialReason')?.touched" />
+              <small class="error-message"
+                *ngIf="beASellerForm.get('socialReason')?.invalid && beASellerForm.get('socialReason')?.touched">
+                Razão social é obrigatória
               </small>
             </div>
             <div class="form-group">
               <label for="cnpj">CNPJ</label>
-              <input 
-                pInputText 
-                pattern="[0-9]*"
-                id="cnpj" 
-                formControlName="cnpj" 
-                placeholder="00.000.000/0000-00"
-                [class.ng-invalid]="beASellerForm.get('cnpj')?.invalid && beASellerForm.get('cnpj')?.touched"
-                (blur)="onCnpjBlur()"
-                (keypress)="onlyNumbers($event)"
-              />
-              <small class="error-message" *ngIf="beASellerForm.get('cnpj')?.invalid && beASellerForm.get('cnpj')?.touched">
+              <input pInputText id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00"
+                (input)="formatCnpj($event)" maxlength="18"
+                [class.ng-invalid]="beASellerForm.get('cnpj')?.invalid && beASellerForm.get('cnpj')?.touched" />
+              <small class="error-message"
+                *ngIf="beASellerForm.get('cnpj')?.invalid && beASellerForm.get('cnpj')?.touched">
                 CNPJ é obrigatório
               </small>
             </div>
@@ -84,14 +70,10 @@
           <div class="form-row">
             <div class="form-group">
               <label for="email">E-mail</label>
-              <input 
-                pInputText 
-                id="email" 
-                formControlName="email" 
-                placeholder="Digite seu e-mail"
-                [class.ng-invalid]="beASellerForm.get('email')?.invalid && beASellerForm.get('email')?.touched"
-              />
-              <small class="error-message" *ngIf="beASellerForm.get('email')?.invalid && beASellerForm.get('email')?.touched">
+              <input pInputText id="email" formControlName="email" placeholder="Digite seu e-mail"
+                [class.ng-invalid]="beASellerForm.get('email')?.invalid && beASellerForm.get('email')?.touched" />
+              <small class="error-message"
+                *ngIf="beASellerForm.get('email')?.invalid && beASellerForm.get('email')?.touched">
                 E-mail válido é obrigatório
               </small>
             </div>
@@ -100,15 +82,10 @@
           <div class="form-row">
             <div class="form-group">
               <label for="senha">Senha</label>
-              <input 
-                pInputText 
-                type="password"
-                id="senha" 
-                formControlName="senha" 
-                placeholder="Digite sua senha"
-                [class.ng-invalid]="beASellerForm.get('senha')?.invalid && beASellerForm.get('senha')?.touched"
-              />
-              <small class="error-message" *ngIf="beASellerForm.get('senha')?.invalid && beASellerForm.get('senha')?.touched">
+              <input pInputText type="password" id="senha" formControlName="senha" placeholder="Digite sua senha"
+                [class.ng-invalid]="beASellerForm.get('senha')?.invalid && beASellerForm.get('senha')?.touched" />
+              <small class="error-message"
+                *ngIf="beASellerForm.get('senha')?.invalid && beASellerForm.get('senha')?.touched">
                 Senha é obrigatória (mínimo 6 caracteres)
               </small>
             </div>
@@ -116,14 +93,8 @@
         </div>
 
         <div class="form-actions">
-          <button 
-            type="submit" 
-            class="p-button p-button-primary cadastrar-button"
-            [disabled]="beASellerForm.invalid"
-          >
-            <i class="pi pi-user-plus"></i>
-            Cadastre como vendedor
-          </button>
+          <p-button type="submit" label="Tornar-se Vendedor" icon="pi pi-check" [loading]="isLoading"
+            [disabled]="beASellerForm.invalid" styleClass="p-button-success"></p-button>
         </div>
       </form>
     </div>
