@@ -114,48 +114,52 @@
           </div>
         </div>
 
-        <!-- Shipping Calculator below gallery -->
-        <p-panel
-          header="Calcular frete e prazo"
-          [toggleable]="false"
-          styleClass="shipping-panel"
-        >
-          <div class="shipping-form">
-            <div class="shipping-input-row">
-              <div class="p-inputgroup">
-                <span class="p-inputgroup-addon">
-                  <i class="pi pi-map-marker"></i>
-                </span>
-                <input
-                  pInputText
-                  type="text"
-                  maxlength="9"
-                  [(ngModel)]="cep"
-                  (input)="formatCep($event)"
-                  placeholder="Inserir CEP"
-                  class="cep-input"
-                />
-              </div>
+        <!-- Product Description below gallery -->
+        <div class="description-section">
+          <div class="description-header">
+            <h2>Descrição do produto</h2>
+          </div>
+
+          <div class="description-content">
+            <!-- Loading state -->
+            <div *ngIf="isLoading()" class="description-loading">
+              <p-skeleton width="100%" height="4rem" class="mb-2"></p-skeleton>
+              <p-skeleton width="80%" height="2rem" class="mb-2"></p-skeleton>
+              <p-skeleton width="60%" height="2rem"></p-skeleton>
+            </div>
+
+            <!-- Content -->
+            <div
+              *ngIf="!isLoading()"
+              class="description-text"
+              [class.expanded]="isDescriptionExpanded"
+              [class.has-overflow]="showExpandButton && !isDescriptionExpanded"
+            >
+              {{ displayDescription }}
+            </div>
+
+            <div
+              *ngIf="showExpandButton && !isLoading()"
+              class="description-actions"
+            >
               <p-button
-                (onClick)="calcularFrete()"
-                label="OK"
-                icon="pi pi-check"
-                [disabled]="!cep || cep.length < 9"
-                styleClass="calc-button"
+                (onClick)="toggleDescription()"
+                [label]="
+                  isDescriptionExpanded ? 'Mostrar menos' : 'Mostrar mais'
+                "
+                [icon]="
+                  isDescriptionExpanded
+                    ? 'pi pi-chevron-up'
+                    : 'pi pi-chevron-down'
+                "
+                severity="secondary"
+                [text]="true"
+                styleClass="show-more-btn"
               >
               </p-button>
             </div>
-            <div class="cep-help">
-              <a
-                href="https://buscacepinter.correios.com.br/app/endereco/index.php"
-                target="_blank"
-                class="cep-link"
-              >
-                Não lembro meu CEP
-              </a>
-            </div>
           </div>
-        </p-panel>
+        </div>
       </div>
 
       <!-- Product Info Section -->
@@ -302,6 +306,46 @@
             </div>
           </div>
 
+          <!-- Shipping Calculator -->
+          <div class="shipping-calculator">
+            <h4>Calcular frete e prazo</h4>
+            <div class="shipping-form">
+              <div class="shipping-input-row">
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon">
+                    <i class="pi pi-map-marker"></i>
+                  </span>
+                  <input
+                    pInputText
+                    type="text"
+                    maxlength="9"
+                    [(ngModel)]="cep"
+                    (input)="formatCep($event)"
+                    placeholder="Inserir CEP"
+                    class="cep-input"
+                  />
+                </div>
+                <p-button
+                  (onClick)="calcularFrete()"
+                  label="OK"
+                  icon="pi pi-check"
+                  [disabled]="!cep || cep.length < 9"
+                  styleClass="calc-button"
+                >
+                </p-button>
+              </div>
+              <div class="cep-help">
+                <a
+                  href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                  target="_blank"
+                  class="cep-link"
+                >
+                  Não lembro meu CEP
+                </a>
+              </div>
+            </div>
+          </div>
+
           <!-- Shipping Results - Below action buttons -->
           <div *ngIf="freteCalculado" class="shipping-results">
             <!-- Error Message -->
@@ -341,49 +385,6 @@
             </div>
           </div>
         </p-card>
-      </div>
-    </div>
-
-    <!-- Product Description Section -->
-    <div class="description-section">
-      <div class="description-header">
-        <h2>Descrição do produto</h2>
-      </div>
-
-      <div class="description-content">
-        <!-- Loading state -->
-        <div *ngIf="isLoading()" class="description-loading">
-          <p-skeleton width="100%" height="4rem" class="mb-2"></p-skeleton>
-          <p-skeleton width="80%" height="2rem" class="mb-2"></p-skeleton>
-          <p-skeleton width="60%" height="2rem"></p-skeleton>
-        </div>
-
-        <!-- Content -->
-        <div
-          *ngIf="!isLoading()"
-          class="description-text"
-          [class.expanded]="isDescriptionExpanded"
-          [class.has-overflow]="showExpandButton && !isDescriptionExpanded"
-        >
-          {{ displayDescription }}
-        </div>
-
-        <div
-          *ngIf="showExpandButton && !isLoading()"
-          class="description-actions"
-        >
-          <p-button
-            (onClick)="toggleDescription()"
-            [label]="isDescriptionExpanded ? 'Mostrar menos' : 'Mostrar mais'"
-            [icon]="
-              isDescriptionExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'
-            "
-            severity="secondary"
-            [text]="true"
-            styleClass="show-more-btn"
-          >
-          </p-button>
-        </div>
       </div>
     </div>
 
@@ -498,7 +499,6 @@
               class="highlight-item"
               *ngFor="let highlight of summaryHighlights"
             >
-              <span class="highlight-text">{{ highlight }}</span>
             </div>
           </div>
         </div>
