@@ -180,7 +180,6 @@
           </div>
         </div>
 
-                <!-- Botões de Ação -->
         <div class="form-actions">
           <button 
             type="button" 
@@ -193,7 +192,8 @@
           <button 
             type="submit" 
             class="p-button p-button-primary"
-            [disabled]="editProfileForm.invalid"
+            [disabled]="false"
+            (click)="debugForm()"
           >
             <i class="pi pi-check"></i>
             Salvar Alterações

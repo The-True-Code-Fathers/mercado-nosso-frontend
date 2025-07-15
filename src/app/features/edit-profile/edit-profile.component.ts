@@ -54,7 +54,6 @@ export class EditProfileComponent implements OnInit {
       nome: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       telefone: [''],
-      senha: ['', [Validators.required, Validators.minLength(8)]],
       cep: [''],
       endereco: [''],
       cidade: [''],
@@ -268,4 +267,26 @@ export class EditProfileComponent implements OnInit {
         }
       });
   }
+
+  debugForm() {
+  console.log('=== DEBUG FORMULÁRIO ===');
+  console.log('Form válido?', this.editProfileForm.valid);
+  console.log('Form value:', this.editProfileForm.value);
+  console.log('Form errors:', this.editProfileForm.errors);
+  
+  // Verificar cada campo
+  Object.keys(this.editProfileForm.controls).forEach(key => {
+    const control = this.editProfileForm.get(key);
+    console.log(`${key}:`, {
+      value: control?.value,
+      valid: control?.valid,
+      errors: control?.errors
+    });
+  });
+  
+  console.log('========================');
+  
+  // Chamar o método original
+  this.salvarAlteracoes();
+}
 }
