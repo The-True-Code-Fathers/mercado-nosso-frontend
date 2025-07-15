@@ -3,8 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
-import { ListingService, Listing } from '../../services/listing.service'
+import { ListingService, Listing, Review } from '../../services/listing.service'
 import { CartService } from '../../../cart/services/cart.service'
+
+// Estender Review para incluir propriedades do frontend
+export interface ReviewWithFrontendData extends Review {
+  helpful?: number
+}
 
 // PrimeNG imports
 import { ButtonModule } from 'primeng/button'
@@ -98,7 +103,10 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   freteCalculado: boolean = false
   freteError: string | null = null
   shippingOptions: ShippingOption[] = []
-  productRating: number = 4.8
+  // Usar getter para o rating do produto baseado nos reviews
+  get productRating(): number {
+    return this.averageRating
+  }
 
   // Cart functionality
   addingToCart: boolean = false
@@ -129,11 +137,39 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   relatedProducts: any[] = []
 
   // Reviews and Ratings
-  averageRating: number = 4.8
+  // Usar getter para o rating médio baseado nos reviews reais
+  get averageRating(): number {
+    if (this.reviews.length === 0) {
+      console.log('No reviews, returning 0')
+      return 0
+    }
+
+    const totalRating = this.reviews.reduce(
+      (sum, review) => sum + review.rating,
+      0,
+    )
+    const average = Math.round((totalRating / this.reviews.length) * 2) / 2 // Arredonda para 0.5
+    console.log(
+      'Average rating calculated:',
+      average,
+      'from',
+      this.reviews.length,
+      'reviews',
+    )
+    return average
+  }
+
+  // Getter para calcular parcelas dinamicamente baseado no preço
+  get displayInstallments(): string {
+    const price = this.listing()?.price || this.defaultProduct.price
+    const installmentValue = price / 12
+    return `12x de R$ ${installmentValue.toFixed(2)} sem juros`
+  }
+
   ratingBars: any[] = []
   summaryText: string = ''
   summaryHighlights: string[] = []
-  reviews: any[] = []
+  reviews: ReviewWithFrontendData[] = []
 
   // Description expansion properties
   isDescriptionExpanded: boolean = false
@@ -149,7 +185,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     id: 1,
     images: ['/images/banner.png', '/images/banner-lg.jpg'],
     rating: 4.8,
-    reviews: 120,
+    price: 999.99, // Preço padrão para cálculo de parcelas
     comments: [
       { user: 'João', comment: 'Produto excelente!' },
       { user: 'Maria', comment: 'Chegou rápido e bem embalado.' },
@@ -157,7 +193,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     sold: 320,
     shipping: 'Frete grátis para todo o Brasil',
     deliveryEstimate: 'Receba em até 5 dias úteis',
-    installments: '12x de R$ 83,33 sem juros',
     description: `
       <h3>Processador Intel Core i7-12700K</h3>
       <p>O processador Intel Core i7-12700K da 12ª geração oferece desempenho excepcional para jogos, criação de conteúdo e multitarefa intensiva. Com arquitetura híbrida inovadora, combina núcleos de performance e eficiência para otimizar cada tarefa.</p>
@@ -198,7 +233,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     `,
     seller: {
       name: 'Loja Oficial Intel',
-      reputation: 'Ótima',
+      reputation: '',
       sales: 1500,
     },
   }
@@ -240,8 +275,11 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
     this.listingService.getListingById(id).subscribe({
       next: listing => {
+        console.log('Listing recebido do backend:', listing)
+        console.log('Sales count no listing:', listing.salesCount)
         this.listing.set(listing)
         this.updateBreadcrumb(listing.title)
+        this.initializeReviews() // Inicializar reviews com dados reais
         this.isLoading.set(false)
       },
       error: err => {
@@ -672,7 +710,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         image: '/images/banner.png',
         rating: 4.6,
         reviews: 87,
-        installments: '12x de R$ 75,00 sem juros',
       },
       {
         id: 3,
@@ -682,7 +719,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         image: '/images/banner-lg.jpg',
         rating: 4.9,
         reviews: 203,
-        installments: '12x de R$ 108,33 sem juros',
       },
       {
         id: 4,
@@ -692,73 +728,149 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         image: '/images/banner.png',
         rating: 4.7,
         reviews: 156,
-        installments: '10x de R$ 55,00 sem juros',
       },
     ]
   }
 
   private initializeReviews(): void {
+    // Usar dados reais do backend quando disponíveis
+    const listing = this.listing()
+    if (listing && listing.listingId) {
+      // Carregar reviews reais da API
+      this.listingService.getReviewsByListingId(listing.listingId).subscribe({
+        next: (reviews: Review[]) => {
+          // Adicionar propriedades do frontend aos reviews
+          this.reviews = reviews.map(review => ({
+            ...review,
+            helpful: 0, // Inicializar com 0, pode ser carregado de outra API se necessário
+          }))
+          const totalReviews = reviews.length
+
+          if (totalReviews > 0) {
+            // Calcular rating médio baseado nos reviews reais
+            const totalRating = reviews.reduce(
+              (sum, review) => sum + review.rating,
+              0,
+            )
+            const averageRating =
+              Math.round((totalRating / totalReviews) * 10) / 10
+
+            // Atualizar o listing no backend com a nova média de rating
+            this.updateListingRating(listing, averageRating)
+
+            // Calcular distribuição de ratings baseada nos dados reais
+            this.calculateRatingDistribution(reviews, totalReviews)
+
+            this.summaryText = `Avaliações baseadas nas experiências reais dos ${totalReviews} clientes que compraram este produto.`
+            this.summaryHighlights = [
+              'Produto Avaliado',
+              `${totalReviews} Avaliações`,
+              `Rating ${averageRating.toFixed(1)}/5`,
+            ]
+          } else {
+            this.setEmptyReviewsState()
+          }
+        },
+        error: error => {
+          console.error('Erro ao carregar reviews:', error)
+          this.setEmptyReviewsState()
+        },
+      })
+    } else {
+      this.setEmptyReviewsState()
+    }
+  }
+
+  // Método público para recarregar reviews (útil quando novos comentários são adicionados)
+  reloadReviews(): void {
+    this.initializeReviews()
+  }
+
+  private updateListingRating(listing: Listing, newRating: number): void {
+    // Atualizar o rating do listing apenas se for diferente do atual
+    if (listing.rating !== newRating) {
+      const updatedListing = { ...listing, rating: newRating }
+
+      this.listingService.updateListing(updatedListing).subscribe({
+        next: updatedListingResponse => {
+          console.log(
+            'Rating do listing atualizado no backend:',
+            updatedListingResponse,
+          )
+          // Atualizar o listing local com os dados atualizados
+          this.listing.set(updatedListingResponse)
+        },
+        error: error => {
+          console.error('Erro ao atualizar rating do listing:', error)
+        },
+      })
+    }
+  }
+
+  private setEmptyReviewsState(): void {
+    // Se não há reviews, exibir estado vazio
     this.ratingBars = [
-      { stars: 5, count: 89, percentage: 74 },
-      { stars: 4, count: 21, percentage: 17 },
-      { stars: 3, count: 6, percentage: 5 },
-      { stars: 2, count: 3, percentage: 3 },
-      { stars: 1, count: 1, percentage: 1 },
+      { stars: 5, count: 0, percentage: 0 },
+      { stars: 4, count: 0, percentage: 0 },
+      { stars: 3, count: 0, percentage: 0 },
+      { stars: 2, count: 0, percentage: 0 },
+      { stars: 1, count: 0, percentage: 0 },
     ]
 
     this.summaryText =
-      'Clientes relatam alta satisfação com o desempenho da placa de vídeo, destacando seu ótimo custo-benefício e capacidade de rodar jogos modernos com boa performance em resolução Full HD. Muitos clientes ressaltam a temperatura baixa de operação, mesmo em longas sessões de jogos. Apesar da maioria das avaliações positivas, alguns clientes mencionaram a ocorrência de ruídos Coil Whine em alguns casos e a necessidade de atenção aos requisitos mínimos do sistema para evitar gargalos.'
-
+      'Este produto ainda não possui avaliações. Seja o primeiro a avaliar!'
     this.summaryHighlights = [
-      'Custo-Benefício Excelente',
-      'Desempenho em Full HD',
-      'Temperatura Baixa',
+      'Produto Novo',
+      'Sem Avaliações',
+      'Avalie Primeiro!',
     ]
+    this.reviews = []
+  }
 
-    this.reviews = [
+  private calculateRatingDistribution(
+    reviews: Review[],
+    totalReviews: number,
+  ): void {
+    // Contar ratings por estrela
+    const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+
+    reviews.forEach(review => {
+      if (review.rating && review.rating >= 1 && review.rating <= 5) {
+        ratingCounts[review.rating as keyof typeof ratingCounts]++
+      }
+    })
+
+    // Calcular percentuais e criar array de rating bars
+    this.ratingBars = [
       {
-        id: 1,
-        userName: 'João Silva',
-        rating: 5,
-        title: 'Excelente processador!',
-        content:
-          'Produto chegou super rápido e bem embalado. Performance excepcional para games e trabalho. Recomendo demais!',
-        date: new Date('2024-12-15'),
-        helpful: 12,
-        images: ['/images/banner.png', '/images/banner-lg.jpg'],
+        stars: 5,
+        count: ratingCounts[5],
+        percentage:
+          totalReviews > 0 ? (ratingCounts[5] / totalReviews) * 100 : 0,
       },
       {
-        id: 2,
-        userName: 'Maria Santos',
-        rating: 4,
-        title: 'Muito bom, recomendo',
-        content:
-          'Ótimo custo-benefício. Fácil instalação e funcionando perfeitamente. Única observação é que esquenta um pouco.',
-        date: new Date('2024-12-10'),
-        helpful: 8,
-        images: ['/images/banner.png'],
+        stars: 4,
+        count: ratingCounts[4],
+        percentage:
+          totalReviews > 0 ? (ratingCounts[4] / totalReviews) * 100 : 0,
       },
       {
-        id: 3,
-        userName: 'Pedro Costa',
-        rating: 5,
-        title: 'Superou expectativas',
-        content:
-          'Processador top! Rodando todos os jogos no ultra sem problemas. Performance incrível.',
-        date: new Date('2024-12-05'),
-        helpful: 15,
-        images: [],
+        stars: 3,
+        count: ratingCounts[3],
+        percentage:
+          totalReviews > 0 ? (ratingCounts[3] / totalReviews) * 100 : 0,
       },
       {
-        id: 4,
-        userName: 'Ana Oliveira',
-        rating: 4,
-        title: 'Boa qualidade',
-        content:
-          'Produto de qualidade, entrega rápida. Uso para edição de vídeo e está atendendo bem.',
-        date: new Date('2024-11-28'),
-        helpful: 6,
-        images: [],
+        stars: 2,
+        count: ratingCounts[2],
+        percentage:
+          totalReviews > 0 ? (ratingCounts[2] / totalReviews) * 100 : 0,
+      },
+      {
+        stars: 1,
+        count: ratingCounts[1],
+        percentage:
+          totalReviews > 0 ? (ratingCounts[1] / totalReviews) * 100 : 0,
       },
     ]
   }
@@ -787,7 +899,11 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   }
 
   get displayImages() {
-    return this.defaultProduct.images
+    // Usar imagens do backend se disponíveis, senão usar as padrão
+    return this.currentListing?.imagesUrl &&
+      this.currentListing.imagesUrl.length > 0
+      ? this.currentListing.imagesUrl
+      : this.defaultProduct.images
   }
 
   get displayTitle() {
@@ -799,6 +915,57 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   get displayPrice() {
     return this.currentListing?.price || 1000
+  }
+
+  get displayRating() {
+    return this.currentListing?.rating || 0
+  }
+
+  get displayReviewsCount() {
+    return this.currentListing?.reviewsId?.length || 0
+  }
+
+  get displaySalesCount() {
+    const currentListing = this.currentListing
+    console.log('=== DEBUG SALES COUNT ===')
+    console.log('currentListing:', currentListing)
+    console.log('currentListing?.salesCount:', currentListing?.salesCount)
+    console.log('typeof salesCount:', typeof currentListing?.salesCount)
+    console.log(
+      'salesCount === undefined:',
+      currentListing?.salesCount === undefined,
+    )
+    console.log('salesCount === null:', currentListing?.salesCount === null)
+    console.log('=========================')
+
+    // Se há dados do backend e salesCount está definido (mesmo que seja 0)
+    if (
+      currentListing &&
+      currentListing.salesCount !== undefined &&
+      currentListing.salesCount !== null
+    ) {
+      return currentListing.salesCount
+    }
+
+    // Se não há dados do backend ainda (carregando), usar mock temporariamente
+    if (!currentListing) {
+      return this.defaultProduct.sold
+    }
+
+    // Se backend retornou mas sem salesCount, mostrar 0
+    return 0
+  }
+
+  get displaySku() {
+    return this.currentListing?.sku || 'SKU-INDISPONÍVEL'
+  }
+
+  get displayCategory() {
+    return this.currentListing?.category || 'OUTROS'
+  }
+
+  get displayProductRecommendations() {
+    return this.currentListing?.productRecommendation || []
   }
 
   get displayDescription() {
@@ -840,8 +1007,20 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     return Array(5).fill(0)
   }
 
+  getStarsArray() {
+    return Array(5).fill(0)
+  }
+
+  mathFloor(value: number): number {
+    return Math.floor(value)
+  }
+
+  mathCeil(value: number): number {
+    return Math.ceil(value)
+  }
+
   get filledStars() {
-    return Math.round(this.defaultProduct.rating)
+    return Math.round(this.displayRating)
   }
 
   // Zoom and Gallery Methods
@@ -947,7 +1126,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   selectedModalImage: string = ''
 
   getTotalReviews(): number {
-    return this.ratingBars.reduce((total, bar) => total + bar.count, 0)
+    return this.reviews.length
   }
 
   writeReview(): void {
@@ -955,15 +1134,16 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     console.log('Abrir formulário de avaliação')
   }
 
-  markHelpful(reviewId: number): void {
+  markHelpful(reviewId: string): void {
     const review = this.reviews.find(r => r.id === reviewId)
     if (review) {
-      review.helpful += 1
+      review.helpful = (review.helpful || 0) + 1
       console.log('Avaliação marcada como útil:', reviewId)
+      // Aqui você pode fazer uma chamada para o backend para persistir a marcação
     }
   }
 
-  reportReview(reviewId: number): void {
+  reportReview(reviewId: string): void {
     console.log('Denunciar avaliação:', reviewId)
     // Implementar modal de denúncia
   }

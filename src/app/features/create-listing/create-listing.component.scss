@@ -112,6 +112,10 @@
       color: var(--color-primary);
       font-size: 1.3rem;
     }
+
+    .pi-star {
+      color: #ffc107;
+    }
   }
 
   ::ng-deep .p-divider {
@@ -284,7 +288,7 @@
 .form-actions {
   display: flex;
   gap: var(--spacing-lg);
-  justify-content: space-between;
+  justify-content: center; // Centralizar o botão único
   margin-top: var(--spacing-xl);
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--color-border);
@@ -311,6 +315,41 @@
       @media (max-width: 768px) {
         width: 100%;
       }
+    }
+  }
+}
+
+// Controle de quantidade - mesmo padrão do carrinho
+.quantity-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  align-items: flex-start; // Alinhado à esquerda
+  margin-top: var(--spacing-xs);
+
+  ::ng-deep .p-inputnumber {
+    .p-inputnumber-input {
+      width: 120px; // Aumentando largura
+      text-align: center;
+      border-radius: 0 !important; // Borda quadrada
+      border: 1px solid var(--color-border) !important; // Mesma cor e espessura do padrão
+    }
+
+    .p-inputnumber-button {
+      width: 2.5rem; // Aumentando largura dos botões
+      border-radius: 0 !important; // Borda quadrada
+      border: 1px solid var(--color-border) !important; // Mesma cor e espessura do padrão
+
+      .pi {
+        font-size: 0.8rem;
+      }
+    }
+
+    // Garantir que todos os elementos tenham bordas quadradas
+    .p-inputnumber-button-up,
+    .p-inputnumber-button-down {
+      border-radius: 0 !important;
+      border: 1px solid var(--color-border) !important; // Mesma cor e espessura do padrão
     }
   }
 }
@@ -349,6 +388,72 @@
       animation: spin 1s linear infinite;
     }
   }
+}
+
+// Asterisco vermelho para campos obrigatórios
+.required {
+  color: var(--color-error, #f44336);
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Product Selection Styles */
+.product-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+}
+
+.product-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.product-details {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.product-category {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  margin-top: var(--spacing-xs);
+}
+
+.field-help {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  margin-top: var(--spacing-xs);
+  font-style: italic;
+}
+
+/* Improved dropdown styling */
+::ng-deep .p-dropdown {
+  width: 100%;
+
+  .p-dropdown-label {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  &.p-dropdown-loading .p-dropdown-trigger {
+    .pi-chevron-down::before {
+      content: '\e924'; // spinner icon
+      animation: spin 2s linear infinite;
+    }
+  }
+}
+
+.help-text {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+#rating {
+  max-width: 200px;
 }
 
 @keyframes spin {

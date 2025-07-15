@@ -413,13 +413,109 @@
 
     .p-rating-icon {
       font-size: 1.8rem !important;
-      color: #ffb300 !important;
+      color: #ddd !important; /* Cor das estrelas não preenchidas */
+      transition: all 0.2s ease;
+      position: relative;
+
+      &.p-rating-icon-active {
+        color: #ffb300 !important; /* Cor das estrelas preenchidas */
+      }
+    }
+
+    /* Para suporte a half stars, vamos usar um pseudo-elemento */
+    .p-rating-icon[data-pc-section='onicon'] {
+      &::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        overflow: hidden;
+        color: #ffb300;
+      }
+    }
+  }
+}
+
+/* Custom Rating Stars */
+.custom-rating {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center; /* Centralizar as estrelas */
+
+  .rating-star {
+    font-size: 1.8rem;
+    transition: all 0.2s ease;
+    position: relative;
+    color: #ddd; /* Cor padrão (vazia) */
+
+    &.star-full {
+      color: #ffb300; /* Estrela cheia */
+    }
+
+    &.star-half {
+      color: #ddd; /* Base cinza */
+
+      &::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        overflow: hidden;
+        color: #ffb300; /* Metade dourada */
+      }
+    }
+
+    &.star-empty {
+      color: #ddd; /* Estrela vazia */
+    }
+  }
+
+  /* Tamanho menor para seção de reviews */
+  &.rating-large .rating-star {
+    font-size: 1.5rem;
+  }
+}
+
+/* Rating para seção de reviews */
+::ng-deep .rating-large {
+  .p-rating {
+    gap: 4px;
+
+    .p-rating-icon {
+      font-size: 1.5rem !important;
+      color: #ddd !important; /* Cor das estrelas não preenchidas */
       transition: all 0.2s ease;
 
       &.p-rating-icon-active {
-        color: #ffb300 !important;
+        color: #ffb300 !important; /* Cor das estrelas preenchidas */
       }
     }
+  }
+}
+
+/* Estilo para half stars customizado */
+::ng-deep .rating-half-star {
+  position: relative;
+  display: inline-block;
+
+  &::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
+    color: #ffb300;
+    z-index: 1;
+  }
+
+  &::after {
+    content: '★';
+    color: #ddd;
+    z-index: 0;
   }
 }
 
@@ -443,6 +539,8 @@
 .sales-info {
   display: flex;
   align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 ::ng-deep .sales-badge {
@@ -633,6 +731,82 @@
 
       &:hover img {
         transform: scale(1.05);
+      }
+    }
+  }
+}
+
+/* Shipping Calculator inside card */
+.shipping-calculator {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+
+  h4 {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--color-text-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .shipping-form {
+    .shipping-input-row {
+      display: flex;
+      gap: var(--spacing-md);
+      align-items: stretch;
+      margin-bottom: var(--spacing-md);
+
+      .p-inputgroup {
+        flex: 1;
+        max-width: 200px;
+
+        .p-inputgroup-addon {
+          background: var(--color-primary);
+          color: white;
+          border-color: var(--color-primary);
+        }
+
+        .cep-input {
+          border-left: none;
+          font-size: 1rem;
+          padding: var(--spacing-md);
+        }
+      }
+
+      .calc-button {
+        ::ng-deep .p-button {
+          background: var(--color-primary);
+          border-color: var(--color-primary);
+          color: white;
+          font-weight: 500;
+          padding: var(--spacing-md) var(--spacing-lg);
+          min-width: 80px;
+
+          &:hover:not(:disabled) {
+            background: var(--color-primary-light);
+            border-color: var(--color-primary-light);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+          }
+        }
+      }
+    }
+
+    .cep-help {
+      .cep-link {
+        color: var(--color-primary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: var(--color-primary-light);
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -1667,7 +1841,7 @@
 /* Reviews List - Enhanced */
 .reviews-list {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 3rem auto 0;
 
   .review-item {
     background: var(--color-surface);
@@ -1809,8 +1983,17 @@
 /* Additional Media Queries for New Sections */
 @media (max-width: 1024px) {
   .reviews-overview-container {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-xl);
+  }
+
+  .summary-card {
+    order: 1; /* Summary card primeiro no tablet/mobile */
+  }
+
+  .rating-overview {
+    order: 2; /* Rating overview segundo no tablet/mobile */
   }
 }
 
@@ -1828,7 +2011,18 @@
   }
 
   .reviews-overview-container {
+    display: flex !important; /* Forçar flexbox sobrescrevendo grid */
+    flex-direction: column;
     gap: var(--spacing-lg);
+    grid-template-columns: none; /* Remover grid */
+  }
+
+  .rating-overview {
+    order: 2; /* Rating overview vai para baixo no mobile */
+  }
+
+  .summary-card {
+    order: 1; /* Summary card vai para cima no mobile */
   }
 
   .rating-overview,

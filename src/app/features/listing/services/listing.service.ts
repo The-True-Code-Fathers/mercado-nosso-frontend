@@ -6,13 +6,32 @@ import { throwError } from 'rxjs'
 
 export interface Listing {
   listingId: string
+  sellerId: string
+  sku: string
+  productRecommendation: string[]
   title: string
   description: string
   price: number
+  rating: number
+  reviewsId: string[]
+  imagesUrl: string[]
+  category: string
   stock: number
-  active: boolean
-  productCondition: string
+  productCondition: 'NEW' | 'USED'
+  salesCount?: number
+  active?: boolean
+  createdAt?: string
+}
+
+export interface Review {
+  id: string
+  listingId: string
+  buyerId: string
+  rating: number
+  message: string
+  imagesUrls: string[]
   createdAt: string
+  sellerId: string
 }
 
 export interface PagedListingResponse {
@@ -47,6 +66,7 @@ export interface SearchParams {
 })
 export class ListingService {
   private apiUrl = 'http://localhost:8080/api/listings'
+  private reviewsApiUrl = 'http://localhost:8080/api/reviews'
 
   constructor(private http: HttpClient) {}
 
@@ -91,5 +111,16 @@ export class ListingService {
 
   deleteListing(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`)
+  }
+
+  getReviewsByListingId(listingId: string): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.reviewsApiUrl}/listing/${listingId}`)
+  }
+
+  updateListing(listing: Listing): Observable<Listing> {
+    return this.http.put<Listing>(
+      `${this.apiUrl}/${listing.listingId}`,
+      listing,
+    )
   }
 }

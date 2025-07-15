@@ -10,9 +10,9 @@
       </div>
       <div class="top-right">
         @if (username) {
-          <span class="user-greeting">Bem vindo de volta, {{ username }}!</span>
+        <span class="user-greeting">Bem vindo de volta, {{ username }}!</span>
         } @else {
-          <span class="user-greeting">Bem vido ao mercado nosso!</span>
+        <span class="user-greeting">Bem vido ao mercado nosso!</span>
         }
       </div>
     </div>
@@ -21,12 +21,16 @@
   <!-- Main Header -->
   <div class="header-main">
     <!-- Mobile Search Header (replaces entire header when active) -->
-    <div class="mobile-search-header" [class.mobile-search-active]="mobileSearchVisible">
+    <div
+      class="mobile-search-header"
+      [class.mobile-search-active]="mobileSearchVisible"
+    >
       <div class="mobile-search-container">
         <p-button
           icon="pi pi-arrow-left"
           styleClass="p-button-text p-button-rounded mobile-back-button"
-          (click)="closeMobileSearch()">
+          (click)="closeMobileSearch()"
+        >
         </p-button>
 
         <div class="mobile-search-input-wrapper">
@@ -44,7 +48,8 @@
         <p-button
           icon="pi pi-search"
           styleClass="p-button-text p-button-rounded mobile-search-submit"
-          (click)="onSearch()">
+          (click)="onSearch()"
+        >
         </p-button>
       </div>
     </div>
@@ -62,14 +67,16 @@
         <p-button
           icon="pi pi-search"
           styleClass="p-button-text p-button-rounded mobile-search-toggle"
-          (click)="toggleMobileSearch()">
+          (click)="toggleMobileSearch()"
+        >
         </p-button>
 
         <p-button
           icon="pi pi-bars"
           styleClass="p-button-text p-button-rounded mobile-menu-toggle"
           (click)="toggleMobileMenu()"
-          [attr.aria-expanded]="mobileMenuVisible">
+          [attr.aria-expanded]="mobileMenuVisible"
+        >
         </p-button>
       </div>
 
@@ -92,7 +99,8 @@
               icon="pi pi-search"
               styleClass="p-button-success search-button"
               (click)="onSearch()"
-              pTooltip="Buscar">
+              pTooltip="Buscar"
+            >
             </p-button>
           </div>
         </div>
@@ -106,8 +114,10 @@
             label="Venda conosco"
             icon="pi pi-shop"
             styleClass="p-button-outlined categories-button"
+            routerLink="/create-listing"
             [attr.aria-expanded]="categoriesMenuVisible"
-            [attr.aria-haspopup]="true" />
+            [attr.aria-haspopup]="true"
+          />
         </div>
 
         <div class="action-separator"></div>
@@ -117,39 +127,38 @@
             icon="pi pi-shopping-cart"
             styleClass="p-button-text p-button-rounded cart-action"
             pTooltip="Meu Carrinho"
-            routerLink="/cart">
+            routerLink="/cart"
+          >
           </p-button>
-          <p-badge
-            *ngIf="cartItemsCount > 0"
-            [value]="cartItemsCount.toString()"
-            severity="danger"
-            class="cart-badge">
-          </p-badge>
         </div>
 
         <p-button
           icon="pi pi-user"
           styleClass="p-button-text p-button-rounded user-action"
           pTooltip="Minha Conta"
-          routerLink="/user">
+          routerLink="/user"
+        >
         </p-button>
 
         <p-button
           [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
           styleClass="p-button-text p-button-rounded theme-action"
           [pTooltip]="isDarkMode ? 'Modo Claro' : 'Modo Escuro'"
-          (click)="toggleTheme()">
+          (click)="toggleTheme()"
+        >
         </p-button>
       </div>
     </div>
-      <div class="quick-categories">
-        <div class="all-categories-container">
-          <span class="category-link all-categories-trigger"
-                (mouseenter)="onCategoriesHover($event)"
-                (mouseleave)="onCategoriesLeave()">
-            <i class="pi pi-bars"></i>
-            {{ getCategoriesButtonLabel() }}
-          </span>
+    <div class="quick-categories">
+      <div class="all-categories-container">
+        <span
+          class="category-link all-categories-trigger"
+          (mouseenter)="onCategoriesHover($event)"
+          (mouseleave)="onCategoriesLeave()"
+        >
+          <i class="pi pi-bars"></i>
+          {{ getCategoriesButtonLabel() }}
+        </span>
 
           <p-overlayPanel
             #categoriesPanel
@@ -192,17 +201,29 @@
   <div class="mobile-menu" [class.mobile-menu-active]="mobileMenuVisible">
     <!-- Main Navigation Actions -->
     <div class="mobile-nav-section">
-      <div class="mobile-nav-item" routerLink="/user" (click)="closeMobileMenu()">
+      <div
+        class="mobile-nav-item"
+        routerLink="/user"
+        (click)="closeMobileMenu()"
+      >
         <i class="pi pi-user"></i>
         <span>Minha conta</span>
       </div>
 
-      <div class="mobile-nav-item" routerLink="/cart" (click)="closeMobileMenu()">
+      <div
+        class="mobile-nav-item"
+        routerLink="/cart"
+        (click)="closeMobileMenu()"
+      >
         <i class="pi pi-shopping-cart"></i>
         <span>Meu carrinho</span>
       </div>
 
-      <div class="mobile-nav-item">
+      <div
+        class="mobile-nav-item"
+        routerLink="/create-listing"
+        (click)="closeMobileMenu()"
+      >
         <i class="pi pi-shop"></i>
         <span>Venda conosco</span>
       </div>
@@ -222,12 +243,22 @@
 
     <!-- All Categories Section -->
     <div class="mobile-all-categories-section">
-      <div class="mobile-all-categories-header" (click)="toggleMobileCategoriesMenu()">
+      <div
+        class="mobile-all-categories-header"
+        (click)="toggleMobileCategoriesMenu()"
+      >
         <span>Todas as categorias</span>
-        <i class="pi" [class.pi-angle-down]="!mobileCategoriesVisible" [class.pi-angle-up]="mobileCategoriesVisible"></i>
+        <i
+          class="pi"
+          [class.pi-angle-down]="!mobileCategoriesVisible"
+          [class.pi-angle-up]="mobileCategoriesVisible"
+        ></i>
       </div>
 
-      <div class="mobile-categories-dropdown" [class.mobile-categories-active]="mobileCategoriesVisible">
+      <div
+        class="mobile-categories-dropdown"
+        [class.mobile-categories-active]="mobileCategoriesVisible"
+      >
         <div class="mobile-non-quick-categories">
           <div class="mobile-category-item"
                *ngFor="let category of getNonQuickCategories()"

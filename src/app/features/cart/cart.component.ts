@@ -133,12 +133,21 @@ export class CartComponent implements OnInit {
           // Retorna um listing mocado em caso de erro
           return of({
             listingId: item.listingId,
+            sellerId: 'unknown',
+            sku: `SKU-${item.listingId}`,
+            productRecommendation: [],
             title: `Produto ${item.listingId}`,
             description: 'Produto não encontrado',
             price: item.price || 0,
+            rating: 0,
+            reviewsId: [],
+            imagesUrl: [
+              'https://via.placeholder.com/80x80?text=Não+Encontrado',
+            ], // Placeholder para produto não encontrado
+            category: 'OTHERS',
             stock: 0,
+            productCondition: 'NEW' as const,
             active: true,
-            productCondition: 'Novo',
             createdAt: new Date().toISOString(),
           } as Listing)
         }),
@@ -150,8 +159,19 @@ export class CartComponent implements OnInit {
         const cartItems: CartItem[] = cartResponse.items.map(
           (cartItem, index) => {
             const listing = listings[index]
+            console.log('Processando listing:', listing)
+            console.log('ImagesUrl do listing:', listing.imagesUrl)
+            
             const unitPrice =
               listing.price || cartItem.price / cartItem.quantity || 0
+
+            // Usar a primeira imagem do array imagesUrl ou placeholder se não houver
+            const productImage =
+              listing.imagesUrl && listing.imagesUrl.length > 0
+                ? listing.imagesUrl[0]
+                : 'https://via.placeholder.com/80x80?text=📦'
+
+            console.log('Imagem selecionada para o produto:', productImage)
 
             return {
               listingId: cartItem.listingId,
@@ -159,8 +179,8 @@ export class CartComponent implements OnInit {
               unitPrice: unitPrice, // Preço unitário fixo
               price: cartItem.price || listing.price || 0, // Preço total do backend
               quantity: cartItem.quantity || 1,
-              image: 'https://via.placeholder.com/80x80?text=📦', // Placeholder até implementar imagens
-              category: 'Produto', // Categoria padrão até implementar categorias
+              image: productImage, // Primeira imagem do array ou placeholder
+              category: listing.category || 'Produto', // Categoria do listing
               selected: true,
               shippingPrice: cartItem.shippingPrice || 0,
             }
@@ -615,5 +635,12 @@ export class CartComponent implements OnInit {
       summary: 'Cancelado',
       detail: 'Quantidade restaurada para 1',
     })
+  }
+
+  // Método para lidar com erro de carregamento de imagem
+  onImageError(event: any, item: CartItem): void {
+    console.error('Erro ao carregar imagem:', event.target.src, 'para o item:', item.name)
+    // Definir uma imagem de fallback
+    event.target.src = 'https://via.placeholder.com/80x80?text=📦'
   }
 }
