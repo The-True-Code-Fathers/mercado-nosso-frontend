@@ -84,7 +84,7 @@ export class CreateAccountComponent implements OnInit {
         email: formData.email,
         passwordHash: formData.senha,
         cpf: this.cleanCpf(formData.cpf),
-        cnpj: this.generateTempCnpj(),
+        cnpj: '',
         isSeller: false 
       };
 
