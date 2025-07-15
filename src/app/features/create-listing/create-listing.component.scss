@@ -112,6 +112,10 @@
       color: var(--color-primary);
       font-size: 1.3rem;
     }
+
+    .pi-star {
+      color: #ffc107;
+    }
   }
 
   ::ng-deep .p-divider {
@@ -439,6 +443,17 @@
       animation: spin 2s linear infinite;
     }
   }
+}
+
+.help-text {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+#rating {
+  max-width: 200px;
 }
 
 @keyframes spin {

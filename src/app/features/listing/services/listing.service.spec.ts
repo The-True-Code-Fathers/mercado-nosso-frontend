@@ -30,12 +30,19 @@ describe('ListingService', () => {
   it('should fetch listing by id', () => {
     const mockListing: Listing = {
       listingId: '1',
+      sellerId: 'seller-123',
+      sku: 'SKU-001',
+      productRecommendation: [],
       title: 'Test Product',
       description: 'Test Description',
       price: 100,
+      rating: 5,
+      reviewsId: [],
+      imagesUrl: [],
+      category: 'ELECTRONICS',
       stock: 10,
+      productCondition: 'NEW',
       active: true,
-      productCondition: 'new',
       createdAt: '2025-01-01',
     }
 
@@ -52,12 +59,19 @@ describe('ListingService', () => {
     const mockListings: Listing[] = [
       {
         listingId: '1',
+        sellerId: 'seller-123',
+        sku: 'SKU-001',
+        productRecommendation: [],
         title: 'Test Product 1',
         description: 'Test Description 1',
         price: 100,
+        rating: 5,
+        reviewsId: [],
+        imagesUrl: [],
+        category: 'ELECTRONICS',
         stock: 10,
+        productCondition: 'NEW',
         active: true,
-        productCondition: 'new',
         createdAt: '2025-01-01',
       },
     ]

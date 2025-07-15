@@ -76,82 +76,57 @@
         <div class="form-group-section">
           <h3 class="section-title">
             <i class="pi pi-tag"></i>
-            Informações do Produto
+            Informações do Anúncio
           </h3>
           <p-divider></p-divider>
 
-          <!-- Seleção de Produto -->
           <div class="form-group">
-            <label for="productId">
-              Selecionar Produto <span class="required">*</span>
-            </label>
-            <p-dropdown
-              id="productId"
-              formControlName="productId"
-              [options]="products()"
-              placeholder="Selecione um produto existente"
-              optionLabel="name"
-              optionValue="productId"
-              (onChange)="onProductSelect($event)"
-              [loading]="isLoadingProducts()"
-              [class.ng-invalid]="
-                createListingForm.get('productId')?.invalid &&
-                createListingForm.get('productId')?.touched
-              "
-            >
-              <ng-template pTemplate="selectedItem" let-selectedOption>
-                <div *ngIf="selectedOption">
-                  <span>{{ selectedOption.name }}</span>
-                  <small class="product-category">{{
-                    selectedOption.category
-                  }}</small>
-                </div>
-              </ng-template>
-              <ng-template pTemplate="item" let-product>
-                <div class="product-option">
-                  <span class="product-name">{{ product.name }}</span>
-                  <small class="product-details"
-                    >{{ product.category }} • {{ product.brand }}</small
-                  >
-                </div>
-              </ng-template>
-            </p-dropdown>
-            <small
-              class="error-message"
-              *ngIf="
-                createListingForm.get('productId')?.invalid &&
-                createListingForm.get('productId')?.touched
-              "
-            >
-              Seleção de produto é obrigatória
-            </small>
-            <small class="field-help">
-              Selecione o produto para o qual você está criando este anúncio
-            </small>
-          </div>
-
-          <div class="form-group">
-            <label for="productName"
-              >Nome do Anúncio <span class="required">*</span></label
+            <label for="sku"
+              >SKU do Produto <span class="required">*</span></label
             >
             <input
               pInputText
-              id="productName"
-              formControlName="productName"
-              placeholder="Digite o nome do anúncio"
+              id="sku"
+              formControlName="sku"
+              placeholder="Digite o SKU do produto (ex: PROD-001)"
               [class.ng-invalid]="
-                createListingForm.get('productName')?.invalid &&
-                createListingForm.get('productName')?.touched
+                createListingForm.get('sku')?.invalid &&
+                createListingForm.get('sku')?.touched
               "
             />
             <small
               class="error-message"
               *ngIf="
-                createListingForm.get('productName')?.invalid &&
-                createListingForm.get('productName')?.touched
+                createListingForm.get('sku')?.invalid &&
+                createListingForm.get('sku')?.touched
               "
             >
-              Nome do produto é obrigatório (mínimo 3 caracteres)
+              SKU é obrigatório (mínimo 3 caracteres)
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="title"
+              >Título do Anúncio <span class="required">*</span></label
+            >
+            <input
+              pInputText
+              id="title"
+              formControlName="title"
+              placeholder="Digite o título do anúncio"
+              [class.ng-invalid]="
+                createListingForm.get('title')?.invalid &&
+                createListingForm.get('title')?.touched
+              "
+            />
+            <small
+              class="error-message"
+              *ngIf="
+                createListingForm.get('title')?.invalid &&
+                createListingForm.get('title')?.touched
+              "
+            >
+              Título é obrigatório (mínimo 3 caracteres)
             </small>
           </div>
 
@@ -184,26 +159,26 @@
             </div>
 
             <div class="form-group">
-              <label for="condition"
-                >Condição Novo/Usado <span class="required">*</span></label
+              <label for="productCondition"
+                >Condição do Produto <span class="required">*</span></label
               >
               <p-dropdown
-                id="condition"
-                formControlName="condition"
+                id="productCondition"
+                formControlName="productCondition"
                 [options]="conditions"
                 placeholder="Selecione a condição"
                 optionLabel="label"
                 optionValue="value"
                 [class.ng-invalid]="
-                  createListingForm.get('condition')?.invalid &&
-                  createListingForm.get('condition')?.touched
+                  createListingForm.get('productCondition')?.invalid &&
+                  createListingForm.get('productCondition')?.touched
                 "
               ></p-dropdown>
               <small
                 class="error-message"
                 *ngIf="
-                  createListingForm.get('condition')?.invalid &&
-                  createListingForm.get('condition')?.touched
+                  createListingForm.get('productCondition')?.invalid &&
+                  createListingForm.get('productCondition')?.touched
                 "
               >
                 Condição é obrigatória
@@ -275,14 +250,14 @@
             </div>
 
             <div class="form-group">
-              <label for="quantity"
+              <label for="stock"
                 >Quantidade em Estoque (UN)
                 <span class="required">*</span></label
               >
               <div class="quantity-control">
                 <p-inputNumber
-                  id="quantity"
-                  formControlName="quantity"
+                  id="stock"
+                  formControlName="stock"
                   [showButtons]="true"
                   buttonLayout="horizontal"
                   spinnerMode="horizontal"
@@ -292,16 +267,16 @@
                   [max]="9999"
                   placeholder="1"
                   [class.ng-invalid]="
-                    createListingForm.get('quantity')?.invalid &&
-                    createListingForm.get('quantity')?.touched
+                    createListingForm.get('stock')?.invalid &&
+                    createListingForm.get('stock')?.touched
                   "
                 ></p-inputNumber>
               </div>
               <small
                 class="error-message"
                 *ngIf="
-                  createListingForm.get('quantity')?.invalid &&
-                  createListingForm.get('quantity')?.touched
+                  createListingForm.get('stock')?.invalid &&
+                  createListingForm.get('stock')?.touched
                 "
               >
                 Quantidade deve ser pelo menos 1

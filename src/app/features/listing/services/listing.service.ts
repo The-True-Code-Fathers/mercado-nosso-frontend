@@ -4,15 +4,20 @@ import { Observable } from 'rxjs'
 
 export interface Listing {
   listingId: string
+  sellerId: string
+  sku: string
+  productRecommendation: string[]
   title: string
   description: string
   price: number
+  rating: number
+  reviewsId: string[]
+  imagesUrl: string[]
+  category: string
   stock: number
-  active: boolean
-  productCondition: string
-  createdAt: string
-  sellerId?: string
-  productId?: string
+  productCondition: 'NEW' | 'USED' | 'REFURBISHED' | 'DAMAGED'
+  active?: boolean
+  createdAt?: string
 }
 
 @Injectable({

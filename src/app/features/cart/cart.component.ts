@@ -133,12 +133,19 @@ export class CartComponent implements OnInit {
           // Retorna um listing mocado em caso de erro
           return of({
             listingId: item.listingId,
+            sellerId: 'unknown',
+            sku: `SKU-${item.listingId}`,
+            productRecommendation: [],
             title: `Produto ${item.listingId}`,
             description: 'Produto não encontrado',
             price: item.price || 0,
+            rating: 0,
+            reviewsId: [],
+            imagesUrl: [],
+            category: 'OTHERS',
             stock: 0,
+            productCondition: 'NEW' as const,
             active: true,
-            productCondition: 'Novo',
             createdAt: new Date().toISOString(),
           } as Listing)
         }),

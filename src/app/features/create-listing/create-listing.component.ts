@@ -19,7 +19,6 @@ import { MessageModule } from 'primeng/message'
 import { ToastModule } from 'primeng/toast'
 import { MessageService } from 'primeng/api'
 import { ListingService } from '../listing/services/listing.service'
-import { ProductService, Product } from '../product/services/product.service'
 import { DEVELOPMENT_CONFIG } from '../../shared/config/development.config'
 
 interface Category {
@@ -30,6 +29,11 @@ interface Category {
 interface Condition {
   label: string
   value: string
+}
+
+interface ProductCondition {
+  label: string
+  value: 'NEW' | 'USED' | 'REFURBISHED' | 'DAMAGED'
 }
 
 @Component({
@@ -58,81 +62,48 @@ export class CreateListingComponent {
   private router = inject(Router)
   private messageService = inject(MessageService)
   private listingService = inject(ListingService)
-  private productService = inject(ProductService)
 
   createListingForm!: FormGroup
   isLoading = signal(false)
   uploadedFiles = signal<File[]>([])
-  products = signal<Product[]>([])
-  isLoadingProducts = signal(false)
 
   // Usar o sellerId da configuração de desenvolvimento
   private readonly sellerId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID
   categories: Category[] = [
-    { label: 'Eletrônicos', value: 'electronics' },
-    { label: 'Roupas e Acessórios', value: 'clothing' },
-    { label: 'Casa e Jardim', value: 'home' },
-    { label: 'Esportes e Lazer', value: 'sports' },
-    { label: 'Livros e Educação', value: 'books' },
-    { label: 'Beleza e Saúde', value: 'beauty' },
-    { label: 'Automóveis', value: 'automotive' },
-    { label: 'Outros', value: 'others' },
+    { label: 'Eletrônicos', value: 'ELECTRONICS' },
+    { label: 'Roupas e Acessórios', value: 'CLOTHING' },
+    { label: 'Casa e Jardim', value: 'HOME_GARDEN' },
+    { label: 'Esportes e Lazer', value: 'SPORTS' },
+    { label: 'Livros e Educação', value: 'BOOKS' },
+    { label: 'Beleza e Saúde', value: 'BEAUTY' },
+    { label: 'Automóveis', value: 'AUTOMOTIVE' },
+    { label: 'Outros', value: 'OTHERS' },
   ]
 
-  conditions: Condition[] = [
-    { label: 'Novo', value: 'new' },
-    { label: 'Usado', value: 'used' },
+  conditions: ProductCondition[] = [
+    { label: 'Novo', value: 'NEW' },
+    { label: 'Usado', value: 'USED' },
+    { label: 'Recondicionado', value: 'REFURBISHED' },
+    { label: 'Danificado', value: 'DAMAGED' },
   ]
 
   ngOnInit() {
     this.initForm()
-    this.loadProducts()
   }
 
   private initForm() {
     this.createListingForm = this.fb.group({
-      productId: ['', Validators.required],
-      productName: ['', [Validators.required, Validators.minLength(3)]],
-      category: ['', Validators.required],
-      condition: ['', Validators.required],
+      sku: ['', [Validators.required, Validators.minLength(3)]],
+      productRecommendation: [[]],
+      title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       price: [null, [Validators.required, Validators.min(0.01)]],
-      quantity: [1, [Validators.required, Validators.min(1)]],
+      rating: [0],
+      imagesUrl: [[]],
+      category: ['', Validators.required],
+      stock: [1, [Validators.required, Validators.min(1)]],
+      productCondition: ['', Validators.required],
     })
-  }
-
-  private loadProducts() {
-    this.isLoadingProducts.set(true)
-    this.productService.getAllProducts().subscribe({
-      next: products => {
-        this.products.set(products)
-        this.isLoadingProducts.set(false)
-      },
-      error: error => {
-        console.error('Erro ao carregar produtos:', error)
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Aviso',
-          detail:
-            'Não foi possível carregar os produtos. Você pode prosseguir mesmo assim.',
-        })
-        this.isLoadingProducts.set(false)
-      },
-    })
-  }
-
-  onProductSelect(event: any) {
-    const selectedProduct = this.products().find(
-      p => p.productId === event.value,
-    )
-    if (selectedProduct) {
-      // Auto-preencher alguns campos baseado no produto selecionado
-      this.createListingForm.patchValue({
-        productName: selectedProduct.name,
-        category: selectedProduct.category,
-        description: selectedProduct.description,
-      })
-    }
   }
 
   onFileSelect(event: any) {
@@ -152,18 +123,28 @@ export class CreateListingComponent {
       this.isLoading.set(true)
 
       const formData = this.createListingForm.value
+
+      // Simular URLs das imagens enviadas (na implementação real, isso seria feito via upload)
+      const imagesUrl = this.uploadedFiles().map(
+        file => `https://placeholder.com/images/${file.name}`,
+      )
+
       const listing = {
-        title: formData.productName,
+        sellerId: this.sellerId,
+        sku: formData.sku,
+        productRecommendation: formData.productRecommendation || [],
+        title: formData.title,
         description: formData.description,
         price: formData.price,
-        stock: formData.quantity,
-        productCondition: formData.condition,
-        active: true,
-        sellerId: this.sellerId, // Incluir o sellerId
-        productId: formData.productId, // Incluir o productId
+        rating: formData.rating || 0,
+        reviewsId: [],
+        imagesUrl: imagesUrl,
+        category: formData.category,
+        stock: formData.stock,
+        productCondition: formData.productCondition,
       }
 
-      console.log('Criando listing com sellerId:', this.sellerId)
+      console.log('Criando listing com dados completos:', listing)
 
       // Criar anúncio usando o backend real
       this.listingService.createListing(listing).subscribe({
