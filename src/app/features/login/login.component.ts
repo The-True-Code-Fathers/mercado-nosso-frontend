@@ -61,7 +61,11 @@ export class LoginComponent implements OnInit {
     this.userService.login(email, password).subscribe({
       next: (user) => {
         console.log('Login sucesso:', user);
-        this.router.navigate(['/home']);
+        localStorage.setItem('currentUserId', user.id);
+        localStorage.setItem('currentUserName', user.fullName);
+        localStorage.setItem('currentUserEmail', user.email);
+
+        
       },
       error: (err) => {
         console.log('Erro', err);
