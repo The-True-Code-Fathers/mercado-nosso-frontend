@@ -29,7 +29,8 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 })
 export class EditProfileComponent {
   editProfileForm: FormGroup;
-
+  selectedFileName: string = '';
+  selectedFile: File | null = null;
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -93,5 +94,34 @@ export class EditProfileComponent {
 
   onSubmit() {
     this.salvarAlteracoes(); // Chama seu método existente
+  }
+
+  onFileSelect(event: any) {
+    const file = event.target.files[0];
+
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Arquivo muito grande. Tamanho máximo 5Mb'
+        });
+        return;
+      }
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Apenas imagens são permitidas.'
+      });
+      return
+    }
+
+    this.selectedFile = file;
+    this.selectedFileName = file.name;
+
+    console.log('Arquivo selecionado:', file);
   }
 }

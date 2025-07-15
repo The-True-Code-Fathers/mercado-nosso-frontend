@@ -44,6 +44,12 @@ import { TabViewModule } from 'primeng/tabview';
           <p-card>
             <h3>Configurações da Conta</h3>
             <p>Gerencie suas preferências e configurações.</p>
+            <p-button
+              label="Editar informações"
+              icon="pi pi-home"
+              routerLink="/edit-profile"
+            >
+            </p-button>
           </p-card>
         </p-tabPanel>
       </p-tabView>
