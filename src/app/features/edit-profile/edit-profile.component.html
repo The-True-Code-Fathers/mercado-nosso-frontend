@@ -83,6 +83,8 @@
                 id="telefone" 
                 formControlName="telefone" 
                 placeholder="(11) 99999-9999"
+                (input)="formatTelefone($event)"
+                maxlength="15"
                 [class.ng-invalid]="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched"
               />
               <small class="error-message" *ngIf="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched">
@@ -136,13 +138,11 @@
                 pInputText 
                 id="cep" 
                 formControlName="cep" 
-                pInputMask="00000-000"
                 placeholder="00000-000"
+                (input)="formatCep($event)"
                 (blur)="onCepBlur()"
                 maxlength="9"
-                [disabled]="cepLoading"
-                (onComplete)="onCepComplete($event)"
-                slotchar="0"
+                [disabled]="cepLoading" 
               />
               <i class="pi pi-spinner pi-spin cep-loading" *ngIf="cepLoading"></i>
               <small class="error-message" *ngIf="cepError">{{cepError}}</small>

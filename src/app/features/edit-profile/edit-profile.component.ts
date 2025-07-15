@@ -152,7 +152,7 @@ export class EditProfileComponent implements OnInit {
       const updatePayload: UpdateUserRequest = {
         fullName: formData.nome,
         email: formData.email,
-        telephoneNumber: formData.telefone,
+        telephoneNumber: this.cleanFormat(formData.telefone),
         profilePictureUrl: this.selectedFile ? 'URL_DA_IMAGEM': undefined
       };
 
@@ -208,19 +208,20 @@ export class EditProfileComponent implements OnInit {
   }
 
   formatCep(event: any) {
-    let value = event.target.value.replace(/\D/g, '');
-
+    let value = event.target.value.replace(/\D/g, ''); 
+    
     if (value.length > 8) {
       value = value.substring(0, 8);
     }
-
+    
     if (value.length > 5) {
       value = value.substring(0, 5) + '-' + value.substring(5);
     }
-
+    
     event.target.value = value;
-
-
+    
+    this.editProfileForm.patchValue({ cep: value });
+    
     if (value.replace('-', '').length === 8) {
       this.buscarCepAutomatico(value);
     }
@@ -286,7 +287,32 @@ export class EditProfileComponent implements OnInit {
   
   console.log('========================');
   
-  // Chamar o método original
   this.salvarAlteracoes();
-}
+  }
+
+  formatTelefone(event: any) {
+    let value = event.target.value.replace(/\D/g, '');
+
+    if (value.length > 11) {
+      value = value.substring(0,11);
+    }
+
+    if (value.length > 7) {
+      value = '(' + value.substring(0, 2) + ') ' + 
+              value.substring(2, 7) + '-' + 
+              value.substring(7);
+    } else if (value.length > 2) {
+      value = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+    } else if (value.length > 0) {
+      value = '(' + value;
+    }
+
+    event.target.value = value;
+    
+    this.editProfileForm.patchValue({ telefone: value });
+  }
+
+  cleanFormat(value: string): string {
+    return value.replace(/\D/g, '');
+  }
 }
