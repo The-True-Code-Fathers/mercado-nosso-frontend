@@ -189,15 +189,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSearch() {
+    console.log('🔍 Header search triggered with term:', this.searchTerm)
+
     if (this.searchTerm.trim()) {
+      const searchTerm = this.searchTerm.trim()
+      console.log('🚀 Navigating to listing with search term:', searchTerm)
+
       // Navigate to product list with search term
-      this.router.navigate(['/listing'], {
-        queryParams: { name: this.searchTerm.trim() },
-      })
-      console.log('Searching for:', this.searchTerm.trim())
+      this.router
+        .navigate(['/listing'], {
+          queryParams: { name: searchTerm },
+        })
+        .then(success => {
+          console.log('📍 Navigation success:', success)
+        })
+        .catch(error => {
+          console.error('❌ Navigation error:', error)
+        })
 
       this.closeMobileMenu()
       this.closeMobileSearch()
+    } else {
+      console.log('⚠️ Search term is empty, not navigating')
     }
   }
 
