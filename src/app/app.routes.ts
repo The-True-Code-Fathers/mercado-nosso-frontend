@@ -41,6 +41,14 @@ export const routes: Routes = [
     title: 'Anúncios',
   },
   {
+    path: 'create-listing',
+    loadChildren: () =>
+      import('./features/create-listing/create-listing.routes').then(
+        m => m.createListingRoutes,
+      ),
+    title: 'Criar Anúncio',
+  },
+  {
     path: 'login',
     loadChildren: () =>
       import('./features/login/login.routes').then(m => m.loginRoutes),

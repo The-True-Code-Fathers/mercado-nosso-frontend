@@ -83,6 +83,8 @@
                 id="telefone" 
                 formControlName="telefone" 
                 placeholder="(11) 99999-9999"
+                (input)="formatTelefone($event)"
+                maxlength="15"
                 [class.ng-invalid]="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched"
               />
               <small class="error-message" *ngIf="editProfileForm.get('telefone')?.invalid && editProfileForm.get('telefone')?.touched">
@@ -137,8 +139,13 @@
                 id="cep" 
                 formControlName="cep" 
                 placeholder="00000-000"
+                (input)="formatCep($event)"
                 (blur)="onCepBlur()"
+                maxlength="9"
+                [disabled]="cepLoading" 
               />
+              <i class="pi pi-spinner pi-spin cep-loading" *ngIf="cepLoading"></i>
+              <small class="error-message" *ngIf="cepError">{{cepError}}</small>
             </div>
             <div class="form-group form-group-large">
               <label for="endereco">Endereço</label>
@@ -173,7 +180,6 @@
           </div>
         </div>
 
-                <!-- Botões de Ação -->
         <div class="form-actions">
           <button 
             type="button" 
@@ -186,7 +192,8 @@
           <button 
             type="submit" 
             class="p-button p-button-primary"
-            [disabled]="editProfileForm.invalid"
+            [disabled]="false"
+            (click)="debugForm()"
           >
             <i class="pi pi-check"></i>
             Salvar Alterações

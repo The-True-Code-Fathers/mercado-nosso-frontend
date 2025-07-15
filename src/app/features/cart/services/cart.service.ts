@@ -79,7 +79,15 @@ export class CartService {
     })
   }
 
-  removeItemFromCart(listingIds: string[]): Observable<void> {
+  // Remove um item específico do carrinho (método direto)
+  removeItemFromCart(listingId: string): Observable<CartResponse> {
+    return this.http.delete<CartResponse>(`${this.apiUrl}/items/${listingId}`, {
+      headers: this.getHeaders(),
+    })
+  }
+
+  // Remove múltiplos itens do carrinho (método assíncrono via Kafka)
+  removeMultipleItemsFromCart(listingIds: string[]): Observable<void> {
     const request: RemoveListingRequest = { listingsIds: listingIds }
     return this.http.delete<void>(`${this.apiUrl}/remove`, {
       headers: this.getHeaders(),

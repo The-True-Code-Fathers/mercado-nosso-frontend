@@ -54,11 +54,11 @@
               </small>
             </div>
           </div>
-
           <div class="form-row">
             <div class="form-group">
               <label for="dataNascimento">Data de Nascimento</label>
-              <input pInputText id="dataNascimento" formControlName="dataNascimento" placeholder="DD/MM/AAAA"
+              <input pInputText id="dataNascimento" formControlName="dataNascimento" placeholder="DD/MM/YYYY"
+                (input)="formatDataNascimento($event)" maxlength="10"
                 [class.ng-invalid]="createAccountForm.get('dataNascimento')?.invalid && createAccountForm.get('dataNascimento')?.touched" />
               <small class="error-message"
                 *ngIf="createAccountForm.get('dataNascimento')?.invalid && createAccountForm.get('dataNascimento')?.touched">
@@ -67,7 +67,8 @@
             </div>
             <div class="form-group">
               <label for="cpf">CPF</label>
-              <input pInputText id="cpf" formControlName="cpf" placeholder="000.000.000-00"
+              <input pInputText id="cpf" formControlName="cpf" placeholder="000.000.000-00" (input)="formatCpf($event)"
+                maxlength="14"
                 [class.ng-invalid]="createAccountForm.get('cpf')?.invalid && createAccountForm.get('cpf')?.touched" />
               <small class="error-message"
                 *ngIf="createAccountForm.get('cpf')?.invalid && createAccountForm.get('cpf')?.touched">
