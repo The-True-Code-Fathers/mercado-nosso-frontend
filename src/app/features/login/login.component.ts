@@ -71,5 +71,11 @@ export class LoginComponent implements OnInit {
         console.log('Erro', err);
       }
     })
+
+    this.loginRedirect();
+  }
+
+  loginRedirect() {
+    this.router.navigate(['/home'])
   }
 }
