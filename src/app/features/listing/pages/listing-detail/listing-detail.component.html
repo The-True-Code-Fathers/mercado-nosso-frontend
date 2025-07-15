@@ -219,7 +219,7 @@
               <span class="pix-text">À vista no PIX com 5% de desconto</span>
             </div>
 
-            <div class="installments">{{ defaultProduct.installments }}</div>
+            <div class="installments">{{ displayInstallments }}</div>
           </div>
 
           <!-- Seller Information -->
@@ -431,7 +431,7 @@
               </div>
             </div>
             <div class="product-installments">
-              {{ product.installments }}
+              {{ displayInstallments }}
             </div>
           </div>
         </p-card>
@@ -498,8 +498,7 @@
             <div
               class="highlight-item"
               *ngFor="let highlight of summaryHighlights"
-            >
-            </div>
+            ></div>
           </div>
         </div>
       </div>
@@ -548,18 +547,6 @@
                 (click)="openImageModal(image)"
               />
             </div>
-          </div>
-
-          <div class="review-actions">
-            <p-button
-              icon="pi pi-thumbs-up"
-              [text]="true"
-              size="small"
-              [label]="'Útil (' + review.helpful + ')'"
-              styleClass="helpful-btn"
-              (onClick)="markHelpful(review.id)"
-            >
-            </p-button>
           </div>
         </div>
       </div>

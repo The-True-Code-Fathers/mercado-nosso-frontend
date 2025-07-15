@@ -158,6 +158,14 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     )
     return average
   }
+
+  // Getter para calcular parcelas dinamicamente baseado no preço
+  get displayInstallments(): string {
+    const price = this.listing()?.price || this.defaultProduct.price
+    const installmentValue = price / 12
+    return `12x de R$ ${installmentValue.toFixed(2)} sem juros`
+  }
+
   ratingBars: any[] = []
   summaryText: string = ''
   summaryHighlights: string[] = []
@@ -177,6 +185,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     id: 1,
     images: ['/images/banner.png', '/images/banner-lg.jpg'],
     rating: 4.8,
+    price: 999.99, // Preço padrão para cálculo de parcelas
     comments: [
       { user: 'João', comment: 'Produto excelente!' },
       { user: 'Maria', comment: 'Chegou rápido e bem embalado.' },
@@ -184,7 +193,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     sold: 320,
     shipping: 'Frete grátis para todo o Brasil',
     deliveryEstimate: 'Receba em até 5 dias úteis',
-    installments: '12x de R$ 83,33 sem juros',
     description: `
       <h3>Processador Intel Core i7-12700K</h3>
       <p>O processador Intel Core i7-12700K da 12ª geração oferece desempenho excepcional para jogos, criação de conteúdo e multitarefa intensiva. Com arquitetura híbrida inovadora, combina núcleos de performance e eficiência para otimizar cada tarefa.</p>
@@ -702,7 +710,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         image: '/images/banner.png',
         rating: 4.6,
         reviews: 87,
-        installments: '12x de R$ 75,00 sem juros',
       },
       {
         id: 3,
@@ -712,7 +719,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         image: '/images/banner-lg.jpg',
         rating: 4.9,
         reviews: 203,
-        installments: '12x de R$ 108,33 sem juros',
       },
       {
         id: 4,
@@ -722,7 +728,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         image: '/images/banner.png',
         rating: 4.7,
         reviews: 156,
-        installments: '10x de R$ 55,00 sem juros',
       },
     ]
   }

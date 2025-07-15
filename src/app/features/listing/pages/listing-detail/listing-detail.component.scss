@@ -442,6 +442,7 @@
   display: flex;
   gap: 4px;
   align-items: center;
+  justify-content: center; /* Centralizar as estrelas */
 
   .rating-star {
     font-size: 1.8rem;
@@ -1840,7 +1841,7 @@
 /* Reviews List - Enhanced */
 .reviews-list {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 3rem auto 0;
 
   .review-item {
     background: var(--color-surface);
@@ -1982,8 +1983,17 @@
 /* Additional Media Queries for New Sections */
 @media (max-width: 1024px) {
   .reviews-overview-container {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-xl);
+  }
+
+  .summary-card {
+    order: 1; /* Summary card primeiro no tablet/mobile */
+  }
+
+  .rating-overview {
+    order: 2; /* Rating overview segundo no tablet/mobile */
   }
 }
 
@@ -2001,7 +2011,18 @@
   }
 
   .reviews-overview-container {
+    display: flex !important; /* Forçar flexbox sobrescrevendo grid */
+    flex-direction: column;
     gap: var(--spacing-lg);
+    grid-template-columns: none; /* Remover grid */
+  }
+
+  .rating-overview {
+    order: 2; /* Rating overview vai para baixo no mobile */
+  }
+
+  .summary-card {
+    order: 1; /* Summary card vai para cima no mobile */
   }
 
   .rating-overview,
