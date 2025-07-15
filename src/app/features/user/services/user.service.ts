@@ -12,6 +12,17 @@ export interface UpdateUserRequest {
     profilePictureUrl?: string;
     email: string;
     telephoneNumber?: string;
+    cnpj?: string;
+    socialReason?: string;
+    isSeller?: boolean;
+}
+
+export interface BecomeSellerRequest {
+    fullName: string;
+    email: string,
+    cnpj: string;
+    socialReason: string;
+    isSeller: boolean;
 }
 
 export interface CreateUserRequest {
@@ -72,5 +83,18 @@ export class UserService {
     getUserById(userId: string): Observable<UserResponse> {
         return this.http.get<UserResponse>(`${this.userApiUrl}/${userId}`)
     }
+
+    becomeSeller(userId: string, request: BecomeSellerRequest): Observable<UserResponse> {
+        const updateRequest: UpdateUserRequest = {
+            fullName: request.fullName,
+            email: request.email,
+            cnpj: request.cnpj,
+            socialReason: request.socialReason,
+            isSeller: true
+        }
+        return this.updateUser(userId, updateRequest);
+    }
+
+   
 }
 
