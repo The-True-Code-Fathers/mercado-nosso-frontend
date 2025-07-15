@@ -33,7 +33,7 @@ interface Condition {
 
 interface ProductCondition {
   label: string
-  value: 'NEW' | 'USED' | 'REFURBISHED' | 'DAMAGED'
+  value: 'NEW' | 'USED'
 }
 
 @Component({
@@ -83,8 +83,6 @@ export class CreateListingComponent {
   conditions: ProductCondition[] = [
     { label: 'Novo', value: 'NEW' },
     { label: 'Usado', value: 'USED' },
-    { label: 'Recondicionado', value: 'REFURBISHED' },
-    { label: 'Danificado', value: 'DAMAGED' },
   ]
 
   ngOnInit() {
