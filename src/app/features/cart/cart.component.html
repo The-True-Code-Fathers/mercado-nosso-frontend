@@ -60,7 +60,12 @@
 
             <!-- Product Image -->
             <div class="item-image">
-              <img [src]="item.image" [alt]="item.name" />
+              <img 
+                [src]="item.image" 
+                [alt]="item.name" 
+                (error)="onImageError($event, item)"
+                loading="lazy"
+              />
               <p-badge
                 [value]="item.category"
                 severity="secondary"
