@@ -50,41 +50,87 @@ export class CreateAccountComponent implements OnInit {
     this.createAccountForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(2)]],
       sobrenome: ['', [Validators.required, Validators.minLength(2)]],
-      dataNascimento: ['', [Validators.required]],
+      dataNascimento: ['', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}\/\d{4}$/)]], // CORRIGIDO
       cpf: ['', [Validators.required, Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]],
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  private cleanCpf(cpf: string): string {
-    return cpf.replace(/\D/g, '');
+  // MÁSCARA PARA CPF: 000.000.000-00
+  formatCpf(event: any) {
+    let value = event.target.value.replace(/\D/g, '');
+    
+    if (value.length > 11) {
+      value = value.substring(0, 11);
+    }
+    
+    if (value.length > 9) {
+      value = value.substring(0, 3) + '.' + 
+              value.substring(3, 6) + '.' + 
+              value.substring(6, 9) + '-' + 
+              value.substring(9);
+    } else if (value.length > 6) {
+      value = value.substring(0, 3) + '.' + 
+              value.substring(3, 6) + '.' + 
+              value.substring(6);
+    } else if (value.length > 3) {
+      value = value.substring(0, 3) + '.' + value.substring(3);
+    }
+    
+    event.target.value = value;
+    this.createAccountForm.patchValue({ cpf: value });
   }
 
-  private generateTempCnpj(): string {
-  const timestamp = Date.now().toString();
-  const random = Math.random().toString().slice(2, 8);
-  return `${timestamp}${random}`.padStart(14, '0').slice(0, 14);
-}
+  // MÁSCARA PARA DATA: 00/00/0000
+  formatDataNascimento(event: any) {
+    let value = event.target.value.replace(/\D/g, '');
+    
+    if (value.length > 8) {
+      value = value.substring(0, 8);
+    }
+    
+    if (value.length > 4) {
+      value = value.substring(0, 2) + '/' + 
+              value.substring(2, 4) + '/' + 
+              value.substring(4);
+    } else if (value.length > 2) {
+      value = value.substring(0, 2) + '/' + value.substring(2);
+    }
+    
+    event.target.value = value;
+    this.createAccountForm.patchValue({ dataNascimento: value });
+  }
+
+  // LIMPA FORMATAÇÃO
+  cleanFormat(value: string): string {
+    return value.replace(/\D/g, '');
+  }
+
+  // CONVERTE DATA PARA ISO
+  convertDateToISO(dateString: string): string {
+    const cleanDate = dateString.replace(/\D/g, '');
+    if (cleanDate.length === 8) {
+      const day = cleanDate.substring(0, 2);
+      const month = cleanDate.substring(2, 4);
+      const year = cleanDate.substring(4, 8);
+      return `${year}-${month}-${day}`;
+    }
+    return dateString;
+  }
 
   onSubmit() {
     if (this.createAccountForm.valid) {
       this.isLoading = true; 
       const formData = this.createAccountForm.value;
 
-      console.log('Form data bruto:', formData);
-      console.log('Nome:', formData.nome);
-      console.log('Sobrenome:', formData.sobrenome);
-      console.log('Email:', formData.email);
-      console.log('CPF:', formData.cpf);
-      console.log('Senha:', formData.senha);
-      
       const userPayload = {
         fullName: `${formData.nome} ${formData.sobrenome}`,
         email: formData.email,
         passwordHash: formData.senha,
-        cpf: this.cleanCpf(formData.cpf),
+        cpf: this.cleanFormat(formData.cpf), // REMOVE FORMATAÇÃO
         cnpj: '',
+        dataDeNascimento: this.convertDateToISO(formData.dataNascimento), // CONVERTE PARA ISO
         isSeller: false 
       };
 
@@ -141,28 +187,6 @@ export class CreateAccountComponent implements OnInit {
     });
   }
 
-  onCpfBlur() {
-    const cpfControl = this.createAccountForm.get('cpf');
-    if (cpfControl?.value) {
-      const cpf = cpfControl.value.replace(/\D/g, '');
-      if (cpf.length === 11) {
-        const formattedCpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-        cpfControl.setValue(formattedCpf);
-      }
-    }
-  }
-
-  onDataNascimentoBlur() {
-    const dataControl = this.createAccountForm.get('dataNascimento');
-    if (dataControl?.value) {
-      const data = dataControl.value.replace(/\D/g, '');
-      if (data.length === 8) {
-        const formattedData = data.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
-        dataControl.setValue(formattedData);
-      }
-    }
-  }
-
   onFileSelect(event: any) {
     const file = event.target.files[0];
 
@@ -175,20 +199,19 @@ export class CreateAccountComponent implements OnInit {
         });
         return;
       }
+
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Apenas imagens são permitidas.'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
+      this.selectedFileName = file.name;
+      console.log('Arquivo selecionado:', file);
     }
-
-    if (!file.type.startsWith('image/')) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'Apenas imagens são permitidas.'
-      });
-      return
-    }
-
-    this.selectedFile = file;
-    this.selectedFileName = file.name;
-
-    console.log('Arquivo selecionado:', file);
   }
 }
