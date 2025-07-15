@@ -1,0 +1,301 @@
+<div class="listing-container">
+  <div class="branding-section">
+    <div class="branding-content">
+      <h1 class="brand-title">Mercado Nosso</h1>
+      <div class="brand-features">
+        <div class="feature-item">
+          <i class="pi pi-plus-circle"></i>
+          <span>Criar Anúncios</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-dollar"></i>
+          <span>Vender Online</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-users"></i>
+          <span>Alcançar Clientes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>Novos Anúncios</h2>
+        <p>Crie seu anúncio e comece a vender</p>
+      </div>
+
+      <form [formGroup]="createListingForm" (ngSubmit)="onSubmit()">
+        <!-- Upload de Foto -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-camera"></i>
+            Enviar Foto
+          </h3>
+          <p-divider></p-divider>
+
+          <div class="upload-container">
+            <p-fileUpload
+              mode="advanced"
+              chooseLabel="Escolher Fotos"
+              uploadLabel="Upload"
+              cancelLabel="Cancelar"
+              accept="image/*"
+              multiple="true"
+              [maxFileSize]="5000000"
+              (onSelect)="onFileSelect($event)"
+              (onRemove)="onFileRemove($event)"
+              [auto]="false"
+              [showUploadButton]="false"
+              [showCancelButton]="false"
+            >
+              <ng-template pTemplate="content">
+                <div class="upload-info" *ngIf="uploadedFiles().length === 0">
+                  <i class="pi pi-camera upload-icon"></i>
+                  <p>Clique para adicionar fotos do seu produto</p>
+                  <small>Máximo 5MB por foto</small>
+                </div>
+                <div class="uploaded-files" *ngIf="uploadedFiles().length > 0">
+                  <div
+                    class="file-preview"
+                    *ngFor="let file of uploadedFiles()"
+                  >
+                    <div class="file-info">
+                      <i class="pi pi-file"></i>
+                      <span>{{ file.name }}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-fileUpload>
+          </div>
+        </div>
+
+        <!-- Informações do Produto -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-tag"></i>
+            Informações do Produto
+          </h3>
+          <p-divider></p-divider>
+
+          <div class="form-group">
+            <label for="productName">Nome do Produto</label>
+            <input
+              pInputText
+              id="productName"
+              formControlName="productName"
+              placeholder="Digite o nome do produto"
+              [class.ng-invalid]="
+                createListingForm.get('productName')?.invalid &&
+                createListingForm.get('productName')?.touched
+              "
+            />
+            <small
+              class="error-message"
+              *ngIf="
+                createListingForm.get('productName')?.invalid &&
+                createListingForm.get('productName')?.touched
+              "
+            >
+              Nome do produto é obrigatório (mínimo 3 caracteres)
+            </small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Categoria</label>
+              <p-dropdown
+                id="category"
+                formControlName="category"
+                [options]="categories"
+                placeholder="Selecione a categoria"
+                optionLabel="label"
+                optionValue="value"
+                [class.ng-invalid]="
+                  createListingForm.get('category')?.invalid &&
+                  createListingForm.get('category')?.touched
+                "
+              ></p-dropdown>
+              <small
+                class="error-message"
+                *ngIf="
+                  createListingForm.get('category')?.invalid &&
+                  createListingForm.get('category')?.touched
+                "
+              >
+                Categoria é obrigatória
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="condition">Condição Novo/Usado</label>
+              <p-dropdown
+                id="condition"
+                formControlName="condition"
+                [options]="conditions"
+                placeholder="Selecione a condição"
+                optionLabel="label"
+                optionValue="value"
+                [class.ng-invalid]="
+                  createListingForm.get('condition')?.invalid &&
+                  createListingForm.get('condition')?.touched
+                "
+              ></p-dropdown>
+              <small
+                class="error-message"
+                *ngIf="
+                  createListingForm.get('condition')?.invalid &&
+                  createListingForm.get('condition')?.touched
+                "
+              >
+                Condição é obrigatória
+              </small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea
+              pInputTextarea
+              id="description"
+              formControlName="description"
+              placeholder="Descreva seu produto detalhadamente..."
+              rows="6"
+              [class.ng-invalid]="
+                createListingForm.get('description')?.invalid &&
+                createListingForm.get('description')?.touched
+              "
+            ></textarea>
+            <small
+              class="error-message"
+              *ngIf="
+                createListingForm.get('description')?.invalid &&
+                createListingForm.get('description')?.touched
+              "
+            >
+              Descrição é obrigatória (mínimo 10 caracteres)
+            </small>
+          </div>
+        </div>
+
+        <!-- Preço e Estoque -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-dollar"></i>
+            Preço e Estoque
+          </h3>
+          <p-divider></p-divider>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="price">Preço de Venda R$ xxxxx</label>
+              <p-inputNumber
+                id="price"
+                formControlName="price"
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR"
+                placeholder="0,00"
+                [class.ng-invalid]="
+                  createListingForm.get('price')?.invalid &&
+                  createListingForm.get('price')?.touched
+                "
+              ></p-inputNumber>
+              <small
+                class="error-message"
+                *ngIf="
+                  createListingForm.get('price')?.invalid &&
+                  createListingForm.get('price')?.touched
+                "
+              >
+                Preço é obrigatório e deve ser maior que R$ 0,01
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="quantity">Quantidade em Estoque xxxx Un</label>
+              <p-inputNumber
+                id="quantity"
+                formControlName="quantity"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                [min]="1"
+                [max]="9999"
+                placeholder="1"
+                [class.ng-invalid]="
+                  createListingForm.get('quantity')?.invalid &&
+                  createListingForm.get('quantity')?.touched
+                "
+              ></p-inputNumber>
+              <small
+                class="error-message"
+                *ngIf="
+                  createListingForm.get('quantity')?.invalid &&
+                  createListingForm.get('quantity')?.touched
+                "
+              >
+                Quantidade deve ser pelo menos 1
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prazo de Envio -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-truck"></i>
+            Envio
+          </h3>
+          <p-divider></p-divider>
+
+          <div class="form-group">
+            <label for="shippingDeadline">Prazo de envio</label>
+            <input
+              pInputText
+              id="shippingDeadline"
+              formControlName="shippingDeadline"
+              placeholder="Ex: 2-3 dias úteis"
+              [class.ng-invalid]="
+                createListingForm.get('shippingDeadline')?.invalid &&
+                createListingForm.get('shippingDeadline')?.touched
+              "
+            />
+            <small
+              class="error-message"
+              *ngIf="
+                createListingForm.get('shippingDeadline')?.invalid &&
+                createListingForm.get('shippingDeadline')?.touched
+              "
+            >
+              Prazo de envio é obrigatório
+            </small>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <p-button
+            label="Voltar"
+            icon="pi pi-arrow-left"
+            styleClass="p-button-secondary p-button-outlined"
+            (click)="goBack()"
+            type="button"
+          ></p-button>
+
+          <p-button
+            label="Criar Anúncio"
+            icon="pi pi-plus"
+            styleClass="p-button-lg"
+            type="submit"
+            [loading]="isLoading()"
+            [disabled]="createListingForm.invalid"
+          ></p-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-toast position="top-right"></p-toast>

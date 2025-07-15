@@ -7,6 +7,24 @@ export interface LoginRequest {
     passwordHash: string;
 }
 
+export interface UpdateUserRequest {
+    fullName: string;
+    profilePictureUrl?: string;
+    email: string;
+    telephoneNumber?: string;
+    cnpj?: string;
+    socialReason?: string;
+    isSeller?: boolean;
+}
+
+export interface BecomeSellerRequest {
+    fullName: string;
+    email: string,
+    cnpj: string;
+    socialReason: string;
+    isSeller: boolean;
+}
+
 export interface CreateUserRequest {
     fullName: string;
     email: string;
@@ -24,6 +42,7 @@ export interface UserResponse {
     profilePictureUrl?: string | null;
     listingSellingId?: string[] | null;
     listingBoughtId?: string[] | null;
+    telephoneNumber?: string | null;
     createdAt: string;
     updatedAt: string;
     active: boolean;
@@ -52,5 +71,30 @@ export class UserService {
     findByEmail(email: string): Observable<UserResponse> {
         return this.http.get<UserResponse>(`${this.userApiUrl}/email/${email}`);
     }
+
+    updateUser(userId: string, request: UpdateUserRequest): Observable<UserResponse> {
+        return this.http.patch<UserResponse>(`${this.userApiUrl}/me`, request, {
+            headers: {
+                'X-User-Id': userId
+            }
+        });
+    }
+
+    getUserById(userId: string): Observable<UserResponse> {
+        return this.http.get<UserResponse>(`${this.userApiUrl}/${userId}`)
+    }
+
+    becomeSeller(userId: string, request: BecomeSellerRequest): Observable<UserResponse> {
+        const updateRequest: UpdateUserRequest = {
+            fullName: request.fullName,
+            email: request.email,
+            cnpj: request.cnpj,
+            socialReason: request.socialReason,
+            isSeller: true
+        }
+        return this.updateUser(userId, updateRequest);
+    }
+
+   
 }
 

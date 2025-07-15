@@ -1,5 +1,9 @@
-<div class="cart-container">
-  <div class="cart-header">
+<div
+  class="cart-container"
+  [class.centered-content]="cartItems().length === 0 || isLoading()"
+>
+  <!-- Header só aparece quando há items -->
+  <div *ngIf="cartItems().length > 0" class="cart-header">
     <h1>
       <i class="pi pi-shopping-cart cart-title-icon"></i>
       Meu Carrinho
@@ -15,27 +19,8 @@
     </div>
   </div>
 
-  <!-- Error State -->
-  <div *ngIf="error() && !isLoading()" class="error-state">
-    <div class="error-content">
-      <i class="pi pi-exclamation-triangle error-icon"></i>
-      <h2>Erro ao carregar carrinho</h2>
-      <p>{{ error() }}</p>
-      <p-button
-        label="Tentar Novamente"
-        icon="pi pi-refresh"
-        styleClass="p-button-outlined"
-        (click)="loadCart()"
-      >
-      </p-button>
-    </div>
-  </div>
-
   <!-- Empty Cart State -->
-  <div
-    *ngIf="cartItems().length === 0 && !isLoading() && !error()"
-    class="empty-cart"
-  >
+  <div *ngIf="cartItems().length === 0 && !isLoading()" class="empty-cart">
     <div class="empty-cart-content">
       <i class="pi pi-shopping-cart empty-icon"></i>
       <h2>Seu carrinho está vazio</h2>
@@ -85,10 +70,20 @@
 
             <!-- Product Details -->
             <div class="item-details">
-              <h3>{{ item.name }}</h3>
-              <p class="item-price">R$ {{ item.price | number : '1.2-2' }}</p>
+              <h3
+                [pTooltip]="item.name"
+                tooltipPosition="top"
+                class="product-title-link"
+                (click)="navigateToProduct(item.listingId)"
+              >
+                {{ item.name }}
+              </h3>
+              <p class="item-price">
+                R$ {{ item.unitPrice | number : '1.2-2' }}
+              </p>
               <p *ngIf="item.quantity > 1" class="item-subtotal">
-                Subtotal: R$ {{ item.price * item.quantity | number : '1.2-2' }}
+                Subtotal: R$
+                {{ item.unitPrice * item.quantity | number : '1.2-2' }}
               </p>
             </div>
 
@@ -109,14 +104,6 @@
                 >
                 </p-inputNumber>
               </div>
-
-              <p-button
-                icon="pi pi-trash"
-                styleClass="p-button-danger p-button-outlined p-button-sm"
-                pTooltip="Remover item"
-                (click)="removeItem(item.listingId)"
-              >
-              </p-button>
             </div>
           </div>
         </p-card>
@@ -152,6 +139,15 @@
           </div>
 
           <div class="summary-actions">
+            <p-button
+              *ngIf="selectedItemsCount > 0"
+              label="Remover Selecionados ({{ selectedItemsCount }})"
+              icon="pi pi-trash"
+              styleClass="p-button-outlined p-button-danger w-full mb-2"
+              (click)="removeSelectedItems()"
+            >
+            </p-button>
+
             <p-button
               label="Continuar Comprando"
               icon="pi pi-arrow-left"
