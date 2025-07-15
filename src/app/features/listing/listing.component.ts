@@ -12,6 +12,7 @@ import {
   ProductCardComponent,
   ProductCardData,
 } from '../../shared/components/product-card/product-card.component'
+import { SearchService } from '../../shared/services/search.service'
 
 // PrimeNG Imports
 import { CardModule } from 'primeng/card'
@@ -99,6 +100,7 @@ export class ListingComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private messageService: MessageService,
+    private searchService: SearchService,
   ) {}
 
   ngOnInit(): void {
@@ -133,6 +135,10 @@ export class ListingComponent implements OnInit {
           newSearchTerm,
         )
         this.searchTerm = newSearchTerm
+
+        // Update the search service to sync with header
+        this.searchService.setSearchTerm(newSearchTerm)
+
         shouldReload = true
       }
 

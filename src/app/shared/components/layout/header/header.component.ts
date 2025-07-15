@@ -6,8 +6,16 @@ import {
   HostListener,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { RouterModule, Router } from '@angular/router'
+import {
+  RouterModule,
+  Router,
+  NavigationEnd,
+  ActivatedRoute,
+} from '@angular/router'
 import { FormsModule } from '@angular/forms'
+import { Subscription } from 'rxjs'
+import { filter } from 'rxjs/operators'
+import { SearchService } from '../../../services/search.service'
 import { ButtonModule } from 'primeng/button'
 import { BadgeModule } from 'primeng/badge'
 import { TooltipModule } from 'primeng/tooltip'
@@ -60,13 +68,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private readonly DESKTOP_BREAKPOINT = 1200
 
   private hoverTimeout: any
+  private subscriptions: Subscription[] = []
 
   constructor(
-    private router: Router, // private cartService: CartService // Inject when available
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private searchService: SearchService, // private cartService: CartService // Inject when available
   ) {}
 
   ngOnInit() {
     this.checkScreenSize()
+
+    // Subscribe to search term changes from the service
+    const searchTermSub = this.searchService.searchTerm$.subscribe(term => {
+      this.searchTerm = term
+    })
+    this.subscriptions.push(searchTermSub)
+
+    // Listen to route changes to clear search on home navigation
+    const routerSub = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.url === '/' || event.url === '/home') {
+          this.searchService.clearSearchTerm()
+        }
+      })
+    this.subscriptions.push(routerSub)
+
     // TODO: Subscribe to cart service to get real-time cart count
     // this.cartService.cartItems$.subscribe(items => {
     //   this.cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -77,6 +105,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout)
     }
+
+    // Unsubscribe from all subscriptions
+    this.subscriptions.forEach(sub => sub.unsubscribe())
+
     // TODO: Unsubscribe from cart service
   }
 
@@ -120,7 +152,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { key: 'auto', label: 'Automotivo', icon: 'pi pi-car' },
     { key: 'food', label: 'Alimentos e Bebidas', icon: 'pi pi-shopping-cart' },
     { key: 'pets', label: 'Pets', icon: 'pi pi-heart' },
-    { key: 'stationery', label: 'Papelaria', icon: 'pi pi-pencil' },
+    { key: 'stationery', label: 'Papelaria', icon: 'pi pi-  pencil' },
     { key: 'music', label: 'Instrumentos Musicais', icon: 'pi pi-music' },
     { key: 'games', label: 'Games', icon: 'pi pi-gamepad' },
     { key: 'baby', label: 'Bebês', icon: 'pi pi-baby' },
@@ -194,6 +226,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.searchTerm.trim()) {
       const searchTerm = this.searchTerm.trim()
       console.log('🚀 Navigating to listing with search term:', searchTerm)
+
+      // Update the search service
+      this.searchService.setSearchTerm(searchTerm)
 
       // Navigate to product list with search term
       this.router
