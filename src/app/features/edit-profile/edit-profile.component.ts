@@ -153,8 +153,14 @@ export class EditProfileComponent implements OnInit {
         fullName: formData.nome,
         email: formData.email,
         telephoneNumber: this.cleanFormat(formData.telefone),
-        profilePictureUrl: this.selectedFile ? 'URL_DA_IMAGEM': undefined
+        profilePictureUrl: this.selectedFile ? 'URL_DA_IMAGEM': undefined,
+        cep: formData.cep
       };
+      
+      console.log('=== PAYLOAD FINAL ===');
+      console.log('Update Payload:', updatePayload);
+      console.log('CEP no payload:', updatePayload.cep);
+      console.log('===================');
 
       this.userService.updateUser(this.currentUserId, updatePayload).subscribe({
             next: (response) => {

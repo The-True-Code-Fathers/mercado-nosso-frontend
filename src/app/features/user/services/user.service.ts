@@ -15,6 +15,7 @@ export interface UpdateUserRequest {
     cnpj?: string;
     socialReason?: string;
     isSeller?: boolean;
+    cep?: string;
 }
 
 export interface BecomeSellerRequest {
@@ -32,6 +33,7 @@ export interface CreateUserRequest {
     cpf: string;
     cnpj: string;
     isSeller: boolean;
+    cep?: string;
 }
 
 export interface UserResponse {
@@ -46,6 +48,7 @@ export interface UserResponse {
     createdAt: string;
     updatedAt: string;
     active: boolean;
+    cep?: string;
 }
 
 @Injectable({

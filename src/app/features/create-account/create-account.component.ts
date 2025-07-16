@@ -57,7 +57,6 @@ export class CreateAccountComponent implements OnInit {
     });
   }
 
-  // MÁSCARA PARA CPF: 000.000.000-00
   formatCpf(event: any) {
     let value = event.target.value.replace(/\D/g, '');
     
@@ -82,7 +81,6 @@ export class CreateAccountComponent implements OnInit {
     this.createAccountForm.patchValue({ cpf: value });
   }
 
-  // MÁSCARA PARA DATA: 00/00/0000
   formatDataNascimento(event: any) {
     let value = event.target.value.replace(/\D/g, '');
     
@@ -102,12 +100,10 @@ export class CreateAccountComponent implements OnInit {
     this.createAccountForm.patchValue({ dataNascimento: value });
   }
 
-  // LIMPA FORMATAÇÃO
   cleanFormat(value: string): string {
     return value.replace(/\D/g, '');
   }
 
-  // CONVERTE DATA PARA ISO
   convertDateToISO(dateString: string): string {
     const cleanDate = dateString.replace(/\D/g, '');
     if (cleanDate.length === 8) {
@@ -128,9 +124,9 @@ export class CreateAccountComponent implements OnInit {
         fullName: `${formData.nome} ${formData.sobrenome}`,
         email: formData.email,
         passwordHash: formData.senha,
-        cpf: this.cleanFormat(formData.cpf), // REMOVE FORMATAÇÃO
+        cpf: this.cleanFormat(formData.cpf),
         cnpj: '',
-        dataDeNascimento: this.convertDateToISO(formData.dataNascimento), // CONVERTE PARA ISO
+        dataDeNascimento: formData.dataNascimento,  
         isSeller: false 
       };
 
