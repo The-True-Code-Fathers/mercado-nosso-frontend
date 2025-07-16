@@ -195,6 +195,7 @@
 }
 
 // Upload de arquivos
+// Upload de arquivos
 .upload-container {
   ::ng-deep .p-fileupload {
     .p-fileupload-content {
@@ -204,11 +205,6 @@
       padding: var(--spacing-lg);
       text-align: center;
       transition: all 0.3s ease;
-
-      &:hover {
-        border-color: var(--color-primary);
-        background: var(--color-elevation-1);
-      }
     }
 
     .p-fileupload-choose {
@@ -219,6 +215,12 @@
         background: var(--color-primary-dark);
         border-color: var(--color-primary-dark);
       }
+    }
+
+    .p-fileupload-buttonbar {
+      padding: 0;
+      border: none;
+      background: transparent;
     }
   }
 }
