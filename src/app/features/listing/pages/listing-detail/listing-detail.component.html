@@ -226,9 +226,7 @@
           <div class="seller-section">
             <h4>Vendido por</h4>
             <div class="seller-info">
-              <a href="#" class="seller-name">{{
-                defaultProduct.seller.name
-              }}</a>
+              <a href="#" class="seller-name">{{ sellerName() }}</a>
               <div
                 class="seller-stats"
                 *ngIf="defaultProduct.seller.reputation"
@@ -239,6 +237,17 @@
                 ></p-tag>
               </div>
             </div>
+          </div>
+
+          <!-- Stock Information -->
+          <div class="stock-section" *ngIf="listing()?.stock !== undefined">
+            <span class="stock-label">Estoque disponível:</span>
+            <span
+              class="stock-value"
+              [class.low-stock]="(listing()?.stock || 0) < 5"
+            >
+              {{ listing()?.stock }} unidades
+            </span>
           </div>
 
           <!-- Quantity Selector -->
@@ -413,13 +422,21 @@
           <div class="product-content">
             <h3 class="product-title">{{ product.title }}</h3>
             <div class="product-rating">
-              <p-rating
-                [ngModel]="product.rating"
-                [readonly]="true"
-                [stars]="5"
-                styleClass="product-rating-small"
-              >
-              </p-rating>
+              <div class="custom-rating">
+                <span
+                  *ngFor="let star of getStarsArray(); let i = index"
+                  class="rating-star"
+                  [ngClass]="{
+                    'star-full': i < mathFloor(product.rating),
+                    'star-half':
+                      i === mathFloor(product.rating) &&
+                      product.rating % 1 >= 0.5,
+                    'star-empty': i >= mathCeil(product.rating)
+                  }"
+                >
+                  ★
+                </span>
+              </div>
               <span class="rating-count">({{ product.reviews }})</span>
             </div>
             <div class="product-pricing">

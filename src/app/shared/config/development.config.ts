@@ -1,7 +1,7 @@
 // Configurações para desenvolvimento
 export const DEVELOPMENT_CONFIG = {
   // User ID fixo para desenvolvimento (substitua por um AuthService real)
-  DEFAULT_USER_ID: '3b02ccf3-3154-4eab-9367-9673a718539f',
+  DEFAULT_USER_ID: '4f340ab7-b0ac-4a58-8672-9dca8f69e7bd',
 
   // URLs da API
   API_BASE_URL: 'http://localhost:8080',

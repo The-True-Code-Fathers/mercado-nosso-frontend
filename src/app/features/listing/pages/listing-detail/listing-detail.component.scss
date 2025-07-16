@@ -638,6 +638,30 @@
   font-size: 0.9rem;
 }
 
+/* Stock Section */
+.stock-section {
+  margin: var(--spacing-lg) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+
+  .stock-label {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .stock-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-success);
+
+    &.low-stock {
+      color: var(--color-warning);
+    }
+  }
+}
+
 /* Quantity Selector */
 .quantity-section {
   display: flex;

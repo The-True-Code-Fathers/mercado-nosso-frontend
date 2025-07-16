@@ -9,9 +9,10 @@ import {
   SearchParams,
 } from './services/listing.service'
 import {
-  ProductCardComponent,
-  ProductCardData,
-} from '../../shared/components/product-card/product-card.component'
+  RecommendationCardComponent,
+  RecommendationCardData,
+} from '../../shared/components/recommendation-card/recommendation-card.component'
+import { ProductCardData } from '../../shared/components/product-card/product-card.component'
 import { SearchService } from '../../shared/services/search.service'
 
 // PrimeNG Imports
@@ -41,7 +42,7 @@ interface DropdownOption {
   imports: [
     CommonModule,
     FormsModule,
-    ProductCardComponent,
+    RecommendationCardComponent,
     CardModule,
     ButtonModule,
     InputTextModule,
@@ -360,10 +361,26 @@ export class ListingComponent implements OnInit {
       id: listing.listingId,
       title: listing.title,
       price: listing.price,
-      image: '/images/placeholder.png', // Default placeholder since Listing doesn't have image
+      image: listing.imagesUrl?.[0] || '/images/placeholder.png',
       condition: listing.productCondition,
       stock: listing.stock,
       category: this.selectedCategory || 'Geral',
+      rating: listing.rating,
+      reviews: listing.reviewsId?.length || 0,
+    }
+  }
+
+  mapListingToRecommendationCard(listing: Listing): RecommendationCardData {
+    return {
+      id: listing.listingId,
+      title: listing.title,
+      price: listing.price,
+      image: listing.imagesUrl?.[0] || '/images/placeholder.png',
+      condition: listing.productCondition,
+      stock: listing.stock,
+      category: listing.category,
+      rating: listing.rating,
+      reviews: listing.reviewsId?.length || 0,
     }
   }
 
@@ -376,7 +393,7 @@ export class ListingComponent implements OnInit {
     })
   }
 
-  onViewDetails(productCard: ProductCardData): void {
+  onViewDetails(productCard: ProductCardData | RecommendationCardData): void {
     this.router.navigate(['/listing', productCard.id])
   }
 
