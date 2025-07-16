@@ -111,8 +111,11 @@
         [ngClass]="'status-' + listing.status"
         *ngFor="let listing of getFilteredListings()"
       >
-        <div class="card-image" (click)="viewListing(listing.id)">
-          <img [src]="listing.image" [alt]="listing.title" />
+        <div class="card-image" (click)="viewListing(listing.listingId)">
+          <img
+            [src]="listing.imagesUrl[0] || '/images/banner.png'"
+            [alt]="listing.title"
+          />
           <div class="image-overlay" *ngIf="listing.status === 'outOfStock'">
             <span class="overlay-text">{{
               getStatusLabel(listing.status)
@@ -147,7 +150,7 @@
             </div>
           </div>
 
-          <h3 class="listing-title" (click)="viewListing(listing.id)">
+          <h3 class="listing-title" (click)="viewListing(listing.listingId)">
             {{ listing.title }}
           </h3>
           <div class="listing-price">
@@ -177,7 +180,7 @@
             severity="secondary"
             [outlined]="true"
             size="small"
-            (onClick)="viewListing(listing.id)"
+            (onClick)="viewListing(listing.listingId)"
             styleClass="action-button"
           >
           </p-button>
@@ -187,7 +190,7 @@
             severity="info"
             [outlined]="true"
             size="small"
-            (onClick)="editListing(listing.id)"
+            (onClick)="editListing(listing.listingId)"
             styleClass="action-button"
           >
           </p-button>

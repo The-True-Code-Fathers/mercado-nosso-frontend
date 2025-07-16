@@ -123,4 +123,10 @@ export class ListingService {
       listing,
     )
   }
+
+  getListingsBySellerId(sellerId: string): Observable<Listing[]> {
+    return this.http.get<Listing[]>(`${this.apiUrl}`, {
+      params: { sellerId },
+    })
+  }
 }

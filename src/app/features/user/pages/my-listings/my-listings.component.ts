@@ -13,16 +13,16 @@ import { ToastModule } from 'primeng/toast'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { MenuItem, MessageService, ConfirmationService } from 'primeng/api'
 
-export interface MyListing {
-  id: string
-  title: string
-  price: number
-  image: string
+// Services
+import {
+  ListingService,
+  Listing,
+} from '../../../listing/services/listing.service'
+import { DEVELOPMENT_CONFIG } from '../../../../shared/config/development.config'
+
+export interface MyListing extends Listing {
   status: 'active' | 'outOfStock'
   sold: number
-  stock: number
-  createdAt: Date
-  category: string
 }
 
 @Component({
@@ -54,17 +54,17 @@ export class MyListingsComponent implements OnInit {
       {
         label: 'Editar',
         icon: 'pi pi-pencil',
-        command: () => this.editListing(listing.id),
+        command: () => this.editListing(listing.listingId),
       },
       {
         label: listing.status === 'active' ? 'Marcar como Esgotado' : 'Ativar',
         icon: listing.status === 'active' ? 'pi pi-times' : 'pi pi-check',
-        command: () => this.toggleListingStatus(listing.id),
+        command: () => this.toggleListingStatus(listing.listingId),
       },
       {
         label: 'Duplicar',
         icon: 'pi pi-copy',
-        command: () => this.duplicateListing(listing.id),
+        command: () => this.duplicateListing(listing.listingId),
       },
       {
         separator: true,
@@ -73,7 +73,7 @@ export class MyListingsComponent implements OnInit {
         label: 'Excluir',
         icon: 'pi pi-trash',
         styleClass: 'text-red-500',
-        command: () => this.confirmDelete(listing.id),
+        command: () => this.confirmDelete(listing.listingId),
       },
     ]
   }
@@ -82,6 +82,7 @@ export class MyListingsComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
+    private listingService: ListingService,
   ) {}
 
   ngOnInit() {
@@ -91,58 +92,32 @@ export class MyListingsComponent implements OnInit {
   loadMyListings() {
     this.isLoading.set(true)
 
-    // Simular dados mockados - substituir por chamada real da API
-    setTimeout(() => {
-      const mockListings: MyListing[] = [
-        {
-          id: '1',
-          title: 'Processador Intel Core i7-12700K 12ª Geração',
-          price: 999.99,
-          image: '/images/banner.png',
-          status: 'active',
-          sold: 23,
-          stock: 15,
-          createdAt: new Date('2024-01-15'),
-          category: 'Eletrônicos',
-        },
-        {
-          id: '2',
-          title: 'Memória RAM DDR4 16GB Corsair Vengeance',
-          price: 299.99,
-          image: '/images/banner-lg.jpg',
-          status: 'active',
-          sold: 12,
-          stock: 8,
-          createdAt: new Date('2024-01-10'),
-          category: 'Eletrônicos',
-        },
-        {
-          id: '3',
-          title: 'SSD NVMe 1TB Samsung 980 Pro',
-          price: 549.99,
-          image: '/images/banner.png',
-          status: 'outOfStock',
-          sold: 45,
-          stock: 0,
-          createdAt: new Date('2024-01-05'),
-          category: 'Eletrônicos',
-        },
-        {
-          id: '4',
-          title: 'Placa de Vídeo RTX 4070 Ti',
-          price: 2499.99,
-          image: '/images/banner-lg.jpg',
-          status: 'active',
-          sold: 8,
-          stock: 3,
-          createdAt: new Date('2023-12-20'),
-          category: 'Eletrônicos',
-        },
-      ]
+    // Usar o ID do vendedor da configuração de desenvolvimento
+    const sellerId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID
 
-      this.listings.set(mockListings)
-      this.isLoading.set(false)
-    }, 1000)
+    // Buscar anúncios específicos do vendedor
+    this.listingService.getListingsBySellerId(sellerId).subscribe({
+      next: listings => {
+        const myListings: MyListing[] = listings.map(listing => ({
+          ...listing,
+          status:
+            listing.stock === 0 ? ('outOfStock' as const) : ('active' as const),
+          sold: listing.salesCount || 0,
+        }))
+
+        this.listings.set(myListings)
+        this.isLoading.set(false)
+      },
+      error: error => {
+        console.error('Erro ao carregar anúncios:', error)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar seus anúncios',
+        })
+        this.isLoading.set(false)
+      },
+    })
   }
 
   getFilteredListings() {
@@ -198,7 +173,7 @@ export class MyListingsComponent implements OnInit {
   }
 
   toggleListingStatus(id: string) {
-    const listing = this.listings().find(l => l.id === id)
+    const listing = this.listings().find(l => l.listingId === id)
     if (listing) {
       const newStatus = listing.status === 'active' ? 'outOfStock' : 'active'
       const action =
@@ -207,7 +182,7 @@ export class MyListingsComponent implements OnInit {
       // Atualizar status localmente
       this.listings.update(listings =>
         listings.map(l =>
-          l.id === id ? { ...l, status: newStatus as any } : l,
+          l.listingId === id ? { ...l, status: newStatus as any } : l,
         ),
       )
 
@@ -240,7 +215,7 @@ export class MyListingsComponent implements OnInit {
   }
 
   deleteListing(id: string) {
-    this.listings.update(listings => listings.filter(l => l.id !== id))
+    this.listings.update(listings => listings.filter(l => l.listingId !== id))
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
