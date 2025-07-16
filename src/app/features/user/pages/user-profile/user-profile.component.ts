@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { TabViewModule } from 'primeng/tabview';
+import { Component } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { RouterModule } from '@angular/router'
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { TabViewModule } from 'primeng/tabview'
 
 @Component({
   selector: 'app-user-profile',
@@ -36,7 +36,28 @@ import { TabViewModule } from 'primeng/tabview';
         <p-tabPanel header="Pedidos" leftIcon="pi pi-shopping-bag">
           <p-card>
             <h3>Meus Pedidos</h3>
-            <p>Aqui você verá o histórico dos seus pedidos.</p>
+            <p>Visualize o histórico das suas compras.</p>
+            <p-button
+              label="Ver Minhas Compras"
+              icon="pi pi-shopping-bag"
+              routerLink="/user/my-purchases"
+              styleClass="p-button-outlined"
+            >
+            </p-button>
+          </p-card>
+        </p-tabPanel>
+
+        <p-tabPanel header="Anúncios" leftIcon="pi pi-list">
+          <p-card>
+            <h3>Meus Anúncios</h3>
+            <p>Gerencie seus produtos e anúncios.</p>
+            <p-button
+              label="Ver Meus Anúncios"
+              icon="pi pi-list"
+              routerLink="/user/my-listings"
+              styleClass="p-button-outlined"
+            >
+            </p-button>
           </p-card>
         </p-tabPanel>
 
