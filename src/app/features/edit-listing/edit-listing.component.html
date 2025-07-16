@@ -1,0 +1,361 @@
+<div class="listing-container">
+  <div class="branding-section">
+    <div class="branding-content">
+      <h1 class="brand-title">Mercado Nosso</h1>
+      <div class="brand-features">
+        <div class="feature-item">
+          <i class="pi pi-pencil"></i>
+          <span>Editar Anúncios</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-dollar"></i>
+          <span>Vender Online</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-users"></i>
+          <span>Alcançar Clientes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-container">
+      <div class="form-header">
+        <div class="header-actions">
+          <p-button
+            icon="pi pi-arrow-left"
+            [text]="true"
+            (onClick)="goBack()"
+            class="back-button"
+          ></p-button>
+        </div>
+        <h2>Editar Anúncio</h2>
+        <p>Atualize as informações do seu anúncio</p>
+      </div>
+
+      <div *ngIf="isLoadingListing()" class="loading-content">
+        <div class="loading-skeleton">
+          <p-skeleton height="4rem" class="mb-2"></p-skeleton>
+          <p-skeleton height="2rem" class="mb-4"></p-skeleton>
+          <p-skeleton height="6rem" class="mb-3"></p-skeleton>
+          <p-skeleton height="4rem" class="mb-3"></p-skeleton>
+          <p-skeleton height="4rem"></p-skeleton>
+        </div>
+      </div>
+
+      <form
+        [formGroup]="editListingForm"
+        (ngSubmit)="onSubmit()"
+        *ngIf="!isLoadingListing()"
+      >
+        <!-- Upload de Foto -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-camera"></i>
+            Fotos do Produto
+          </h3>
+
+          <!-- Mostrar imagens existentes -->
+          <div
+            class="existing-images"
+            *ngIf="currentListing()?.imagesUrl?.length"
+          >
+            <h4>Imagens atuais:</h4>
+            <div class="images-grid">
+              <div
+                class="image-item"
+                *ngFor="
+                  let imageUrl of currentListing()?.imagesUrl;
+                  let i = index
+                "
+              >
+                <img [src]="imageUrl" [alt]="currentListing()?.title" />
+                <button
+                  type="button"
+                  class="remove-image-btn"
+                  (click)="removeExistingImage(i)"
+                  pButton
+                  icon="pi pi-times"
+                  [rounded]="true"
+                  size="small"
+                  severity="danger"
+                ></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="upload-container">
+            <p-fileUpload
+              mode="advanced"
+              chooseLabel="Adicionar Mais Fotos"
+              uploadLabel="Upload"
+              cancelLabel="Cancelar"
+              accept="image/*"
+              multiple="true"
+              [maxFileSize]="5000000"
+              (onSelect)="onFileSelect($event)"
+              (onRemove)="onFileRemove($event)"
+              [auto]="false"
+              [showUploadButton]="false"
+              [showCancelButton]="false"
+            >
+              <ng-template pTemplate="content">
+                <div class="upload-info" *ngIf="uploadedFiles().length === 0">
+                  <i class="pi pi-camera upload-icon"></i>
+                  <p>Clique para adicionar mais fotos do seu produto</p>
+                  <small>Máximo 5MB por foto</small>
+                </div>
+                <div class="uploaded-files" *ngIf="uploadedFiles().length > 0">
+                  <div
+                    class="file-preview"
+                    *ngFor="let file of uploadedFiles()"
+                  >
+                    <div class="file-info">
+                      <i class="pi pi-file"></i>
+                      <span>{{ file.name }}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-fileUpload>
+          </div>
+        </div>
+
+        <!-- Informações do Produto -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-tag"></i>
+            Informações do Anúncio
+          </h3>
+
+          <div class="form-group">
+            <label for="sku"
+              >SKU do Produto <span class="required">*</span></label
+            >
+            <input
+              pInputText
+              id="sku"
+              formControlName="sku"
+              placeholder="Digite o SKU do produto (ex: PROD-001)"
+              [class.ng-invalid]="
+                editListingForm.get('sku')?.invalid &&
+                editListingForm.get('sku')?.touched
+              "
+            />
+            <small
+              class="error-message"
+              *ngIf="
+                editListingForm.get('sku')?.invalid &&
+                editListingForm.get('sku')?.touched
+              "
+            >
+              SKU é obrigatório (mínimo 3 caracteres)
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="title"
+              >Título do Anúncio <span class="required">*</span></label
+            >
+            <input
+              pInputText
+              id="title"
+              formControlName="title"
+              placeholder="Digite o título do anúncio"
+              [class.ng-invalid]="
+                editListingForm.get('title')?.invalid &&
+                editListingForm.get('title')?.touched
+              "
+            />
+            <small
+              class="error-message"
+              *ngIf="
+                editListingForm.get('title')?.invalid &&
+                editListingForm.get('title')?.touched
+              "
+            >
+              Título é obrigatório (mínimo 3 caracteres)
+            </small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category"
+                >Categoria <span class="required">*</span></label
+              >
+              <p-dropdown
+                id="category"
+                formControlName="category"
+                [options]="categories"
+                placeholder="Selecione a categoria"
+                optionLabel="label"
+                optionValue="value"
+                [class.ng-invalid]="
+                  editListingForm.get('category')?.invalid &&
+                  editListingForm.get('category')?.touched
+                "
+              ></p-dropdown>
+              <small
+                class="error-message"
+                *ngIf="
+                  editListingForm.get('category')?.invalid &&
+                  editListingForm.get('category')?.touched
+                "
+              >
+                Categoria é obrigatória
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="productCondition"
+                >Condição do Produto <span class="required">*</span></label
+              >
+              <p-dropdown
+                id="productCondition"
+                formControlName="productCondition"
+                [options]="conditions"
+                placeholder="Selecione a condição"
+                optionLabel="label"
+                optionValue="value"
+                [class.ng-invalid]="
+                  editListingForm.get('productCondition')?.invalid &&
+                  editListingForm.get('productCondition')?.touched
+                "
+              ></p-dropdown>
+              <small
+                class="error-message"
+                *ngIf="
+                  editListingForm.get('productCondition')?.invalid &&
+                  editListingForm.get('productCondition')?.touched
+                "
+              >
+                Condição é obrigatória
+              </small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description"
+              >Descrição <span class="required">*</span></label
+            >
+            <textarea
+              pInputTextarea
+              id="description"
+              formControlName="description"
+              placeholder="Descreva seu produto detalhadamente..."
+              rows="6"
+              [class.ng-invalid]="
+                editListingForm.get('description')?.invalid &&
+                editListingForm.get('description')?.touched
+              "
+            ></textarea>
+            <small
+              class="error-message"
+              *ngIf="
+                editListingForm.get('description')?.invalid &&
+                editListingForm.get('description')?.touched
+              "
+            >
+              Descrição é obrigatória (mínimo 10 caracteres)
+            </small>
+          </div>
+        </div>
+
+        <!-- Preço e Estoque -->
+        <div class="form-group-section">
+          <h3 class="section-title">
+            <i class="pi pi-dollar"></i>
+            Preço e Estoque
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="price"
+                >Preço de Venda (R$) <span class="required">*</span></label
+              >
+              <p-inputNumber
+                id="price"
+                formControlName="price"
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR"
+                placeholder="R$ 0,00"
+                [class.ng-invalid]="
+                  editListingForm.get('price')?.invalid &&
+                  editListingForm.get('price')?.touched
+                "
+              ></p-inputNumber>
+              <small
+                class="error-message"
+                *ngIf="
+                  editListingForm.get('price')?.invalid &&
+                  editListingForm.get('price')?.touched
+                "
+              >
+                Preço é obrigatório e deve ser maior que R$ 0,01
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="stock"
+                >Quantidade em Estoque (UN)
+                <span class="required">*</span></label
+              >
+              <div class="quantity-control">
+                <p-inputNumber
+                  id="stock"
+                  formControlName="stock"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  spinnerMode="horizontal"
+                  decrementButtonClass="p-button-secondary"
+                  incrementButtonClass="p-button-secondary"
+                  [min]="1"
+                  [max]="9999"
+                  placeholder="1"
+                  [class.ng-invalid]="
+                    editListingForm.get('stock')?.invalid &&
+                    editListingForm.get('stock')?.touched
+                  "
+                ></p-inputNumber>
+              </div>
+              <small
+                class="error-message"
+                *ngIf="
+                  editListingForm.get('stock')?.invalid &&
+                  editListingForm.get('stock')?.touched
+                "
+              >
+                Quantidade deve ser pelo menos 1
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
+            styleClass="p-button-lg p-button-outlined"
+            type="button"
+            (onClick)="goBack()"
+            [disabled]="isLoading()"
+          ></p-button>
+
+          <p-button
+            label="Salvar Alterações"
+            icon="pi pi-check"
+            styleClass="p-button-lg"
+            type="submit"
+            [loading]="isLoading()"
+            [disabled]="editListingForm.invalid"
+          ></p-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-toast position="top-right"></p-toast>

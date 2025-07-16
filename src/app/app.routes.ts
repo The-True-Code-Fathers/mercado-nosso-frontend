@@ -49,6 +49,14 @@ export const routes: Routes = [
     title: 'Criar Anúncio',
   },
   {
+    path: 'edit-listing/:id',
+    loadChildren: () =>
+      import('./features/edit-listing/edit-listing.routes').then(
+        m => m.editListingRoutes,
+      ),
+    title: 'Editar Anúncio',
+  },
+  {
     path: 'login',
     loadChildren: () =>
       import('./features/login/login.routes').then(m => m.loginRoutes),
