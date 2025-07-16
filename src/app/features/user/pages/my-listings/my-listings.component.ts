@@ -161,14 +161,20 @@ export class MyListingsComponent implements OnInit {
   }
 
   createNewListing() {
+    // Resetar scroll para o topo antes de navegar
+    window.scrollTo(0, 0)
     this.router.navigate(['/create-listing'])
   }
 
   editListing(id: string) {
+    // Resetar scroll para o topo antes de navegar
+    window.scrollTo(0, 0)
     this.router.navigate(['/edit-listing', id])
   }
 
   viewListing(id: string) {
+    // Resetar scroll para o topo antes de navegar
+    window.scrollTo(0, 0)
     this.router.navigate(['/listing', id])
   }
 
@@ -195,6 +201,8 @@ export class MyListingsComponent implements OnInit {
   }
 
   duplicateListing(id: string) {
+    // Resetar scroll para o topo antes de navegar
+    window.scrollTo(0, 0)
     this.router.navigate(['/create-listing'], {
       queryParams: { duplicate: id },
     })
