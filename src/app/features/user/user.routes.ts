@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes } from '@angular/router'
 
 export const userRoutes: Routes = [
   {
@@ -10,8 +10,16 @@ export const userRoutes: Routes = [
     path: 'profile',
     loadComponent: () =>
       import('./pages/user-profile/user-profile.component').then(
-        (m) => m.UserProfileComponent
+        m => m.UserProfileComponent,
       ),
     title: 'Minha Conta - Mercado Nosso',
   },
-];
+  {
+    path: 'my-listings',
+    loadComponent: () =>
+      import('./pages/my-listings/my-listings.component').then(
+        m => m.MyListingsComponent,
+      ),
+    title: 'Meus Anúncios - Mercado Nosso',
+  },
+]
