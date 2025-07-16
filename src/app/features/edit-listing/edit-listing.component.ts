@@ -13,6 +13,7 @@ import { InputTextarea } from 'primeng/inputtextarea'
 import { InputNumberModule } from 'primeng/inputnumber'
 import { DropdownModule } from 'primeng/dropdown'
 import { FileUploadModule } from 'primeng/fileupload'
+import { DividerModule } from 'primeng/divider'
 import { CardModule } from 'primeng/card'
 import { MessageModule } from 'primeng/message'
 import { ToastModule } from 'primeng/toast'
@@ -43,6 +44,7 @@ interface ProductCondition {
     InputNumberModule,
     DropdownModule,
     FileUploadModule,
+    DividerModule,
     CardModule,
     MessageModule,
     ToastModule,

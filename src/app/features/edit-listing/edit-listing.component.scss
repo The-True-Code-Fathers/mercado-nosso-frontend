@@ -175,27 +175,36 @@
 
 .form-group-section {
   margin-bottom: var(--spacing-xl);
-  background: var(--color-surface);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+
+    i {
+      color: var(--color-primary);
+      font-size: 1.3rem;
+    }
+
+    .pi-star {
+      color: var(--color-secondary);
+    }
+  }
+
+  ::ng-deep .p-divider {
+    margin: var(--spacing-sm) 0 var(--spacing-lg);
+
+    .p-divider-content {
+      background: var(--color-surface);
+    }
+  }
 
   &:last-child {
     margin-bottom: 0;
-  }
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-lg);
-
-  i {
-    color: var(--color-primary);
   }
 }
 
