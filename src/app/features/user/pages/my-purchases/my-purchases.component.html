@@ -95,33 +95,15 @@
             <span class="price-main"
               >R$ {{ purchase.price | number : '1.2-2' }}</span
             >
-            <span *ngIf="purchase.quantityPurchased > 1" class="price-details">
-              <small class="price-unit">unidade</small>
-              <div class="price-total">
-                Total: R$
-                {{
-                  purchase.price * purchase.quantityPurchased | number : '1.2-2'
-                }}
-              </div>
-            </span>
           </div>
 
           <div class="listing-stats">
-            <div
-              class="stat-item quantity-stat"
-              [class.multiple-quantity]="purchase.quantityPurchased > 1"
-            >
+            <div class="stat-item">
               <i class="pi pi-shopping-cart"></i>
-              <span class="quantity-text">
-                <strong>{{ purchase.quantityPurchased }}</strong> comprado{{
+              <span>
+                {{ purchase.quantityPurchased }} comprado{{
                   purchase.quantityPurchased > 1 ? 's' : ''
                 }}
-                <span
-                  *ngIf="purchase.quantityPurchased > 1"
-                  class="quantity-badge"
-                >
-                  {{ purchase.quantityPurchased }}x
-                </span>
               </span>
             </div>
             <div class="stat-item">
