@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import { tap, catchError } from 'rxjs/operators'
+import { tap, catchError, map } from 'rxjs/operators'
 import { throwError } from 'rxjs'
 
 export interface Listing {
@@ -27,6 +27,7 @@ export interface Review {
   id: string
   listingId: string
   buyerId: string
+  buyerName?: string // Nome do comprador (será preenchido via lookup)
   rating: number
   message: string
   imagesUrls: string[]
@@ -125,8 +126,18 @@ export class ListingService {
   }
 
   getListingsBySellerId(sellerId: string): Observable<Listing[]> {
-    return this.http.get<Listing[]>(`${this.apiUrl}`, {
-      params: { sellerId },
-    })
+    return this.http.get<Listing[]>(`${this.apiUrl}`).pipe(
+      map(listings => {
+        console.log('Todos os listings recebidos:', listings.length)
+        console.log('Filtrando por sellerId:', sellerId)
+
+        const filtered = listings.filter(
+          listing => listing.sellerId === sellerId,
+        )
+        console.log('Listings filtrados:', filtered.length)
+
+        return filtered
+      }),
+    )
   }
 }

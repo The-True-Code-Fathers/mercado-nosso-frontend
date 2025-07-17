@@ -1,5 +1,5 @@
-/* My Listings - Design System baseado na Home e Listing */
-.my-listings-container {
+/* My Purchases - Design System baseado na Home e Listing */
+.my-purchases-container {
   min-height: 100vh;
   background: var(--color-bg);
   padding: var(--spacing-lg);
@@ -50,80 +50,6 @@
     i {
       font-size: 1.5rem;
     }
-  }
-}
-
-::ng-deep .create-button {
-  &.p-button {
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-weight: 600;
-    font-size: 1rem;
-
-    @media (max-width: 768px) {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-}
-
-/* Tab Navigation */
-.tab-navigation {
-  max-width: 1200px;
-  margin: 0 auto var(--spacing-xl);
-  border-bottom: 2px solid var(--color-border);
-}
-
-.tabs {
-  display: flex;
-  gap: 0;
-  overflow-x: auto;
-
-  @media (max-width: 768px) {
-    gap: var(--spacing-xs);
-  }
-}
-
-.tab-button {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  border-bottom: 3px solid transparent;
-
-  &:hover {
-    color: var(--color-primary);
-    background: var(--color-elevation-1);
-  }
-
-  &.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-    background: var(--color-elevation-1);
-  }
-
-  .tab-count {
-    background: var(--color-primary);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    min-width: 20px;
-    text-align: center;
-  }
-
-  @media (max-width: 768px) {
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: 0.9rem;
   }
 }
 
@@ -190,6 +116,38 @@
   }
 }
 
+/* Error State */
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 400px;
+
+  .error-icon {
+    font-size: 4rem;
+    color: var(--color-error);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  h3 {
+    color: var(--color-text-primary);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+  }
+}
+
 /* Listings Grid */
 .listings-grid {
   display: grid;
@@ -228,11 +186,27 @@
   margin-bottom: var(--spacing-sm);
 }
 
+.menu-container {
+  position: relative;
+  z-index: 10;
+}
+
 ::ng-deep .status-tag {
   &.p-tag {
     font-weight: 600;
     font-size: 0.8rem;
     margin-top: 2px;
+  }
+}
+
+::ng-deep .menu-button {
+  &.p-button {
+    width: 32px;
+    height: 32px;
+
+    .p-button-icon {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -251,26 +225,6 @@
 
   &:hover img {
     transform: scale(1.05);
-  }
-
-  .image-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .overlay-text {
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
   }
 }
 
@@ -300,6 +254,36 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+
+  .price-main {
+    display: block;
+  }
+
+  .price-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .price-unit {
+      color: var(--color-text-muted);
+      font-size: 0.7rem;
+      font-weight: 400;
+      margin-top: -4px;
+    }
+
+    .price-total {
+      color: var(--color-success);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: var(--spacing-xs);
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(76, 175, 80, 0.2);
+    }
+  }
 }
 
 .listing-stats {
@@ -326,6 +310,55 @@
   span {
     white-space: nowrap;
   }
+
+  &.quantity-stat {
+    position: relative;
+
+    .quantity-text {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+
+      strong {
+        color: var(--color-text-primary);
+        font-weight: 700;
+      }
+    }
+
+    .quantity-badge {
+      background: var(--color-primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: var(--spacing-xs);
+    }
+
+    &.multiple-quantity {
+      .quantity-text strong {
+        color: var(--color-primary);
+        font-size: 1rem;
+      }
+
+      i {
+        color: var(--color-primary);
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .listing-meta {
@@ -342,11 +375,16 @@
     border-radius: var(--radius-sm);
     font-weight: 500;
   }
+
+  .purchase-date {
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
 }
 
 .card-actions {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
   padding: var(--spacing-md);
   background: var(--color-elevation-1);
   border-top: 1px solid var(--color-border);
@@ -355,8 +393,8 @@
 ::ng-deep .action-button {
   &.p-button {
     flex: 1;
-    font-size: 0.9rem;
-    padding: var(--spacing-sm);
+    font-size: 0.8rem;
+    padding: var(--spacing-xs);
 
     .p-button-label {
       font-weight: 500;
@@ -364,9 +402,29 @@
   }
 }
 
+::ng-deep .evaluated-button {
+  &.p-button {
+    background: #d4edda !important;
+    border-color: #4caf50 !important;
+    color: #155724 !important;
+    opacity: 0.8;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #d4edda !important;
+      border-color: #4caf50 !important;
+      color: #155724 !important;
+    }
+
+    .p-button-icon {
+      color: #4caf50 !important;
+    }
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 480px) {
-  .my-listings-container {
+  .my-purchases-container {
     padding: var(--spacing-sm);
   }
 
@@ -423,16 +481,6 @@
 
       &:hover {
         background: var(--color-elevation-1);
-      }
-    }
-
-    &.text-red-500 {
-      .p-menuitem-link {
-        color: var(--color-error);
-
-        &:hover {
-          background: rgba(244, 67, 54, 0.1);
-        }
       }
     }
   }

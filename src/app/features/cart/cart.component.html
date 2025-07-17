@@ -60,17 +60,12 @@
 
             <!-- Product Image -->
             <div class="item-image">
-              <img 
-                [src]="item.image" 
-                [alt]="item.name" 
+              <img
+                [src]="item.image"
+                [alt]="item.name"
                 (error)="onImageError($event, item)"
                 loading="lazy"
               />
-              <p-badge
-                [value]="item.category"
-                severity="secondary"
-                class="category-badge"
-              ></p-badge>
             </div>
 
             <!-- Product Details -->
@@ -100,7 +95,7 @@
                   [ngModel]="item.quantity"
                   (ngModelChange)="updateQuantity(item.listingId, $event)"
                   [min]="0"
-                  [max]="99"
+                  [max]="item.stock"
                   [showButtons]="true"
                   buttonLayout="horizontal"
                   spinnerMode="horizontal"
@@ -158,7 +153,8 @@
               icon="pi pi-arrow-left"
               styleClass="p-button-outlined w-full mb-2"
               routerLink="/products"
-              (click)="continueShopping()">
+              (click)="continueShopping()"
+            >
             </p-button>
 
             <div class="action-buttons-row">

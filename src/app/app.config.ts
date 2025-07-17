@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core'
-import { provideRouter } from '@angular/router'
+import { provideRouter, withInMemoryScrolling } from '@angular/router'
 import { provideHttpClient } from '@angular/common/http'
 import { ConfirmationService, MessageService } from 'primeng/api'
 
@@ -11,7 +11,12 @@ import Aura from '@primeng/themes/aura'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'disabled',
+      }),
+    ),
     provideHttpClient(),
     provideAnimationsAsync(),
     providePrimeNG({
@@ -22,8 +27,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
-    provideHttpClient(),
     // Global PrimeNG services for modern Angular
     ConfirmationService,
     MessageService,

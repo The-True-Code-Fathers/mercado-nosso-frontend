@@ -160,39 +160,46 @@
           {{ getCategoriesButtonLabel() }}
         </span>
 
-          <p-overlayPanel
-            #categoriesPanel
-            styleClass="categories-overlay-panel"
-            (onHide)="categoriesMenuVisible = false"
-            (onShow)="categoriesMenuVisible = true"
-            [showCloseIcon]="false"
-            [dismissable]="false"
-            appendTo="body">
-            <div class="categories-mega-content"
-                 (mouseenter)="onOverlayPanelEnter()"
-                 (mouseleave)="onOverlayPanelLeave()">
-              <div class="categories-grid">
-                <a *ngFor="let category of categories"
-                   [routerLink]="['/listing']"
-                   [queryParams]="{category: category.key}"
-                   class="category-item"
-                   (click)="onCategorySelected()">
-                  <i [class]="category.icon"></i>
-                  <span>{{ category.label }}</span>
-                </a>
-              </div>
+        <p-overlayPanel
+          #categoriesPanel
+          styleClass="categories-overlay-panel"
+          (onHide)="categoriesMenuVisible = false"
+          (onShow)="categoriesMenuVisible = true"
+          [showCloseIcon]="false"
+          [dismissable]="false"
+          appendTo="body"
+        >
+          <div
+            class="categories-mega-content"
+            (mouseenter)="onOverlayPanelEnter()"
+            (mouseleave)="onOverlayPanelLeave()"
+          >
+            <div class="categories-grid">
+              <a
+                *ngFor="let category of categories"
+                [routerLink]="['/listing']"
+                [queryParams]="{ category: category.key }"
+                class="category-item"
+                (click)="onCategorySelected()"
+              >
+                <i [class]="category.icon"></i>
+                <span>{{ category.label }}</span>
+              </a>
             </div>
-          </p-overlayPanel>
-        </div>
-
-        <!-- Responsive quick categories -->
-        <span class="category-link"
-              *ngFor="let category of getQuickCategoriesForScreen()"
-              [routerLink]="['/listing']"
-              [queryParams]="{category: category.key}">
-          {{ category.label }}
-        </span>
+          </div>
+        </p-overlayPanel>
       </div>
+
+      <!-- Responsive quick categories -->
+      <span
+        class="category-link"
+        *ngFor="let category of getQuickCategoriesForScreen()"
+        [routerLink]="['/listing']"
+        [queryParams]="{ category: category.key }"
+      >
+        {{ category.label }}
+      </span>
+    </div>
   </div>
 
   <!-- Mobile Menu Button - Remove old structure -->
@@ -208,6 +215,15 @@
       >
         <i class="pi pi-user"></i>
         <span>Minha conta</span>
+      </div>
+
+      <div
+        class="mobile-nav-item"
+        routerLink="/user/my-purchases"
+        (click)="closeMobileMenu()"
+      >
+        <i class="pi pi-shopping-bag"></i>
+        <span>Minhas compras</span>
       </div>
 
       <div
@@ -231,11 +247,13 @@
 
     <!-- Quick Categories Section -->
     <div class="mobile-quick-categories-section">
-      <div class="mobile-quick-category-item"
-           *ngFor="let category of quickCategories.slice(0, 4)"
-           [routerLink]="['/listing']"
-           [queryParams]="{category: category.key}"
-           (click)="closeMobileMenu()">
+      <div
+        class="mobile-quick-category-item"
+        *ngFor="let category of quickCategories.slice(0, 4)"
+        [routerLink]="['/listing']"
+        [queryParams]="{ category: category.key }"
+        (click)="closeMobileMenu()"
+      >
         <i [class]="category.icon"></i>
         <span>{{ category.label }}</span>
       </div>
@@ -260,11 +278,13 @@
         [class.mobile-categories-active]="mobileCategoriesVisible"
       >
         <div class="mobile-non-quick-categories">
-          <div class="mobile-category-item"
-               *ngFor="let category of getNonQuickCategories()"
-               [routerLink]="['/listing']"
-               [queryParams]="{category: category.key}"
-               (click)="closeMobileMenu()">
+          <div
+            class="mobile-category-item"
+            *ngFor="let category of getNonQuickCategories()"
+            [routerLink]="['/listing']"
+            [queryParams]="{ category: category.key }"
+            (click)="closeMobileMenu()"
+          >
             <i [class]="category.icon"></i>
             <span>{{ category.label }}</span>
           </div>

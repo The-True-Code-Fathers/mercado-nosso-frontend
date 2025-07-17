@@ -22,4 +22,12 @@ export const userRoutes: Routes = [
       ),
     title: 'Meus Anúncios - Mercado Nosso',
   },
+  {
+    path: 'my-purchases',
+    loadComponent: () =>
+      import('./pages/my-purchases/my-purchases.component').then(
+        m => m.MyPurchasesComponent,
+      ),
+    title: 'Minhas Compras - Mercado Nosso',
+  },
 ]
