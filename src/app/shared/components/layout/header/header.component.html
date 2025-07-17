@@ -55,15 +55,12 @@
       </div>
     </div>
 
-    <!-- Regular Header Content -->
     <div class="header-container" [class.header-hidden]="mobileSearchVisible" [class.dashboard-header]="isDashboardRoute">
-      <!-- Logo/Brand -->
       <div class="brand" routerLink="/home">
         <i class="pi pi-shopping-bag brand-icon"></i>
         <span class="brand-text">{{ getBrandText() }}</span>
       </div>
 
-      <!-- Mobile Actions -->
       <div class="mobile-actions">
         <p-button
           *ngIf="!isDashboardRoute"
@@ -110,20 +107,6 @@
 
       <!-- User Actions -->
       <div class="user-actions desktop-only">
-        <!-- Categories Button -->
-        <div class="categories-container">
-          <p-button
-            label="Venda conosco"
-            icon="pi pi-shop"
-            styleClass="p-button-outlined categories-button"
-            routerLink="/create-listing"
-            [attr.aria-expanded]="categoriesMenuVisible"
-            [attr.aria-haspopup]="true"
-          />
-        </div>
-
-        <div class="action-separator"></div>
-
         <div class="cart-container">
           <p-button
             icon="pi pi-shopping-cart"
