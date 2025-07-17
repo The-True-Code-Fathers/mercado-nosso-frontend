@@ -18,14 +18,20 @@ import {
   Listing,
 } from '../../../listing/services/listing.service'
 import { UserService, UserResponse } from '../../services/user.service'
+import { OrderService, Order } from '../../services/order.service'
 import { DEVELOPMENT_CONFIG } from '../../../../shared/config/development.config'
 import { forkJoin, of } from 'rxjs'
-import { catchError, switchMap } from 'rxjs/operators'
+import { catchError, switchMap, map } from 'rxjs/operators'
+
+// Components
+import { ReviewModalComponent } from '../../components/review-modal.component'
 
 export interface MyPurchase extends Listing {
   status: 'active' | 'outOfStock'
   quantityPurchased: number
   purchaseDate: Date
+  orderId: string
+  orderStatus: Order['status']
 }
 
 @Component({
@@ -40,6 +46,7 @@ export interface MyPurchase extends Listing {
     SkeletonModule,
     ToastModule,
     ConfirmDialogModule,
+    ReviewModalComponent,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './my-purchases.component.html',
@@ -50,9 +57,14 @@ export class MyPurchasesComponent implements OnInit {
   isLoading = signal<boolean>(false)
   error = signal<string | null>(null)
 
+  // Review Modal
+  showReviewModal = signal<boolean>(false)
+  selectedPurchase = signal<MyPurchase | null>(null)
+
   private router = inject(Router)
   private listingService = inject(ListingService)
   private userService = inject(UserService)
+  private orderService = inject(OrderService)
   private messageService = inject(MessageService)
   private confirmationService = inject(ConfirmationService)
 
@@ -66,25 +78,34 @@ export class MyPurchasesComponent implements OnInit {
     this.isLoading.set(true)
     this.error.set(null)
 
-    // Buscar dados do usuário para obter os IDs das compras
-    this.userService
-      .getCurrentUser(this.userId)
+    // Buscar todas as orders do usuário
+    this.orderService
+      .getAllOrdersByBuyer(this.userId)
       .pipe(
-        switchMap((user: UserResponse) => {
-          console.log('Dados do usuário:', user)
+        switchMap((orders: Order[]) => {
+          console.log('Orders do usuário:', orders)
 
-          // Verificar se há compras
-          if (!user.listingBoughtId || user.listingBoughtId.length === 0) {
+          // Verificar se há orders
+          if (!orders || orders.length === 0) {
             console.log('Usuário não tem compras')
             this.purchases.set([])
             this.isLoading.set(false)
             return of([])
           }
 
-          console.log('IDs das compras:', user.listingBoughtId)
+          // Extrair todos os listingIDs de todas as orders
+          const allListingIds: string[] = []
 
-          // Buscar detalhes de todos os listings comprados
-          const listingRequests = user.listingBoughtId.map(listingId =>
+          orders.forEach(order => {
+            order.listingID.forEach(listingId => {
+              allListingIds.push(listingId)
+            })
+          })
+
+          console.log('IDs dos listings das compras:', allListingIds)
+
+          // Buscar detalhes de todos os listings
+          const listingRequests = allListingIds.map(listingId =>
             this.listingService.getListingById(listingId).pipe(
               catchError(error => {
                 console.error(`Erro ao buscar listing ${listingId}:`, error)
@@ -93,32 +114,47 @@ export class MyPurchasesComponent implements OnInit {
             ),
           )
 
-          return forkJoin(listingRequests)
+          return forkJoin(listingRequests).pipe(
+            map((listings: (Listing | null)[]) => {
+              // Filtrar listings válidos e converter para MyPurchase
+              const validListings = listings.filter(
+                (listing): listing is Listing => listing !== null,
+              )
+
+              const purchases: MyPurchase[] = validListings.map(listing => {
+                // Encontrar a order correspondente
+                const order = orders.find(o =>
+                  o.listingID.includes(listing.listingId),
+                )
+
+                return {
+                  ...listing,
+                  status:
+                    listing.stock > 0
+                      ? 'active'
+                      : ('outOfStock' as 'active' | 'outOfStock'),
+                  quantityPurchased: 1, // Por enquanto assumimos 1
+                  purchaseDate: new Date(
+                    order?.creationTime || listing.createdAt || new Date(),
+                  ),
+                  orderId: order?.orderId || '',
+                  orderStatus: order?.status || 'OPEN',
+                }
+              })
+
+              return purchases
+            }),
+          )
         }),
         catchError(error => {
           console.error('Erro ao carregar compras:', error)
           this.error.set('Erro ao carregar suas compras. Tente novamente.')
+          this.isLoading.set(false)
           return of([])
         }),
       )
       .subscribe({
-        next: (listings: (Listing | null)[]) => {
-          console.log('Listings das compras:', listings)
-
-          // Filtrar listings válidos e converter para MyPurchase
-          const validListings = listings.filter(
-            listing => listing !== null,
-          ) as Listing[]
-          const purchases: MyPurchase[] = validListings.map(listing => ({
-            ...listing,
-            status:
-              listing.stock > 0
-                ? 'active'
-                : ('outOfStock' as 'active' | 'outOfStock'),
-            quantityPurchased: 1, // Por enquanto assumimos 1, depois pode vir do histórico de compras
-            purchaseDate: new Date(listing.createdAt || new Date()), // Usando data de criação como proxy
-          }))
-
+        next: (purchases: MyPurchase[]) => {
           console.log('Compras processadas:', purchases)
           this.purchases.set(purchases)
           this.isLoading.set(false)
@@ -140,11 +176,14 @@ export class MyPurchasesComponent implements OnInit {
   }
 
   ratePurchase(purchase: MyPurchase) {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Avaliação',
-      detail: `Funcionalidade de avaliação em desenvolvimento para ${purchase.title}`,
-    })
+    this.selectedPurchase.set(purchase)
+    this.showReviewModal.set(true)
+  }
+
+  onReviewSubmitted() {
+    // Fechar modal e recarregar se necessário
+    this.showReviewModal.set(false)
+    this.selectedPurchase.set(null)
   }
 
   contactSeller(purchase: MyPurchase) {
@@ -153,5 +192,32 @@ export class MyPurchasesComponent implements OnInit {
       summary: 'Contato',
       detail: `Funcionalidade de contato em desenvolvimento para ${purchase.title}`,
     })
+  }
+
+  getOrderStatusLabel(status: Order['status']): string {
+    const statusMap: Record<Order['status'], string> = {
+      OPEN: 'Processando',
+      PROCESSING: 'Em Processamento',
+      SHIPPED: 'Enviado',
+      DELIVERED: 'Entregue',
+      CANCELLED: 'Cancelado',
+    }
+    return statusMap[status] || 'Processando'
+  }
+
+  getOrderStatusSeverity(
+    status: Order['status'],
+  ): 'success' | 'info' | 'warning' | 'danger' {
+    const severityMap: Record<
+      Order['status'],
+      'success' | 'info' | 'warning' | 'danger'
+    > = {
+      OPEN: 'info',
+      PROCESSING: 'warning',
+      SHIPPED: 'info',
+      DELIVERED: 'success',
+      CANCELLED: 'danger',
+    }
+    return severityMap[status] || 'info'
   }
 }
