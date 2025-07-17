@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core'
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewEncapsulation,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { CardModule } from 'primeng/card'
@@ -20,6 +26,7 @@ export interface ProductCardNewData {
   imports: [CommonModule, RouterLink, CardModule],
   templateUrl: './product-card-new.component.html',
   styleUrls: ['./product-card-new.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ProductCardNewComponent {
   @Input() product!: ProductCardNewData
