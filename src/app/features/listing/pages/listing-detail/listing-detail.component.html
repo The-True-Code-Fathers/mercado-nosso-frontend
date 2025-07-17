@@ -529,9 +529,12 @@
                 <i class="pi pi-user"></i>
               </div>
               <div class="reviewer-details">
-                <span class="reviewer-name"
-                  >Comprador {{ review.buyerId.substring(0, 8) }}</span
-                >
+                <span class="reviewer-name">
+                  {{
+                    review.buyerName ||
+                      'Comprador ' + review.buyerId.substring(0, 8)
+                  }}
+                </span>
                 <span class="review-date">{{
                   review.createdAt | date : 'dd/MM/yyyy HH:mm'
                 }}</span>

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, forkJoin } from 'rxjs'
-import { map, catchError } from 'rxjs/operators'
+import { map, catchError, switchMap } from 'rxjs/operators'
 import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
+import { UserService } from './user.service'
 
 export interface CreateReviewRequest {
   listingId: string
@@ -16,6 +17,7 @@ export interface ReviewResponse {
   id: string
   listingId: string
   buyerId: string
+  buyerName?: string // Nome do comprador (será preenchido via lookup)
   rating: number
   message?: string
   imagesUrls?: string[]
@@ -29,6 +31,7 @@ export interface ReviewResponse {
 export class ReviewService {
   private readonly apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
   private submittedReviews = new Set<string>() // Cache local para reviews já enviadas
+  private userService = inject(UserService)
 
   constructor(private http: HttpClient) {}
 
@@ -63,9 +66,37 @@ export class ReviewService {
   }
 
   getReviewsByListing(listingId: string): Observable<ReviewResponse[]> {
-    return this.http.get<ReviewResponse[]>(
-      `${this.apiUrl}/listing/${listingId}`,
-    )
+    return this.http
+      .get<ReviewResponse[]>(`${this.apiUrl}/listing/${listingId}`)
+      .pipe(
+        switchMap(reviews => {
+          if (reviews.length === 0) {
+            return of([])
+          }
+
+          // Buscar nomes dos usuários para cada review
+          const userRequests = reviews.map(review =>
+            this.userService.getUserById(review.buyerId).pipe(
+              map(user => ({
+                ...review,
+                buyerName: user.fullName,
+              })),
+              catchError(error => {
+                console.error(
+                  `Erro ao buscar usuário ${review.buyerId}:`,
+                  error,
+                )
+                return of({
+                  ...review,
+                  buyerName: 'Usuário Anônimo',
+                })
+              }),
+            ),
+          )
+
+          return forkJoin(userRequests)
+        }),
+      )
   }
 
   getUserReviewForListing(

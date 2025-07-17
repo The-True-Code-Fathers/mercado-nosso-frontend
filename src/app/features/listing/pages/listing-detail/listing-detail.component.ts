@@ -6,9 +6,13 @@ import { HttpClient } from '@angular/common/http'
 import { ListingService, Listing, Review } from '../../services/listing.service'
 import { CartService } from '../../../cart/services/cart.service'
 import { UserService, UserResponse } from '../../../user/services/user.service'
+import {
+  ReviewService,
+  ReviewResponse,
+} from '../../../user/services/review.service'
 
 // Estender Review para incluir propriedades do frontend
-export interface ReviewWithFrontendData extends Review {
+export interface ReviewWithFrontendData extends ReviewResponse {
   helpful?: number
 }
 
@@ -248,6 +252,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private messageService: MessageService,
     private userService: UserService,
+    private reviewService: ReviewService,
   ) {
     this.initializeGalleryImages()
     this.initializeRelatedProducts()
@@ -743,9 +748,9 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     // Usar dados reais do backend quando disponíveis
     const listing = this.listing()
     if (listing && listing.listingId) {
-      // Carregar reviews reais da API
-      this.listingService.getReviewsByListingId(listing.listingId).subscribe({
-        next: (reviews: Review[]) => {
+      // Carregar reviews reais da API com nomes dos usuários
+      this.reviewService.getReviewsByListing(listing.listingId).subscribe({
+        next: (reviews: ReviewResponse[]) => {
           // Adicionar propriedades do frontend aos reviews
           this.reviews = reviews.map(review => ({
             ...review,
@@ -766,7 +771,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
             this.updateListingRating(listing, averageRating)
 
             // Calcular distribuição de ratings baseada nos dados reais
-            this.calculateRatingDistribution(reviews, totalReviews)
+            this.calculateRatingDistribution(reviews as Review[], totalReviews)
 
             this.summaryText = `Avaliações baseadas nas experiências reais dos ${totalReviews} clientes que compraram este produto.`
             this.summaryHighlights = [

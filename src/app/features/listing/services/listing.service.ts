@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { tap, catchError, map } from 'rxjs/operators'
@@ -27,6 +27,7 @@ export interface Review {
   id: string
   listingId: string
   buyerId: string
+  buyerName?: string // Nome do comprador (será preenchido via lookup)
   rating: number
   message: string
   imagesUrls: string[]
