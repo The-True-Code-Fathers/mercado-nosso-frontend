@@ -55,6 +55,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   mobileSearchVisible = false // Add mobile search state
   cartItemsCount = 3 // TODO: This should come from CartService
   username: string | null = 'Matheus' // TODO: Replace with actual user service
+  isDashboardRoute = false // Track if current route is dashboard
 
   // Responsive properties
   isMobile = false
@@ -79,6 +80,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.checkScreenSize()
 
+    // Check initial route
+    this.isDashboardRoute = this.router.url.includes('/dashboard')
+
     // Subscribe to search term changes from the service
     const searchTermSub = this.searchService.searchTerm$.subscribe(term => {
       this.searchTerm = term
@@ -92,6 +96,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (event.url === '/' || event.url === '/home') {
           this.searchService.clearSearchTerm()
         }
+        // Check if current route is dashboard
+        this.isDashboardRoute = event.url.includes('/dashboard')
       })
     this.subscriptions.push(routerSub)
 
@@ -320,5 +326,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.categories.filter(
       category => !quickCategoryKeys.includes(category.key),
     )
+  }
+
+  // Get brand text based on current route
+  getBrandText(): string {
+    return this.isDashboardRoute ? 'Mercado Nosso Analytics' : 'Mercado Nosso'
   }
 }
