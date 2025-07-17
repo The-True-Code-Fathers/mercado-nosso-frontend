@@ -1,0 +1,294 @@
+.payment-step {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.step-header h2 {
+  color: var(--color-text-primary);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.step-header p {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.payment-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.payment-methods-section h3 {
+  color: var(--color-text-primary);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.saved-methods h4,
+.quick-methods h4,
+.new-card-section h4 {
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.method-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.method-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.method-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(27, 94, 32, 0.1);
+}
+
+.method-selection {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+}
+
+.method-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.method-main {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.method-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--color-elevation-1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+}
+
+.method-icon.large {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+}
+
+.method-icon img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.method-details h5 {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.method-details p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.default-badge {
+  background: var(--color-success);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+}
+
+.quick-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.quick-method-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.quick-method-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.quick-method-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(27, 94, 32, 0.1);
+}
+
+.quick-method-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.quick-method-content h5 {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.quick-method-content p {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.installments-section {
+  margin-top: var(--spacing-md);
+}
+
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.form-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-field.full-width {
+  flex: 1 1 100%;
+}
+
+.form-field label {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.checkbox-label {
+  margin-left: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.add-card-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .payment-step {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .step-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .quick-methods-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .method-selection {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .method-main {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .step-actions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .step-actions p-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-methods-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* PrimeNG overrides */
+:host ::ng-deep .p-card .p-card-content {
+  padding: var(--spacing-lg);
+}
+
+:host ::ng-deep .p-button {
+  min-width: 120px;
+}
+
+:host ::ng-deep .p-radiobutton {
+  margin-top: var(--spacing-xs);
+}
+
+:host ::ng-deep .p-dropdown {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 100%;
+}
+
+:host ::ng-deep .p-checkbox {
+  margin-right: var(--spacing-sm);
+}

@@ -498,20 +498,13 @@ export class CartComponent implements OnInit {
       return
     }
 
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Checkout',
-      detail: `Processando ${selectedItems.length} item(s) selecionado(s)...`,
-    })
+    // Navigate to checkout page
+    this.router.navigate(['/checkout'])
   }
 
   continueShopping() {
-    // Navigate back to products - this would use Router in a real app
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Redirecionando',
-      detail: 'Voltando para a lista de produtos...',
-    })
+    // Navigate back to products
+    this.router.navigate(['/listing'])
   }
 
   private updateTotals() {

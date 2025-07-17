@@ -30,11 +30,6 @@ export const routes: Routes = [
     title: 'Usuário',
   },
   {
-    path: 'finish',
-    loadComponent: () =>
-      import('./features/finish/finish.component').then(m => m.FinishComponent),
-  },
-  {
     path: 'listing',
     loadChildren: () =>
       import('./features/listing/listing.routes').then(m => m.listingRoutes),

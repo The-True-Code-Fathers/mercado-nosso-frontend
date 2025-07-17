@@ -1,0 +1,176 @@
+<div class="shipping-step">
+  <div class="step-header">
+    <h2>Endereço de Entrega</h2>
+    <p>Escolha ou cadastre um endereço para receber seu pedido</p>
+  </div>
+
+  <div class="shipping-content">
+    <!-- Existing Addresses -->
+    <div class="addresses-section" *ngIf="savedAddresses.length > 0">
+      <h3>Endereços Salvos</h3>
+      <div class="addresses-list">
+        <p-card 
+          *ngFor="let address of savedAddresses" 
+          class="address-card"
+          [class.selected]="selectedAddressId === address.id"
+        >
+          <div class="address-selection">
+            <p-radioButton
+              [value]="address.id"
+              [(ngModel)]="selectedAddressId"
+              (onChange)="onAddressSelect(address)"
+              [inputId]="'address-' + address.id"
+            >
+            </p-radioButton>
+            
+            <div class="address-info">
+              <h4>{{ address.fullName }}</h4>
+              <p>{{ address.street }}, {{ address.number }}</p>
+              <p *ngIf="address.complement">{{ address.complement }}</p>
+              <p>{{ address.neighborhood }} - {{ address.city }}/{{ address.state }}</p>
+              <p>CEP: {{ address.zipCode }}</p>
+              <span 
+                *ngIf="address.isDefault" 
+                class="default-badge"
+              >
+                Padrão
+              </span>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+
+    <!-- New Address Form -->
+    <div class="new-address-section">
+      <h3>
+        {{ savedAddresses.length > 0 ? 'Novo Endereço' : 'Endereço de Entrega' }}
+      </h3>
+      
+      <p-card class="address-form-card">
+        <div class="address-form">
+          <div class="form-row">
+            <div class="form-field full-width">
+              <label for="fullName">Nome Completo *</label>
+              <input
+                id="fullName"
+                pInputText
+                [(ngModel)]="newAddress.fullName"
+                placeholder="Seu nome completo"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="zipCode">CEP *</label>
+              <input
+                id="zipCode"
+                pInputText
+                [(ngModel)]="newAddress.zipCode"
+                (blur)="onZipCodeChange()"
+                placeholder="00000-000"
+                class="w-full"
+              />
+            </div>
+            <div class="form-field">
+              <label for="state">Estado *</label>
+              <p-dropdown
+                id="state"
+                [(ngModel)]="newAddress.state"
+                [options]="states"
+                optionLabel="name"
+                optionValue="code"
+                placeholder="Selecione"
+                class="w-full"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field flex-2">
+              <label for="street">Rua *</label>
+              <input
+                id="street"
+                pInputText
+                [(ngModel)]="newAddress.street"
+                placeholder="Nome da rua"
+                class="w-full"
+              />
+            </div>
+            <div class="form-field">
+              <label for="number">Número *</label>
+              <input
+                id="number"
+                pInputText
+                [(ngModel)]="newAddress.number"
+                placeholder="123"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="complement">Complemento</label>
+              <input
+                id="complement"
+                pInputText
+                [(ngModel)]="newAddress.complement"
+                placeholder="Apto, casa, etc."
+                class="w-full"
+              />
+            </div>
+            <div class="form-field">
+              <label for="neighborhood">Bairro *</label>
+              <input
+                id="neighborhood"
+                pInputText
+                [(ngModel)]="newAddress.neighborhood"
+                placeholder="Nome do bairro"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field full-width">
+              <label for="city">Cidade *</label>
+              <input
+                id="city"
+                pInputText
+                [(ngModel)]="newAddress.city"
+                placeholder="Nome da cidade"
+                class="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="step-actions">
+      <p-button
+        label="Voltar"
+        icon="pi pi-arrow-left"
+        styleClass="p-button-outlined"
+        (click)="goBack()"
+      >
+      </p-button>
+      
+      <p-button
+        label="Continuar"
+        icon="pi pi-arrow-right"
+        iconPos="right"
+        (click)="continueToPayment()"
+        [disabled]="!canContinue()"
+      >
+      </p-button>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

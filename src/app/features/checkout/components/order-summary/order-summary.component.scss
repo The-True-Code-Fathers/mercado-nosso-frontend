@@ -1,0 +1,131 @@
+.order-summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--spacing-lg);
+  position: sticky;
+  top: 100px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.summary-header h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.summary-icon {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.items-count {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--spacing-sm);
+  background: var(--color-elevation-1);
+  border-radius: 6px;
+}
+
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.summary-line span:first-child {
+  color: var(--color-text-secondary);
+}
+
+.amount {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.amount.discount {
+  color: var(--color-success);
+}
+
+.summary-line.total {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.summary-line.total .amount {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.summary-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary);
+}
+
+.summary-loading i {
+  font-size: 1.2rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 1024px) {
+  .order-summary-card {
+    position: static;
+    order: -1;
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .order-summary-card {
+    padding: var(--spacing-md);
+  }
+
+  .summary-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .summary-line {
+    font-size: 0.9rem;
+  }
+
+  .summary-line.total {
+    font-size: 1rem;
+  }
+
+  .summary-line.total .amount {
+    font-size: 1.1rem;
+  }
+}
+
+:host ::ng-deep .p-divider {
+  margin: var(--spacing-sm) 0;
+}
+
+:host ::ng-deep .p-divider.p-divider-horizontal:before {
+  border-top-color: var(--color-border);
+}

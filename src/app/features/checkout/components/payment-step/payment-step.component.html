@@ -1,0 +1,263 @@
+<div class="payment-step">
+  <div class="step-header">
+    <h2>Forma de Pagamento</h2>
+    <p>Escolha como você quer pagar seu pedido</p>
+  </div>
+
+  <div class="payment-content">
+    <!-- Payment Methods -->
+    <div class="payment-methods-section">
+      <h3>Métodos de Pagamento</h3>
+      
+      <!-- Saved Payment Methods -->
+      <div class="saved-methods" *ngIf="savedPaymentMethods.length > 0">
+        <h4>Cartões Salvos</h4>
+        <div class="methods-list">
+          <p-card 
+            *ngFor="let method of savedPaymentMethods" 
+            class="method-card"
+            [class.selected]="selectedMethodId === method.id"
+          >
+            <div class="method-selection">
+              <p-radioButton
+                [value]="method.id"
+                [(ngModel)]="selectedMethodId"
+                (onChange)="onMethodSelect(method)"
+                [inputId]="'method-' + method.id"
+              >
+              </p-radioButton>
+              
+              <div class="method-info">
+                <div class="method-main">
+                  <div class="method-icon">
+                    <i [class]="getPaymentIcon(method.type)"></i>
+                  </div>
+                  <div class="method-details">
+                    <h5>{{ getPaymentTitle(method.type) }}</h5>
+                    <p *ngIf="method.cardNumber">{{ method.cardNumber }}</p>
+                    <p *ngIf="method.cardholderName">{{ method.cardholderName }}</p>
+                  </div>
+                </div>
+                <span 
+                  *ngIf="method.isDefault" 
+                  class="default-badge"
+                >
+                  Padrão
+                </span>
+              </div>
+            </div>
+
+            <!-- Installments for Credit Card -->
+            <div 
+              *ngIf="selectedMethodId === method.id && method.type === 'CREDIT_CARD'"
+              class="installments-section"
+            >
+              <p-divider></p-divider>
+              <div class="form-field">
+                <label for="installments">Parcelamento</label>
+                <p-dropdown
+                  id="installments"
+                  [(ngModel)]="selectedInstallments"
+                  [options]="installmentOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Selecione"
+                  class="w-full"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <!-- Quick Payment Methods -->
+      <div class="quick-methods">
+        <h4>Pagamento Rápido</h4>
+        <div class="quick-methods-grid">
+          <p-card 
+            class="quick-method-card"
+            [class.selected]="selectedQuickMethod === 'PIX'"
+            (click)="selectQuickMethod('PIX')"
+          >
+            <div class="quick-method-content">
+              <div class="method-icon large">
+                <img src="/public/images/pix.png" alt="PIX" />
+              </div>
+              <h5>PIX</h5>
+              <p>Pagamento instantâneo</p>
+            </div>
+          </p-card>
+
+          <p-card 
+            class="quick-method-card"
+            [class.selected]="selectedQuickMethod === 'APPLE_PAY'"
+            (click)="selectQuickMethod('APPLE_PAY')"
+          >
+            <div class="quick-method-content">
+              <div class="method-icon large">
+                <img src="/public/images/Apple_Pay-Logo.wine.png" alt="Apple Pay" />
+              </div>
+              <h5>Apple Pay</h5>
+              <p>Pague com Touch ID</p>
+            </div>
+          </p-card>
+
+          <p-card 
+            class="quick-method-card"
+            [class.selected]="selectedQuickMethod === 'PAYPAL'"
+            (click)="selectQuickMethod('PAYPAL')"
+          >
+            <div class="quick-method-content">
+              <div class="method-icon large">
+                <img src="/public/images/paypal-logo.png" alt="PayPal" />
+              </div>
+              <h5>PayPal</h5>
+              <p>Seguro e confiável</p>
+            </div>
+          </p-card>
+
+          <p-card 
+            class="quick-method-card"
+            [class.selected]="selectedQuickMethod === 'MERCADO_PAGO'"
+            (click)="selectQuickMethod('MERCADO_PAGO')"
+          >
+            <div class="quick-method-content">
+              <div class="method-icon large">
+                <img src="/public/images/mercado-pago-logo.png" alt="Mercado Pago" />
+              </div>
+              <h5>Mercado Pago</h5>
+              <p>Rápido e fácil</p>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <!-- New Card Form -->
+      <div class="new-card-section" *ngIf="showNewCardForm">
+        <h4>Novo Cartão</h4>
+        <p-card class="card-form-card">
+          <div class="card-form">
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="cardNumber">Número do Cartão *</label>
+                <input
+                  id="cardNumber"
+                  pInputText
+                  [(ngModel)]="newCard.cardNumber"
+                  placeholder="0000 0000 0000 0000"
+                  maxlength="19"
+                  (input)="formatCardNumber($event)"
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="cardholderName">Nome no Cartão *</label>
+                <input
+                  id="cardholderName"
+                  pInputText
+                  [(ngModel)]="newCard.cardholderName"
+                  placeholder="NOME SOBRENOME"
+                  class="w-full"
+                  style="text-transform: uppercase"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label for="expiryDate">Validade *</label>
+                <input
+                  id="expiryDate"
+                  pInputText
+                  [(ngModel)]="newCard.expiryDate"
+                  placeholder="MM/AA"
+                  maxlength="5"
+                  (input)="formatExpiryDate($event)"
+                  class="w-full"
+                />
+              </div>
+              <div class="form-field">
+                <label for="cvv">CVV *</label>
+                <input
+                  id="cvv"
+                  pInputText
+                  [(ngModel)]="newCard.cvv"
+                  placeholder="123"
+                  maxlength="4"
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="newCardInstallments">Parcelamento</label>
+                <p-dropdown
+                  id="newCardInstallments"
+                  [(ngModel)]="newCard.installments"
+                  [options]="installmentOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Selecione"
+                  class="w-full"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field full-width">
+                <p-checkbox
+                  [(ngModel)]="saveNewCard"
+                  [binary]="true"
+                  inputId="saveCard"
+                >
+                </p-checkbox>
+                <label for="saveCard" class="checkbox-label">
+                  Salvar este cartão para futuras compras
+                </label>
+              </div>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Add New Card Button -->
+      <div class="add-card-section" *ngIf="!showNewCardForm">
+        <p-button
+          label="Adicionar Novo Cartão"
+          icon="pi pi-plus"
+          styleClass="p-button-outlined w-full"
+          (click)="toggleNewCardForm()"
+        >
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="step-actions">
+      <p-button
+        label="Voltar"
+        icon="pi pi-arrow-left"
+        styleClass="p-button-outlined"
+        (click)="goBack()"
+      >
+      </p-button>
+      
+      <p-button
+        label="Revisar Pedido"
+        icon="pi pi-arrow-right"
+        iconPos="right"
+        (click)="continueToConfirmation()"
+        [disabled]="!canContinue()"
+      >
+      </p-button>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

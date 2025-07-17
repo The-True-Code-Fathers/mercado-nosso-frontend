@@ -1,0 +1,154 @@
+<div class="confirmation-step">
+  <div class="step-header">
+    <h2>Revisar Pedido</h2>
+    <p>Confira todos os dados antes de finalizar sua compra</p>
+  </div>
+
+  <div class="confirmation-content">
+    <!-- Order Items -->
+    <div class="order-items-section">
+      <h3>
+        <i class="pi pi-shopping-bag"></i>
+        Produtos ({{ orderSummary()?.itemsCount || 0 }})
+      </h3>
+      <p-card class="items-card">
+        <div class="items-list">
+          <div 
+            *ngFor="let item of checkoutItems()" 
+            class="order-item"
+          >
+            <div class="item-image">
+              <img [src]="item.image" [alt]="item.name" />
+            </div>
+            <div class="item-details">
+              <h4>{{ item.name }}</h4>
+              <p class="item-price">
+                {{ item.quantity }}x R$ {{ item.unitPrice | number : '1.2-2' }}
+              </p>
+              <p class="item-seller">Vendido por: {{ item.sellerName || 'Loja Demo' }}</p>
+            </div>
+            <div class="item-total">
+              <span class="total-price">
+                R$ {{ item.totalPrice | number : '1.2-2' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="shipping-section">
+      <h3>
+        <i class="pi pi-map-marker"></i>
+        Endereço de Entrega
+      </h3>
+      <p-card class="address-card" *ngIf="shippingAddress()">
+        <div class="address-info">
+          <h4>{{ shippingAddress()?.fullName }}</h4>
+          <p>{{ shippingAddress()?.street }}, {{ shippingAddress()?.number }}</p>
+          <p *ngIf="shippingAddress()?.complement">{{ shippingAddress()?.complement }}</p>
+          <p>{{ shippingAddress()?.neighborhood }} - {{ shippingAddress()?.city }}/{{ shippingAddress()?.state }}</p>
+          <p>CEP: {{ shippingAddress()?.zipCode }}</p>
+        </div>
+        <div class="edit-section">
+          <p-button
+            label="Alterar"
+            icon="pi pi-pencil"
+            styleClass="p-button-text p-button-sm"
+            (click)="editShipping()"
+          >
+          </p-button>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="payment-section">
+      <h3>
+        <i class="pi pi-credit-card"></i>
+        Forma de Pagamento
+      </h3>
+      <p-card class="payment-card" *ngIf="paymentMethod()">
+        <div class="payment-info">
+          <div class="payment-icon">
+            <i [class]="getPaymentIcon(paymentMethod()?.type!)"></i>
+          </div>
+          <div class="payment-details">
+            <h4>{{ getPaymentTitle(paymentMethod()?.type!) }}</h4>
+            <p *ngIf="paymentMethod()?.cardNumber">{{ paymentMethod()?.cardNumber }}</p>
+            <p *ngIf="paymentMethod()?.installments && paymentMethod()?.installments! > 1">
+              {{ paymentMethod()?.installments }}x sem juros
+            </p>
+          </div>
+        </div>
+        <div class="edit-section">
+          <p-button
+            label="Alterar"
+            icon="pi pi-pencil"
+            styleClass="p-button-text p-button-sm"
+            (click)="editPayment()"
+          >
+          </p-button>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="summary-section">
+      <h3>
+        <i class="pi pi-receipt"></i>
+        Resumo do Pedido
+      </h3>
+      <p-card class="summary-card" *ngIf="orderSummary()">
+        <div class="summary-breakdown">
+          <div class="summary-line">
+            <span>Subtotal ({{ orderSummary()?.itemsCount }} {{ orderSummary()?.itemsCount === 1 ? 'item' : 'itens' }}):</span>
+            <span>R$ {{ orderSummary()?.subtotal | number : '1.2-2' }}</span>
+          </div>
+          
+          <div class="summary-line">
+            <span>Frete:</span>
+            <span>R$ {{ orderSummary()?.shippingTotal | number : '1.2-2' }}</span>
+          </div>
+          
+          <div class="summary-line" *ngIf="orderSummary()?.discountTotal! > 0">
+            <span>Desconto:</span>
+            <span class="discount">-R$ {{ orderSummary()?.discountTotal | number : '1.2-2' }}</span>
+          </div>
+          
+          <p-divider></p-divider>
+          
+          <div class="summary-line total-line">
+            <span>Total:</span>
+            <span class="total">R$ {{ orderSummary()?.total | number : '1.2-2' }}</span>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="step-actions">
+      <p-button
+        label="Voltar"
+        icon="pi pi-arrow-left"
+        styleClass="p-button-outlined"
+        (click)="goBack()"
+        [disabled]="isPlacingOrder"
+      >
+      </p-button>
+      
+      <p-button
+        [label]="isPlacingOrder ? 'Processando...' : 'Finalizar Compra'"
+        [icon]="isPlacingOrder ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+        iconPos="right"
+        (click)="placeOrder()"
+        [disabled]="!canPlaceOrder() || isPlacingOrder"
+        styleClass="checkout-final-button"
+      >
+      </p-button>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

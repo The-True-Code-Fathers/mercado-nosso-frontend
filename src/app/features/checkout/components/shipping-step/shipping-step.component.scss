@@ -1,0 +1,180 @@
+.shipping-step {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.step-header h2 {
+  color: var(--color-text-primary);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.step-header p {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.shipping-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.addresses-section h3,
+.new-address-section h3 {
+  color: var(--color-text-primary);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.addresses-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.address-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.address-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.address-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(27, 94, 32, 0.1);
+}
+
+.address-selection {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+}
+
+.address-info h4 {
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.address-info p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0 0 var(--spacing-xs) 0;
+  line-height: 1.4;
+}
+
+.default-badge {
+  display: inline-block;
+  background: var(--color-success);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  margin-top: var(--spacing-xs);
+}
+
+.address-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.form-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-field.full-width {
+  flex: 1 1 100%;
+}
+
+.form-field.flex-2 {
+  flex: 2;
+}
+
+.form-field label {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .shipping-step {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .step-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .address-selection {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .step-actions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .step-actions p-button {
+    width: 100%;
+  }
+}
+
+/* PrimeNG overrides */
+:host ::ng-deep .p-card .p-card-content {
+  padding: var(--spacing-lg);
+}
+
+:host ::ng-deep .p-button {
+  min-width: 120px;
+}
+
+:host ::ng-deep .p-radiobutton {
+  margin-top: var(--spacing-xs);
+}
+
+:host ::ng-deep .p-dropdown {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 100%;
+}
