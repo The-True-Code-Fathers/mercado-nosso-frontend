@@ -1,0 +1,201 @@
+<div class="my-listings-container">
+  <!-- Toast for notifications -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="pi pi-list"></i>
+        Meus Anúncios
+      </h1>
+      <p-button
+        label="Novo Anúncio"
+        icon="pi pi-plus"
+        severity="success"
+        (onClick)="createNewListing()"
+        styleClass="create-button"
+      >
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <div class="tabs">
+      <button
+        class="tab-button"
+        [class.active]="selectedTab() === 'all'"
+        (click)="selectTab('all')"
+      >
+        Todos
+        <span class="tab-count">{{ listings().length }}</span>
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="selectedTab() === 'active'"
+        (click)="selectTab('active')"
+      >
+        Ativos
+        <span class="tab-count">{{ getActiveCount() }}</span>
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="selectedTab() === 'outOfStock'"
+        (click)="selectTab('outOfStock')"
+      >
+        Esgotados
+        <span class="tab-count">{{ getSoldCount() }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-grid">
+      <div
+        class="listing-card-skeleton"
+        *ngFor="let item of [1, 2, 3, 4, 5, 6]"
+      >
+        <p-skeleton
+          width="100%"
+          height="200px"
+          borderRadius="8px"
+          class="mb-3"
+        ></p-skeleton>
+        <p-skeleton width="80%" height="1.5rem" class="mb-2"></p-skeleton>
+        <p-skeleton width="60%" height="1.2rem" class="mb-3"></p-skeleton>
+        <div class="skeleton-stats">
+          <p-skeleton width="40%" height="1rem"></p-skeleton>
+          <p-skeleton width="30%" height="1rem"></p-skeleton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="!isLoading() && getFilteredListings().length === 0"
+      class="empty-state"
+    >
+      <div class="empty-content">
+        <i class="pi pi-inbox empty-icon"></i>
+        <h3>Nenhum anúncio encontrado</h3>
+        <p *ngIf="selectedTab() === 'all'">
+          Você ainda não criou nenhum anúncio.
+        </p>
+        <p *ngIf="selectedTab() !== 'all'">
+          Não há anúncios com o status "{{ getStatusLabel(selectedTab()) }}".
+        </p>
+        <p-button
+          *ngIf="selectedTab() === 'all'"
+          label="Criar Primeiro Anúncio"
+          icon="pi pi-plus"
+          severity="success"
+          (onClick)="createNewListing()"
+        >
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Listings Grid -->
+    <div
+      *ngIf="!isLoading() && getFilteredListings().length > 0"
+      class="listings-grid"
+    >
+      <div
+        class="listing-card"
+        [ngClass]="'status-' + listing.status"
+        *ngFor="let listing of getFilteredListings()"
+      >
+        <div class="card-image" (click)="viewListing(listing.listingId)">
+          <img
+            [src]="listing.imagesUrl[0] || '/images/banner.png'"
+            [alt]="listing.title"
+          />
+          <div class="image-overlay" *ngIf="listing.status === 'outOfStock'">
+            <span class="overlay-text">{{
+              getStatusLabel(listing.status)
+            }}</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="content-header">
+            <p-tag
+              [value]="getStatusLabel(listing.status)"
+              [severity]="getStatusSeverity(listing.status)"
+              styleClass="status-tag"
+            >
+            </p-tag>
+            <div class="menu-container">
+              <p-button
+                icon="pi pi-ellipsis-v"
+                severity="secondary"
+                [text]="true"
+                size="small"
+                (onClick)="menu.toggle($event)"
+                styleClass="menu-button"
+              >
+              </p-button>
+              <p-menu
+                #menu
+                [model]="getMenuItems(listing)"
+                [popup]="true"
+                [appendTo]="'body'"
+              ></p-menu>
+            </div>
+          </div>
+
+          <h3 class="listing-title" (click)="viewListing(listing.listingId)">
+            {{ listing.title }}
+          </h3>
+          <div class="listing-price">
+            R$ {{ listing.price | number : '1.2-2' }}
+          </div>
+
+          <div class="listing-stats">
+            <div class="stat-item">
+              <i class="pi pi-shopping-cart"></i>
+              <span>{{ listing.sold }} vendidos</span>
+            </div>
+            <div class="stat-item">
+              <i class="pi pi-box"></i>
+              <span>{{ listing.stock }} estoque</span>
+            </div>
+          </div>
+
+          <div class="listing-meta">
+            <span class="category">{{ listing.category }}</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <p-button
+            label="Ver Anúncio"
+            icon="pi pi-eye"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (onClick)="viewListing(listing.listingId)"
+            styleClass="action-button"
+          >
+          </p-button>
+          <p-button
+            label="Editar"
+            icon="pi pi-pencil"
+            severity="info"
+            [outlined]="true"
+            size="small"
+            (onClick)="editListing(listing.listingId)"
+            styleClass="action-button"
+          >
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

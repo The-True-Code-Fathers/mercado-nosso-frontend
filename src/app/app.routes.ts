@@ -49,6 +49,14 @@ export const routes: Routes = [
     title: 'Criar Anúncio',
   },
   {
+    path: 'edit-listing/:id',
+    loadChildren: () =>
+      import('./features/edit-listing/edit-listing.routes').then(
+        m => m.editListingRoutes,
+      ),
+    title: 'Editar Anúncio',
+  },
+  {
     path: 'login',
     loadChildren: () =>
       import('./features/login/login.routes').then(m => m.loginRoutes),
@@ -83,5 +91,13 @@ export const routes: Routes = [
         m => m.createAccountRoutes,
       ),
     title: 'Seja um vendedor',
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./features/dashboard/dashboard.component').then(
+        m => m.DashboardComponent,
+      ),
+    title: 'Dashboard',
   },
 ]
