@@ -22,11 +22,11 @@ import { ConfirmationStepComponent } from './components/confirmation-step/confir
     OrderSummaryComponent,
     ShippingStepComponent,
     PaymentStepComponent,
-    ConfirmationStepComponent
+    ConfirmationStepComponent,
   ],
   providers: [MessageService],
   templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.scss'
+  styleUrl: './checkout.component.scss',
 })
 export class CheckoutComponent implements OnInit {
   private checkoutService = inject(CheckoutService)
@@ -48,7 +48,7 @@ export class CheckoutComponent implements OnInit {
   private initializeCheckout(): void {
     // Load cart and initialize checkout
     this.cartService.getCart().subscribe({
-      next: (cartResponse) => {
+      next: cartResponse => {
         // Convert cart response to checkout items
         const cartItems = cartResponse.items.map(item => ({
           listingId: item.listingId,
@@ -59,7 +59,8 @@ export class CheckoutComponent implements OnInit {
           image: 'https://via.placeholder.com/80x80?text=📦',
           category: 'Produto',
           selected: true,
-          shippingPrice: item.shippingPrice || 0
+          shippingPrice: item.shippingPrice || 0,
+          stock: 999, // Mock stock - in real app get from listing service
         }))
 
         if (cartItems.length === 0) {
@@ -67,7 +68,7 @@ export class CheckoutComponent implements OnInit {
             severity: 'warn',
             summary: 'Carrinho Vazio',
             detail: 'Adicione produtos ao carrinho antes de finalizar a compra',
-            life: 5000
+            life: 5000,
           })
           this.router.navigate(['/cart'])
           return
@@ -76,16 +77,16 @@ export class CheckoutComponent implements OnInit {
         // Initialize checkout with cart items
         this.checkoutService.initializeCheckout(cartItems)
       },
-      error: (error) => {
+      error: error => {
         console.error('Error loading cart:', error)
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
           detail: 'Não foi possível carregar o carrinho',
-          life: 5000
+          life: 5000,
         })
         this.router.navigate(['/cart'])
-      }
+      },
     })
   }
 
@@ -97,4 +98,3 @@ export class CheckoutComponent implements OnInit {
     this.checkoutService.nextStep()
   }
 }
-
