@@ -254,6 +254,36 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+
+  .price-main {
+    display: block;
+  }
+
+  .price-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .price-unit {
+      color: var(--color-text-muted);
+      font-size: 0.7rem;
+      font-weight: 400;
+      margin-top: -4px;
+    }
+
+    .price-total {
+      color: var(--color-success);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: var(--spacing-xs);
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(76, 175, 80, 0.2);
+    }
+  }
 }
 
 .listing-stats {
@@ -279,6 +309,55 @@
 
   span {
     white-space: nowrap;
+  }
+
+  &.quantity-stat {
+    position: relative;
+
+    .quantity-text {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+
+      strong {
+        color: var(--color-text-primary);
+        font-weight: 700;
+      }
+    }
+
+    .quantity-badge {
+      background: var(--color-primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: var(--spacing-xs);
+    }
+
+    &.multiple-quantity {
+      .quantity-text strong {
+        color: var(--color-primary);
+        font-size: 1rem;
+      }
+
+      i {
+        color: var(--color-primary);
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -319,6 +398,26 @@
 
     .p-button-label {
       font-weight: 500;
+    }
+  }
+}
+
+::ng-deep .evaluated-button {
+  &.p-button {
+    background: #d4edda !important;
+    border-color: #4caf50 !important;
+    color: #155724 !important;
+    opacity: 0.8;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #d4edda !important;
+      border-color: #4caf50 !important;
+      color: #155724 !important;
+    }
+
+    .p-button-icon {
+      color: #4caf50 !important;
     }
   }
 }

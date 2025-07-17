@@ -19,6 +19,7 @@ import {
 } from '../../../listing/services/listing.service'
 import { UserService, UserResponse } from '../../services/user.service'
 import { OrderService, Order } from '../../services/order.service'
+import { ReviewService, ReviewResponse } from '../../services/review.service'
 import { DEVELOPMENT_CONFIG } from '../../../../shared/config/development.config'
 import { forkJoin, of } from 'rxjs'
 import { catchError, switchMap, map } from 'rxjs/operators'
@@ -61,10 +62,14 @@ export class MyPurchasesComponent implements OnInit {
   showReviewModal = signal<boolean>(false)
   selectedPurchase = signal<MyPurchase | null>(null)
 
+  // Track which listings have been reviewed
+  reviewedListings = signal<Set<string>>(new Set())
+
   private router = inject(Router)
   private listingService = inject(ListingService)
   private userService = inject(UserService)
   private orderService = inject(OrderService)
+  private reviewService = inject(ReviewService)
   private messageService = inject(MessageService)
   private confirmationService = inject(ConfirmationService)
 
@@ -116,32 +121,56 @@ export class MyPurchasesComponent implements OnInit {
 
           return forkJoin(listingRequests).pipe(
             map((listings: (Listing | null)[]) => {
-              // Filtrar listings válidos e converter para MyPurchase
+              // Filtrar listings válidos
               const validListings = listings.filter(
                 (listing): listing is Listing => listing !== null,
               )
 
-              const purchases: MyPurchase[] = validListings.map(listing => {
-                // Encontrar a order correspondente
-                const order = orders.find(o =>
-                  o.listingID.includes(listing.listingId),
-                )
+              // Contar quantas vezes cada listing aparece nas orders
+              const listingQuantities = new Map<string, number>()
+              orders.forEach(order => {
+                order.listingID.forEach(listingId => {
+                  const currentQuantity = listingQuantities.get(listingId) || 0
+                  listingQuantities.set(listingId, currentQuantity + 1)
+                })
+              })
 
-                return {
-                  ...listing,
-                  status:
-                    listing.stock > 0
-                      ? 'active'
-                      : ('outOfStock' as 'active' | 'outOfStock'),
-                  quantityPurchased: 1, // Por enquanto assumimos 1
-                  purchaseDate: new Date(
-                    order?.creationTime || listing.createdAt || new Date(),
-                  ),
-                  orderId: order?.orderId || '',
-                  orderStatus: order?.status || 'OPEN',
+              // Agrupar listings únicos e calcular quantidades
+              const uniquePurchases = new Map<string, MyPurchase>()
+
+              validListings.forEach(listing => {
+                if (!uniquePurchases.has(listing.listingId)) {
+                  const order = orders.find(o =>
+                    o.listingID.includes(listing.listingId),
+                  )
+
+                  const purchase: MyPurchase = {
+                    ...listing,
+                    status:
+                      listing.stock > 0
+                        ? 'active'
+                        : ('outOfStock' as 'active' | 'outOfStock'),
+                    quantityPurchased:
+                      listingQuantities.get(listing.listingId) || 1,
+                    purchaseDate: new Date(
+                      order?.creationTime || listing.createdAt || new Date(),
+                    ),
+                    orderId: order?.orderId || '',
+                    orderStatus: order?.status || 'OPEN',
+                  }
+
+                  uniquePurchases.set(listing.listingId, purchase)
                 }
               })
 
+              // Converter para array e ordenar por data de compra (mais recente primeiro)
+              const purchases: MyPurchase[] = Array.from(
+                uniquePurchases.values(),
+              ).sort(
+                (a, b) => b.purchaseDate.getTime() - a.purchaseDate.getTime(),
+              )
+
+              console.log('Compras agrupadas:', purchases)
               return purchases
             }),
           )
@@ -157,12 +186,35 @@ export class MyPurchasesComponent implements OnInit {
         next: (purchases: MyPurchase[]) => {
           console.log('Compras processadas:', purchases)
           this.purchases.set(purchases)
+
+          // Verificar quais produtos já foram avaliados
+          this.checkExistingReviews(purchases)
+
           this.isLoading.set(false)
         },
         error: error => {
           console.error('Erro final:', error)
           this.error.set('Erro ao carregar suas compras. Tente novamente.')
           this.isLoading.set(false)
+        },
+      })
+  }
+
+  checkExistingReviews(purchases: MyPurchase[]) {
+    const listingIds = purchases.map(purchase => purchase.listingId)
+
+    if (listingIds.length === 0) return
+
+    this.reviewService
+      .checkUserReviewsForListings(listingIds, this.userId)
+      .subscribe({
+        next: reviewMap => {
+          const reviewedIds = new Set(Object.keys(reviewMap))
+          this.reviewedListings.set(reviewedIds)
+          console.log('Produtos já avaliados:', reviewedIds)
+        },
+        error: error => {
+          console.error('Erro ao verificar avaliações existentes:', error)
         },
       })
   }
@@ -176,12 +228,30 @@ export class MyPurchasesComponent implements OnInit {
   }
 
   ratePurchase(purchase: MyPurchase) {
+    // Verificar se já foi avaliado
+    if (this.reviewedListings().has(purchase.listingId)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Você já avaliou este produto.',
+      })
+      return
+    }
+
     this.selectedPurchase.set(purchase)
     this.showReviewModal.set(true)
   }
 
   onReviewSubmitted() {
-    // Fechar modal e recarregar se necessário
+    // Adicionar o produto à lista de avaliados
+    const purchase = this.selectedPurchase()
+    if (purchase) {
+      const updatedReviewed = new Set(this.reviewedListings())
+      updatedReviewed.add(purchase.listingId)
+      this.reviewedListings.set(updatedReviewed)
+    }
+
+    // Fechar modal
     this.showReviewModal.set(false)
     this.selectedPurchase.set(null)
   }
