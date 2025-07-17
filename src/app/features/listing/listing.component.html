@@ -243,16 +243,14 @@
         class="products-container"
       >
         <div class="products-grid" [ngClass]="'view-' + selectedView">
-          <app-recommendation-card
+          <app-product-card-new
             *ngFor="let listing of listings(); trackBy: trackByListingId"
-            [product]="mapListingToRecommendationCard(listing)"
+            [product]="mapListingToProductCard(listing)"
             [linkPath]="'/listing'"
-            [showRating]="true"
-            [showCondition]="true"
-            (viewDetails)="onViewDetails($event)"
+            (cardClick)="onCardClick($event)"
             class="product-card-wrapper"
           >
-          </app-recommendation-card>
+          </app-product-card-new>
         </div>
 
         <!-- Pagination -->

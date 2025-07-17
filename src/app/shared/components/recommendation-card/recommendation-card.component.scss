@@ -81,6 +81,29 @@
   gap: 6px;
   margin: 2px 0;
 
+  .custom-rating {
+    display: flex;
+    align-items: center;
+
+    .rating-star {
+      font-size: 1rem;
+      color: #ddd;
+      transition: color 0.2s ease;
+
+      &.star-full {
+        color: #ffc107;
+      }
+
+      &.star-half {
+        color: #ffc107;
+      }
+
+      &.star-empty {
+        color: #ddd;
+      }
+    }
+  }
+
   :host ::ng-deep .rating-stars {
     .p-rating-icon {
       color: var(--color-warning);
@@ -130,6 +153,12 @@
     font-weight: 700;
     color: var(--color-primary);
     line-height: 1.2;
+  }
+
+  .product-installments {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
   }
 }
 

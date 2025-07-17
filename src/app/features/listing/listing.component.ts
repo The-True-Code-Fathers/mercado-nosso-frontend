@@ -9,9 +9,9 @@ import {
   SearchParams,
 } from './services/listing.service'
 import {
-  RecommendationCardComponent,
-  RecommendationCardData,
-} from '../../shared/components/recommendation-card/recommendation-card.component'
+  ProductCardNewComponent,
+  ProductCardNewData,
+} from '../../shared/components/product-card-new/product-card-new.component'
 import { ProductCardData } from '../../shared/components/product-card/product-card.component'
 import { SearchService } from '../../shared/services/search.service'
 
@@ -42,7 +42,7 @@ interface DropdownOption {
   imports: [
     CommonModule,
     FormsModule,
-    RecommendationCardComponent,
+    ProductCardNewComponent,
     CardModule,
     ButtonModule,
     InputTextModule,
@@ -356,44 +356,20 @@ export class ListingComponent implements OnInit {
   }
 
   // Product card integration methods
-  mapListingToProductCard(listing: Listing): ProductCardData {
+  mapListingToProductCard(listing: Listing): ProductCardNewData {
     return {
       id: listing.listingId,
       title: listing.title,
       price: listing.price,
-      image: listing.imagesUrl?.[0] || '/images/placeholder.png',
-      condition: listing.productCondition,
-      stock: listing.stock,
-      category: this.selectedCategory || 'Geral',
-      rating: listing.rating,
-      reviews: listing.reviewsId?.length || 0,
+      originalPrice: undefined,
+      image: listing.imagesUrl[0] || '/images/placeholder.png',
+      rating: 0, // Força rating 0 para todos os produtos
+      reviews: 0, // Força 0 reviews para todos os produtos
+      installments: `12x de R$ ${(listing.price / 12).toFixed(2)} sem juros`,
     }
   }
 
-  mapListingToRecommendationCard(listing: Listing): RecommendationCardData {
-    return {
-      id: listing.listingId,
-      title: listing.title,
-      price: listing.price,
-      image: listing.imagesUrl?.[0] || '/images/placeholder.png',
-      condition: listing.productCondition,
-      stock: listing.stock,
-      category: listing.category,
-      rating: listing.rating,
-      reviews: listing.reviewsId?.length || 0,
-    }
-  }
-
-  onAddToCart(productCard: ProductCardData): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Produto adicionado',
-      detail: `${productCard.title} foi adicionado ao carrinho`,
-      life: 3000,
-    })
-  }
-
-  onViewDetails(productCard: ProductCardData | RecommendationCardData): void {
+  onCardClick(productCard: ProductCardNewData): void {
     this.router.navigate(['/listing', productCard.id])
   }
 

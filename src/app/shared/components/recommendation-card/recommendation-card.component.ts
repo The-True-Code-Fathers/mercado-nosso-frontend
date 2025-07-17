@@ -84,4 +84,17 @@ export class RecommendationCardComponent {
       100
     return Math.round(discount)
   }
+
+  // Métodos para estrelas customizadas
+  getStarsArray(): number[] {
+    return Array(5).fill(0)
+  }
+
+  mathFloor(value: number): number {
+    return Math.floor(value)
+  }
+
+  mathCeil(value: number): number {
+    return Math.ceil(value)
+  }
 }

@@ -29,13 +29,20 @@
 
     <!-- Rating Section -->
     <div class="product-rating" *ngIf="showRating && product.rating">
-      <p-rating
-        [ngModel]="product.rating"
-        [readonly]="true"
-        [stars]="5"
-        styleClass="rating-stars"
-      >
-      </p-rating>
+      <div class="custom-rating">
+        <span
+          *ngFor="let star of getStarsArray(); let i = index"
+          class="rating-star"
+          [ngClass]="{
+            'star-full': i < mathFloor(product.rating),
+            'star-half':
+              i === mathFloor(product.rating) && product.rating % 1 >= 0.5,
+            'star-empty': i >= mathCeil(product.rating)
+          }"
+        >
+          ★
+        </span>
+      </div>
       <span class="rating-text" *ngIf="product.reviews">
         ({{ product.reviews }})
       </span>
@@ -62,6 +69,9 @@
         R$ {{ product.originalPrice | number : '1.2-2' }}
       </div>
       <div class="current-price">R$ {{ product.price | number : '1.2-2' }}</div>
+      <div class="product-installments">
+        12x de R$ {{ product.price / 12 | number : '1.2-2' }} sem juros
+      </div>
     </div>
   </div>
 </p-card>
