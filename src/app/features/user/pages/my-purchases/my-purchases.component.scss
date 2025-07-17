@@ -116,6 +116,38 @@
   }
 }
 
+/* Error State */
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 400px;
+
+  .error-icon {
+    font-size: 4rem;
+    color: var(--color-error);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  h3 {
+    color: var(--color-text-primary);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+  }
+}
+
 /* Listings Grid */
 .listings-grid {
   display: grid;

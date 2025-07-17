@@ -17,7 +17,10 @@ import {
   ListingService,
   Listing,
 } from '../../../listing/services/listing.service'
+import { UserService, UserResponse } from '../../services/user.service'
 import { DEVELOPMENT_CONFIG } from '../../../../shared/config/development.config'
+import { forkJoin, of } from 'rxjs'
+import { catchError, switchMap } from 'rxjs/operators'
 
 export interface MyPurchase extends Listing {
   status: 'active' | 'outOfStock'
@@ -45,9 +48,11 @@ export interface MyPurchase extends Listing {
 export class MyPurchasesComponent implements OnInit {
   purchases = signal<MyPurchase[]>([])
   isLoading = signal<boolean>(false)
+  error = signal<string | null>(null)
 
   private router = inject(Router)
   private listingService = inject(ListingService)
+  private userService = inject(UserService)
   private messageService = inject(MessageService)
   private confirmationService = inject(ConfirmationService)
 
@@ -59,55 +64,79 @@ export class MyPurchasesComponent implements OnInit {
 
   loadPurchases() {
     this.isLoading.set(true)
+    this.error.set(null)
 
-    // Simular carregamento de compras do usuário
-    setTimeout(() => {
-      const mockPurchases: MyPurchase[] = [
-        {
-          listingId: '1',
-          sellerId: 'seller1',
-          sku: 'IPHONE-001',
-          productRecommendation: [],
-          title: 'iPhone 14 Pro Max 256GB',
-          description: 'iPhone seminovo em excelente estado',
-          price: 4500,
-          rating: 5,
-          imagesUrl: ['/images/banner.png'],
-          category: 'Eletrônicos',
-          stock: 0,
-          productCondition: 'USED',
-          reviewsId: [],
-          status: 'active',
-          quantityPurchased: 1,
-          purchaseDate: new Date('2024-01-15'),
-        },
-        {
-          listingId: '2',
-          sellerId: 'seller2',
-          sku: 'BOOK-001',
-          productRecommendation: [],
-          title: 'Livro de JavaScript Avançado',
-          description: 'Guia completo para desenvolvedores',
-          price: 89.9,
-          rating: 4,
-          imagesUrl: ['/images/banner.png'],
-          category: 'Livros e Educação',
-          stock: 0,
-          productCondition: 'NEW',
-          reviewsId: [],
-          status: 'active',
-          quantityPurchased: 2,
-          purchaseDate: new Date('2024-02-20'),
-        },
-      ]
+    // Buscar dados do usuário para obter os IDs das compras
+    this.userService
+      .getCurrentUser(this.userId)
+      .pipe(
+        switchMap((user: UserResponse) => {
+          console.log('Dados do usuário:', user)
 
-      this.purchases.set(mockPurchases)
-      this.isLoading.set(false)
-    }, 1000)
+          // Verificar se há compras
+          if (!user.listingBoughtId || user.listingBoughtId.length === 0) {
+            console.log('Usuário não tem compras')
+            this.purchases.set([])
+            this.isLoading.set(false)
+            return of([])
+          }
+
+          console.log('IDs das compras:', user.listingBoughtId)
+
+          // Buscar detalhes de todos os listings comprados
+          const listingRequests = user.listingBoughtId.map(listingId =>
+            this.listingService.getListingById(listingId).pipe(
+              catchError(error => {
+                console.error(`Erro ao buscar listing ${listingId}:`, error)
+                return of(null) // Retorna null para listings não encontrados
+              }),
+            ),
+          )
+
+          return forkJoin(listingRequests)
+        }),
+        catchError(error => {
+          console.error('Erro ao carregar compras:', error)
+          this.error.set('Erro ao carregar suas compras. Tente novamente.')
+          return of([])
+        }),
+      )
+      .subscribe({
+        next: (listings: (Listing | null)[]) => {
+          console.log('Listings das compras:', listings)
+
+          // Filtrar listings válidos e converter para MyPurchase
+          const validListings = listings.filter(
+            listing => listing !== null,
+          ) as Listing[]
+          const purchases: MyPurchase[] = validListings.map(listing => ({
+            ...listing,
+            status:
+              listing.stock > 0
+                ? 'active'
+                : ('outOfStock' as 'active' | 'outOfStock'),
+            quantityPurchased: 1, // Por enquanto assumimos 1, depois pode vir do histórico de compras
+            purchaseDate: new Date(listing.createdAt || new Date()), // Usando data de criação como proxy
+          }))
+
+          console.log('Compras processadas:', purchases)
+          this.purchases.set(purchases)
+          this.isLoading.set(false)
+        },
+        error: error => {
+          console.error('Erro final:', error)
+          this.error.set('Erro ao carregar suas compras. Tente novamente.')
+          this.isLoading.set(false)
+        },
+      })
   }
 
   viewPurchase(listingId: string) {
     this.router.navigate(['/listing', listingId])
+  }
+
+  reloadPurchases() {
+    this.loadPurchases()
   }
 
   ratePurchase(purchase: MyPurchase) {

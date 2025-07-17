@@ -1,8 +1,8 @@
 .account-container {
   min-height: 100vh;
   display: flex;
-  background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 50%, #81C784 100%);
-  
+  background: linear-gradient(135deg, #2e7d32 0%, #4caf50 50%, #81c784 100%);
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -15,7 +15,7 @@
   justify-content: center;
   padding: var(--spacing-xl);
   color: white;
-  
+
   @media (max-width: 768px) {
     padding: var(--spacing-lg);
     min-height: 200px;
@@ -33,7 +33,7 @@
   font-weight: 700;
   margin-bottom: var(--spacing-md);
   color: white;
-  
+
   @media (max-width: 768px) {
     font-size: 2rem;
   }
@@ -51,7 +51,7 @@
   gap: var(--spacing-sm);
   font-size: 1rem;
   opacity: 0.9;
-  
+
   i {
     font-size: 1.2rem;
     color: var(--color-accent);
@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
-  
+
   @media (max-width: 768px) {
     padding: var(--spacing-lg);
   }
@@ -73,11 +73,12 @@
 .form-container {
   width: 100%;
   max-width: 500px;
-  background: white;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   padding: var(--spacing-xl);
-  
+
   @media (max-width: 768px) {
     padding: var(--spacing-lg);
     border-radius: var(--radius-md);
@@ -87,14 +88,14 @@
 .form-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
-  
+
   h2 {
     font-size: 1.8rem;
     font-weight: 600;
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-sm);
   }
-  
+
   p {
     color: var(--color-text-secondary);
     font-size: 0.9rem;
@@ -103,7 +104,7 @@
 
 .form-group-section {
   margin-bottom: var(--spacing-xl);
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -117,7 +118,7 @@
   font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-md);
-  
+
   i {
     color: var(--color-primary);
     font-size: 1.2rem;
@@ -128,12 +129,14 @@
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
-  
+  max-width: 100%; /* Garante que não saia do container */
+  overflow: hidden; /* Previne overflow */
+
   @media (max-width: 768px) {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -144,17 +147,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  
+  min-width: 0; /* Permite que o elemento encolha */
+
   &.form-group-small {
-    flex: 0 0 150px;
-    
+    flex: 0 0 120px; /* Reduzido de 150px para 120px */
+
     @media (max-width: 768px) {
       flex: 1;
     }
   }
-  
+
   &.form-group-large {
     flex: 2;
+    min-width: 0; /* Garante que não saia do container */
   }
 }
 
@@ -165,24 +170,29 @@
 }
 
 .form-group input {
+  width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   transition: all 0.3s ease;
-  
+  box-sizing: border-box;
+  max-width: 100%; /* Garante que não exceda o container */
+
   &:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
   }
-  
+
   &.ng-invalid.ng-touched {
     border-color: var(--color-error);
   }
-  
+
   &::placeholder {
-    color: var(--color-text-light);
+    color: var(--color-text-muted);
   }
 }
 
@@ -198,7 +208,7 @@
   margin-top: var(--spacing-xl);
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--color-border);
-  
+
   @media (max-width: 768px) {
     button {
       width: 100%;
@@ -212,19 +222,19 @@
   height: 48px;
   font-size: 1rem;
   font-weight: 600;
-  background: #4CAF50;
+  background: var(--color-primary);
   color: white;
-  border: 1px solid #4CAF50;
-  
+  border: 1px solid var(--color-primary);
+
   &:hover {
-    background: #45a049;
+    background: var(--color-primary-dark);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
-  
+
   @media (max-width: 768px) {
     width: 100%;
   }
@@ -235,11 +245,11 @@
     margin: var(--spacing-md);
     padding: var(--spacing-lg);
   }
-  
+
   .brand-title {
     font-size: 1.8rem;
   }
-  
+
   .form-header h2 {
     font-size: 1.5rem;
   }
@@ -251,15 +261,15 @@
 }
 
 .seller-button {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 2px solid white !important;
-  color: white !important;
+  background: var(--color-surface-alpha) !important;
+  border: 2px solid var(--color-text-primary) !important;
+  color: var(--color-text-primary) !important;
   padding: 12px 24px !important;
   font-weight: 600 !important;
   transition: all 0.3s ease !important;
-  
+
   &:hover {
-    background: white !important;
-    color: #2E7D32 !important;
+    background: var(--color-text-primary) !important;
+    color: var(--color-surface) !important;
   }
 }

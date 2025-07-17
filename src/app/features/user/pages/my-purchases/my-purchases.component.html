@@ -38,8 +38,26 @@
       </div>
     </div>
 
+    <!-- Error State -->
+    <div *ngIf="!isLoading() && error()" class="error-state">
+      <div class="error-content">
+        <i class="pi pi-exclamation-triangle error-icon"></i>
+        <h3>Erro ao carregar compras</h3>
+        <p>{{ error() }}</p>
+        <p-button
+          label="Tentar Novamente"
+          icon="pi pi-refresh"
+          (click)="reloadPurchases()"
+          styleClass="p-button-outlined"
+        ></p-button>
+      </div>
+    </div>
+
     <!-- Empty State -->
-    <div *ngIf="!isLoading() && purchases().length === 0" class="empty-state">
+    <div
+      *ngIf="!isLoading() && !error() && purchases().length === 0"
+      class="empty-state"
+    >
       <div class="empty-content">
         <i class="pi pi-shopping-bag empty-icon"></i>
         <h3>Nenhuma compra encontrada</h3>
@@ -48,7 +66,10 @@
     </div>
 
     <!-- Purchases Grid -->
-    <div *ngIf="!isLoading() && purchases().length > 0" class="listings-grid">
+    <div
+      *ngIf="!isLoading() && !error() && purchases().length > 0"
+      class="listings-grid"
+    >
       <div
         class="listing-card"
         [ngClass]="'status-' + purchase.status"
