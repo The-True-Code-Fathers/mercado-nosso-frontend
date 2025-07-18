@@ -35,43 +35,97 @@
           <p-divider></p-divider>
 
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group form-group-medium">
               <label for="nome">Nome</label>
-              <input pInputText id="nome" formControlName="nome" placeholder="Digite seu nome"
-                [class.ng-invalid]="createAccountForm.get('nome')?.invalid && createAccountForm.get('nome')?.touched" />
-              <small class="error-message"
-                *ngIf="createAccountForm.get('nome')?.invalid && createAccountForm.get('nome')?.touched">
+              <input
+                pInputText
+                id="nome"
+                formControlName="nome"
+                placeholder="Digite seu nome"
+                [class.ng-invalid]="
+                  createAccountForm.get('nome')?.invalid &&
+                  createAccountForm.get('nome')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  createAccountForm.get('nome')?.invalid &&
+                  createAccountForm.get('nome')?.touched
+                "
+              >
                 Nome é obrigatório
               </small>
             </div>
-            <div class="form-group">
+            <div class="form-group form-group-small">
               <label for="sobrenome">Sobrenome</label>
-              <input pInputText id="sobrenome" formControlName="sobrenome" placeholder="Digite seu sobrenome"
-                [class.ng-invalid]="createAccountForm.get('sobrenome')?.invalid && createAccountForm.get('sobrenome')?.touched" />
-              <small class="error-message"
-                *ngIf="createAccountForm.get('sobrenome')?.invalid && createAccountForm.get('sobrenome')?.touched">
+              <input
+                pInputText
+                id="sobrenome"
+                formControlName="sobrenome"
+                placeholder="Digite seu sobrenome"
+                [class.ng-invalid]="
+                  createAccountForm.get('sobrenome')?.invalid &&
+                  createAccountForm.get('sobrenome')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  createAccountForm.get('sobrenome')?.invalid &&
+                  createAccountForm.get('sobrenome')?.touched
+                "
+              >
                 Sobrenome é obrigatório
               </small>
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group form-group-medium">
               <label for="dataNascimento">Data de Nascimento</label>
-              <input pInputText id="dataNascimento" formControlName="dataNascimento" placeholder="DD/MM/YYYY"
-                (input)="formatDataNascimento($event)" maxlength="10"
-                [class.ng-invalid]="createAccountForm.get('dataNascimento')?.invalid && createAccountForm.get('dataNascimento')?.touched" />
-              <small class="error-message"
-                *ngIf="createAccountForm.get('dataNascimento')?.invalid && createAccountForm.get('dataNascimento')?.touched">
+              <input
+                pInputText
+                id="dataNascimento"
+                formControlName="dataNascimento"
+                placeholder="DD/MM/YYYY"
+                (input)="formatDataNascimento($event)"
+                maxlength="10"
+                [class.ng-invalid]="
+                  createAccountForm.get('dataNascimento')?.invalid &&
+                  createAccountForm.get('dataNascimento')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  createAccountForm.get('dataNascimento')?.invalid &&
+                  createAccountForm.get('dataNascimento')?.touched
+                "
+              >
                 Data de nascimento é obrigatória
               </small>
             </div>
-            <div class="form-group">
+            <div class="form-group form-group-small">
               <label for="cpf">CPF</label>
-              <input pInputText id="cpf" formControlName="cpf" placeholder="000.000.000-00" (input)="formatCpf($event)"
+              <input
+                pInputText
+                id="cpf"
+                formControlName="cpf"
+                placeholder="000.000.000-00"
+                (input)="formatCpf($event)"
                 maxlength="14"
-                [class.ng-invalid]="createAccountForm.get('cpf')?.invalid && createAccountForm.get('cpf')?.touched" />
-              <small class="error-message"
-                *ngIf="createAccountForm.get('cpf')?.invalid && createAccountForm.get('cpf')?.touched">
+                [class.ng-invalid]="
+                  createAccountForm.get('cpf')?.invalid &&
+                  createAccountForm.get('cpf')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  createAccountForm.get('cpf')?.invalid &&
+                  createAccountForm.get('cpf')?.touched
+                "
+              >
                 CPF é obrigatório
               </small>
             </div>
@@ -80,10 +134,23 @@
           <div class="form-row">
             <div class="form-group">
               <label for="email">E-mail</label>
-              <input pInputText id="email" formControlName="email" placeholder="Digite seu e-mail"
-                [class.ng-invalid]="createAccountForm.get('email')?.invalid && createAccountForm.get('email')?.touched" />
-              <small class="error-message"
-                *ngIf="createAccountForm.get('email')?.invalid && createAccountForm.get('email')?.touched">
+              <input
+                pInputText
+                id="email"
+                formControlName="email"
+                placeholder="Digite seu e-mail"
+                [class.ng-invalid]="
+                  createAccountForm.get('email')?.invalid &&
+                  createAccountForm.get('email')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  createAccountForm.get('email')?.invalid &&
+                  createAccountForm.get('email')?.touched
+                "
+              >
                 E-mail válido é obrigatório
               </small>
             </div>
@@ -92,10 +159,24 @@
           <div class="form-row">
             <div class="form-group">
               <label for="senha">Senha</label>
-              <input pInputText type="password" id="senha" formControlName="senha" placeholder="Digite sua senha"
-                [class.ng-invalid]="createAccountForm.get('senha')?.invalid && createAccountForm.get('senha')?.touched" />
-              <small class="error-message"
-                *ngIf="createAccountForm.get('senha')?.invalid && createAccountForm.get('senha')?.touched">
+              <input
+                pInputText
+                type="password"
+                id="senha"
+                formControlName="senha"
+                placeholder="Digite sua senha"
+                [class.ng-invalid]="
+                  createAccountForm.get('senha')?.invalid &&
+                  createAccountForm.get('senha')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  createAccountForm.get('senha')?.invalid &&
+                  createAccountForm.get('senha')?.touched
+                "
+              >
                 Senha é obrigatória (mínimo 6 caracteres)
               </small>
             </div>
@@ -105,9 +186,19 @@
             <div class="form-group">
               <label for="profile-picture">Foto de Perfil</label>
               <div class="file-upload-container">
-                <input type="file" id="profile-picture" accept="image/*" (change)="onFileSelect($event)" #fileInput
-                  style="display: none;" />
-                <button type="button" class="p-button p-button-outlined file-upload-btn" (click)="fileInput.click()">
+                <input
+                  type="file"
+                  id="profile-picture"
+                  accept="image/*"
+                  (change)="onFileSelect($event)"
+                  #fileInput
+                  style="display: none"
+                />
+                <button
+                  type="button"
+                  class="p-button p-button-outlined file-upload-btn"
+                  (click)="fileInput.click()"
+                >
                   <i class="pi pi-upload"></i>
                   Escolher Foto
                 </button>
@@ -123,8 +214,11 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="p-button p-button-primary cadastrar-button"
-            [disabled]="createAccountForm.invalid || isLoading">
+          <button
+            type="submit"
+            class="p-button p-button-primary cadastrar-button"
+            [disabled]="createAccountForm.invalid || isLoading"
+          >
             <i class="pi pi-spinner pi-spin" *ngIf="isLoading"></i>
             <i class="pi pi-check" *ngIf="!isLoading"></i>
             {{ isLoading ? 'Criando...' : 'Criar Conta' }}
