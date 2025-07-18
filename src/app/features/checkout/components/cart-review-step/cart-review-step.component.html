@@ -29,19 +29,16 @@
         </div>
     </div>
 
-    <div class="step-actions">
-        <button type="button" class="btn-back" (click)="goToCart()">
-        <i class="pi pi-arrow-left"></i>
-            Voltar ao Carrinho
-        </button>
-
-        <button
-            type="button"
-            class="btn-continue"
-            (click)="continueToShipping()"
-        >
-        Continuar para Entrega
-        <i class="pi pi-arrow-right"></i>
-        </button>
-    </div>
+    <app-checkout-navigation
+        [showBack]="true"
+        [showContinue]="true"
+        [continueDisabled]="!canContinue()"
+        backLabel="Voltar"
+        continueLabel="Continuar"
+        backIcon="pi pi-arrow-left"
+        continueIcon="pi pi-arrow-right"
+        step="shipping"
+        (onBack)="goToCart()"
+        (onContinue)="continueToShipping()"
+    ></app-checkout-navigation>
 </div>

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { CheckoutService } from '../../services/checkout.service'
 import { OrderSummary } from '../../models/checkout.models'
+import { CheckoutNavigationComponent } from '../shared'
 
 @Component({
   selector: 'app-cart-review-step',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CheckoutNavigationComponent],
   templateUrl: './cart-review-step.component.html',
   styleUrl: './cart-review-step.component.scss'
 })
@@ -23,5 +24,9 @@ export class CartReviewStepComponent {
 
   continueToShipping(): void {
     this.checkoutService.nextStep()
+  }
+
+  canContinue(): boolean {
+    return this.orderSummary !== null && this.orderSummary.items.length > 0
   }
 }
