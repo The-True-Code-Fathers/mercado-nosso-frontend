@@ -28,6 +28,10 @@ import { IconFieldModule } from 'primeng/iconfield'
 import { InputIconModule } from 'primeng/inputicon'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { OverlayPanel } from 'primeng/overlaypanel'
+import {
+  UserService,
+  UserResponse,
+} from '../../../../features/user/services/user.service'
 // import { CartService } from '../../core/services/cart.service'; // Uncomment when cart service is implemented
 
 @Component({
@@ -66,7 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   mobileSearchVisible = false
   userMenuVisible = false
   cartItemsCount = 3
-  username: string | null = 'Matheus'
+  username: string | null = ''
   isLoggedIn = false
 
   // Responsive properties
@@ -87,12 +91,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private searchService: SearchService, // private cartService: CartService // Inject when available
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
     this.checkScreenSize()
     this.syncLoginState()
-
+    this.loadUsername()
     window.addEventListener('storage', this.handleStorageChange)
 
     // Subscribe to search term changes from the service
@@ -336,6 +341,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private syncLoginState() {
     this.isLoggedIn = DEVELOPMENT_CONFIG.DEFAULT_USER_ID !== '0'
+    if (this.isLoggedIn) {
+      this.loadUsername()
+    } else {
+      this.username = ''
+    }
+  }
+
+  private loadUsername() {
+    const userId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID
+    if (userId && userId !== '0') {
+      this.userService.getUserById(userId).subscribe({
+        next: (user: UserResponse) => {
+          this.username = user.fullName || ''
+        },
+        error: () => {
+          this.username = ''
+        },
+      })
+    } else {
+      this.username = ''
+    }
   }
 
   // Get categories for current screen size
