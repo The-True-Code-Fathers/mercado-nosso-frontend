@@ -281,6 +281,9 @@
               size="large"
               severity="success"
               styleClass="buy-now-btn"
+              (onClick)="buyNow()"
+              [loading]="buyingNow"
+              [disabled]="buyingNow"
             >
             </p-button>
             <p-button

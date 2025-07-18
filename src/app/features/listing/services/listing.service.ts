@@ -4,6 +4,8 @@ import { Observable } from 'rxjs'
 import { tap, catchError, map } from 'rxjs/operators'
 import { throwError } from 'rxjs'
 
+import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
+
 export interface Listing {
   listingId: string
   sellerId: string
@@ -66,8 +68,8 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class ListingService {
-  private apiUrl = 'http://localhost:8080/api/listings'
-  private reviewsApiUrl = 'http://localhost:8080/api/reviews'
+  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/listings`
+  private reviewsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
 
   constructor(private http: HttpClient) {}
 

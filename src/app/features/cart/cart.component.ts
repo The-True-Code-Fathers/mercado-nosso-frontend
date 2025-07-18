@@ -14,7 +14,7 @@ import { CheckboxModule } from 'primeng/checkbox'
 import { ConfirmationService, MessageService } from 'primeng/api'
 import { CartService, CartResponse } from './services/cart.service'
 import { ListingService, Listing } from '../listing/services/listing.service'
-import { forkJoin, of } from 'rxjs'
+import { forkJoin, of, Observable } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 
 export interface CartItem {
@@ -75,6 +75,16 @@ export class CartComponent implements OnInit {
   // Getter for total items in cart (regardless of selection)
   get totalItemsInCart(): number {
     return this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+  }
+
+  // Getter for selected items (for checkout)
+  get selectedItems(): CartItem[] {
+    return this.cartItems().filter(item => item.selected)
+  }
+
+  // Method to get selected items as Observable for services
+  getSelectedItems(): Observable<CartItem[]> {
+    return of(this.selectedItems)
   }
 
   constructor(
@@ -518,8 +528,13 @@ export class CartComponent implements OnInit {
       return
     }
 
-    // Navigate to checkout page
-    this.router.navigate(['/checkout'])
+    // Navigate to checkout page with selected items in state
+    this.router.navigate(['/checkout'], {
+      state: {
+        selectedCartItems: selectedItems,
+        source: 'cart',
+      },
+    })
   }
 
   continueShopping() {

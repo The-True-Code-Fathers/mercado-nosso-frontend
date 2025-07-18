@@ -1,11 +1,18 @@
 import { Injectable, signal } from '@angular/core'
 import { BehaviorSubject, Observable, of } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
-import { CheckoutItem, ShippingAddress, PaymentMethod, Order, OrderSummary, CheckoutStep, CHECKOUT_STEPS } from '../models/checkout.models'
-import { CartItem } from '../../cart/cart.component'
+import {
+  CheckoutItem,
+  ShippingAddress,
+  PaymentMethod,
+  Order,
+  OrderSummary,
+  CheckoutStep,
+  CHECKOUT_STEPS,
+} from '../models/checkout.models'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CheckoutService {
   // State management with signals
@@ -30,22 +37,9 @@ export class CheckoutService {
 
   constructor(private http: HttpClient) {}
 
-  // Initialize checkout with cart items
-  initializeCheckout(cartItems: CartItem[]): void {
-    const checkoutItems: CheckoutItem[] = cartItems
-      .filter(item => item.selected)
-      .map(item => ({
-        listingId: item.listingId,
-        name: item.name,
-        unitPrice: item.unitPrice,
-        quantity: item.quantity,
-        totalPrice: item.price,
-        image: item.image,
-        sellerId: 'seller-' + item.listingId, // Mock seller ID
-        sellerName: 'Vendedor Demo',
-        shippingPrice: item.shippingPrice || 0
-      }))
-
+  // Initialize checkout with checkout items
+  initializeCheckout(checkoutItems: CheckoutItem[]): void {
+    // Set the checkout items directly since they're already in the right format
     this._checkoutItems.set(checkoutItems)
     this.updateOrderSummary()
     this.setCurrentStep(0)
@@ -81,7 +75,7 @@ export class CheckoutService {
     const updatedSteps = this._steps().map((step, index) => ({
       ...step,
       completed: index < currentIndex,
-      active: index === currentIndex
+      active: index === currentIndex,
     }))
     this._steps.set(updatedSteps)
   }
@@ -106,7 +100,10 @@ export class CheckoutService {
     }
 
     const subtotal = items.reduce((sum, item) => sum + item.totalPrice, 0)
-    const shippingTotal = items.reduce((sum, item) => sum + item.shippingPrice, 0)
+    const shippingTotal = items.reduce(
+      (sum, item) => sum + item.shippingPrice,
+      0,
+    )
     const discountTotal = 0 // Can be calculated based on promotions
     const total = subtotal + shippingTotal - discountTotal
     const itemsCount = items.reduce((sum, item) => sum + item.quantity, 0)
@@ -117,7 +114,7 @@ export class CheckoutService {
       shippingTotal,
       discountTotal,
       total,
-      itemsCount
+      itemsCount,
     })
   }
 
@@ -134,7 +131,7 @@ export class CheckoutService {
         city: 'São Paulo',
         state: 'SP',
         zipCode: '01234-567',
-        isDefault: true
+        isDefault: true,
       },
       {
         id: '2',
@@ -145,8 +142,8 @@ export class CheckoutService {
         city: 'São Paulo',
         state: 'SP',
         zipCode: '01310-100',
-        isDefault: false
-      }
+        isDefault: false,
+      },
     ]
     return of(mockAddresses)
   }
@@ -160,18 +157,18 @@ export class CheckoutService {
         cardholderName: 'JOAO SILVA',
         expiryDate: '12/26',
         installments: 1,
-        isDefault: true
+        isDefault: true,
       },
       {
         id: '2',
         type: 'PIX',
-        isDefault: false
+        isDefault: false,
       },
       {
         id: '3',
         type: 'APPLE_PAY',
-        isDefault: false
-      }
+        isDefault: false,
+      },
     ]
     return of(mockPayments)
   }
@@ -179,7 +176,7 @@ export class CheckoutService {
   // Order placement
   placeOrder(): Observable<Order> {
     this._isLoading.set(true)
-    
+
     // Simulate API call
     const order: Order = {
       id: 'order-' + Date.now(),
@@ -195,7 +192,8 @@ export class CheckoutService {
       total: this._orderSummary()!.total,
       createdAt: new Date().toISOString(),
       estimatedDelivery: this.calculateEstimatedDelivery(),
-      trackingCode: 'BR' + Math.random().toString(36).substr(2, 9).toUpperCase()
+      trackingCode:
+        'BR' + Math.random().toString(36).substr(2, 9).toUpperCase(),
     }
 
     // Simulate network delay
@@ -213,11 +211,11 @@ export class CheckoutService {
     deliveryDate.setDate(deliveryDate.getDate() + 7) // 7 days from now
     const endDate = new Date(deliveryDate)
     endDate.setDate(endDate.getDate() + 3) // 3-day window
-    
+
     const formatDate = (date: Date) => {
       return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })
     }
-    
+
     return `${formatDate(deliveryDate)} - ${formatDate(endDate)}`
   }
 

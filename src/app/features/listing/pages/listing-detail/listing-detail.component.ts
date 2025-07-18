@@ -115,6 +115,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   // Cart functionality
   addingToCart: boolean = false
+  buyingNow: boolean = false
   quantity: number = 1
   sellerName = signal<string>('Carregando...')
 
@@ -1212,6 +1213,74 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
             life: 5000,
           })
         },
+      })
+  }
+
+  buyNow(): void {
+    if (!this.listingId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Produto não encontrado',
+        life: 3000,
+      })
+      return
+    }
+
+    this.buyingNow = true
+
+    // Get current product price
+    const productPrice = this.displayPrice
+    const listing = this.listing()
+
+    if (!listing) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Informações do produto não disponíveis',
+        life: 3000,
+      })
+      this.buyingNow = false
+      return
+    }
+
+    // Create checkout item from current product
+    const checkoutItem = {
+      listingId: this.listingId,
+      name: listing.title || `Produto ${this.listingId}`,
+      unitPrice: productPrice,
+      quantity: this.quantity,
+      totalPrice: productPrice * this.quantity,
+      image:
+        listing.imagesUrl && listing.imagesUrl.length > 0
+          ? listing.imagesUrl[0]
+          : 'https://via.placeholder.com/80x80?text=📦',
+      sellerId: listing.sellerId || 'unknown',
+      sellerName:
+        this.sellerName() || `Vendedor ${listing.sellerId || 'Desconhecido'}`,
+      shippingPrice: 0, // Will be calculated later
+    }
+
+    // Navigate to checkout with the single item
+    this.router
+      .navigate(['/checkout'], {
+        state: {
+          directBuyItem: checkoutItem,
+          source: 'buyNow',
+        },
+      })
+      .then(() => {
+        this.buyingNow = false
+      })
+      .catch(err => {
+        this.buyingNow = false
+        console.error('Error navigating to checkout:', err)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível ir para o checkout',
+          life: 3000,
+        })
       })
   }
 

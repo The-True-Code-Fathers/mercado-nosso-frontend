@@ -4,18 +4,18 @@
 <div class="checkout-container">
   <div class="checkout-content">
     <div class="checkout-main">
-      <!-- Step 0: Cart Review (if needed) -->
+      <!-- Step 0: Cart Review -->
       <div *ngIf="currentStep() === 0" class="step-container">
         <div class="cart-review-step">
           <div class="step-header">
-            <h2>Revisar Carrinho</h2>
+            <h2>Revisar itens</h2>
             <p>Confirme os produtos antes de continuar</p>
           </div>
-          
+
           <div class="cart-items" *ngIf="orderSummary()">
             <div class="items-list">
-              <div 
-                *ngFor="let item of orderSummary()!.items" 
+              <div
+                *ngFor="let item of orderSummary()!.items"
                 class="cart-item-review"
               >
                 <div class="item-image">
@@ -24,7 +24,8 @@
                 <div class="item-details">
                   <h4>{{ item.name }}</h4>
                   <p class="item-price">
-                    {{ item.quantity }}x R$ {{ item.unitPrice | number : '1.2-2' }}
+                    {{ item.quantity }}x R$
+                    {{ item.unitPrice | number : '1.2-2' }}
                   </p>
                 </div>
                 <div class="item-total">
@@ -35,17 +36,13 @@
           </div>
 
           <div class="step-actions">
-            <button 
-              type="button" 
-              class="btn-back"
-              (click)="goToCart()"
-            >
+            <button type="button" class="btn-back" (click)="goToCart()">
               <i class="pi pi-arrow-left"></i>
               Voltar ao Carrinho
             </button>
-            
-            <button 
-              type="button" 
+
+            <button
+              type="button"
               class="btn-continue"
               (click)="continueToShipping()"
             >
