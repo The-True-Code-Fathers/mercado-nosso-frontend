@@ -44,11 +44,12 @@
       <div class="price-original" *ngIf="product.originalPrice">
         R$ {{ product.originalPrice | number : '1.2-2' }}
       </div>
-    </div>
-
-    <!-- Installments -->
-    <div class="installments" *ngIf="product.installments">
-      {{ product.installments }}
+      <div class="installments">
+        <span *ngIf="product.price"
+          >ou 12x de R$ {{ product.price / 12 | number : '1.2-2' }} sem
+          juros</span
+        >
+      </div>
     </div>
   </div>
 </div>

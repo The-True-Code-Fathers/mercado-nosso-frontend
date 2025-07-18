@@ -101,7 +101,8 @@
   gap: var(--spacing-xl);
 
   @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column-reverse;
     gap: var(--spacing-lg);
   }
 }
