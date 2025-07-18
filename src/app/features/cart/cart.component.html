@@ -3,7 +3,7 @@
   [class.centered-content]="cartItems().length === 0 || isLoading()"
 >
   <!-- Header só aparece quando há items -->
-  <div *ngIf="cartItems().length > 0" class="cart-header">
+  <div *ngIf="cartItems().length > 0 && !isLoading()" class="cart-header">
     <h1>
       <i class="pi pi-shopping-cart cart-title-icon"></i>
       Meu Carrinho
@@ -42,7 +42,9 @@
     class="cart-content"
   >
     <div class="cart-items">
-      <div class="items-header"></div>
+      <div class="items-header">
+        <!-- Cabeçalho opcional para os itens -->
+      </div>
 
       <div class="items-list">
         <p-card *ngFor="let item of cartItems()" class="cart-item">
