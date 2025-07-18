@@ -36,10 +36,8 @@ export class CheckoutService {
   steps = this._steps.asReadonly()
 
   constructor(private http: HttpClient) {}
-
-  // Initialize checkout with checkout items
+ 
   initializeCheckout(checkoutItems: CheckoutItem[]): void {
-    // Set the checkout items directly since they're already in the right format
     this._checkoutItems.set(checkoutItems)
     this.updateOrderSummary()
     this.setCurrentStep(0)
@@ -119,7 +117,7 @@ export class CheckoutService {
   }
 
   // Mock data for development
-  getMockAddresses(): Observable<ShippingAddress[]> {
+  getShippingAddresses(): Observable<ShippingAddress[]> {
     const mockAddresses: ShippingAddress[] = [
       {
         id: '1',
@@ -132,23 +130,12 @@ export class CheckoutService {
         state: 'SP',
         zipCode: '01234-567',
         isDefault: true,
-      },
-      {
-        id: '2',
-        fullName: 'João Silva',
-        street: 'Av. Paulista',
-        number: '1000',
-        neighborhood: 'Bela Vista',
-        city: 'São Paulo',
-        state: 'SP',
-        zipCode: '01310-100',
-        isDefault: false,
-      },
+      }
     ]
     return of(mockAddresses)
   }
 
-  getMockPaymentMethods(): Observable<PaymentMethod[]> {
+  getPaymentMethods(): Observable<PaymentMethod[]> {
     const mockPayments: PaymentMethod[] = [
       {
         id: '1',
