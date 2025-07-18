@@ -66,10 +66,12 @@ export class LoginComponent implements OnInit {
     this.userService.login(email, password).subscribe({
       next: user => {
         console.log('Login sucesso:', user)
-        localStorage.setItem('currentUserId', user.id)
+        // Não salva mais currentUserId, apenas devUserId
         localStorage.setItem('currentUserName', user.fullName)
         localStorage.setItem('currentUserEmail', user.email)
         setDevelopmentUserId(user.id)
+        // Força atualização do header na mesma aba
+        window.dispatchEvent(new StorageEvent('storage', { key: 'devUserId' }))
       },
       error: err => {
         console.log('Erro', err)
