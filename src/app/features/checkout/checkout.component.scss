@@ -40,6 +40,7 @@ app-cart-review-step,
 app-shipping-step,
 app-payment-step,
 app-confirmation-step {
+  height: 100% !important;
   display: flex;
   flex-direction: column;
 }
