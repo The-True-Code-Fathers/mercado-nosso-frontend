@@ -45,16 +45,25 @@ import { OverlayPanel } from 'primeng/overlaypanel'
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  logout() {
+    localStorage.setItem('userId', '0')
+    this.isLoggedIn = false
+    this.username = null
+    this.router.navigate(['/login'])
+  }
   @ViewChild('categoriesPanel') categoriesPanel!: OverlayPanel
+  @ViewChild('userMenuPanel') userMenuPanel!: OverlayPanel
 
   isDarkMode = false
   searchTerm: string = ''
   categoriesMenuVisible = false
   mobileMenuVisible = false
   mobileCategoriesVisible = false
-  mobileSearchVisible = false // Add mobile search state
-  cartItemsCount = 3 // TODO: This should come from CartService
-  username: string | null = 'Matheus' // TODO: Replace with actual user service
+  mobileSearchVisible = false
+  userMenuVisible = false
+  cartItemsCount = 3
+  username: string | null = 'Matheus'
+  isLoggedIn = true
 
   // Responsive properties
   isMobile = false
@@ -85,7 +94,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     })
     this.subscriptions.push(searchTermSub)
 
-    // Listen to route changes to clear search on home navigation
+    // Listen to route changes to clear search on home navigation e dar F5 na home
     const routerSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -139,6 +148,43 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onCategorySelected() {
     this.categoriesPanel.hide()
+  }
+
+  // User menu methods
+  toggleUserMenu(event: Event) {
+    this.userMenuPanel.toggle(event)
+    this.userMenuVisible = !this.userMenuVisible
+  }
+
+  closeUserMenu() {
+    this.userMenuPanel.hide()
+    this.userMenuVisible = false
+  }
+
+  onUserMenuItemClick(action: string) {
+    this.closeUserMenu()
+
+    switch (action) {
+      case 'login':
+        this.router.navigate(['/login'])
+        break
+      case 'register':
+        this.router.navigate(['/register'])
+        break
+      case 'profile':
+        this.router.navigate(['/user/profile'])
+        break
+      case 'orders':
+        this.router.navigate(['/user/orders'])
+        break
+      case 'purchases':
+        this.router.navigate(['/user/purchases'])
+        break
+      case 'logout':
+        // TODO: Implement logout logic
+        console.log('Logout clicked')
+        break
+    }
   }
 
   categories = [
@@ -249,12 +295,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // HostListener to detect screen size changes
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     this.checkScreenSize()
 
-    // Close mobile menu when switching to desktop
     if (this.isDesktop && this.mobileMenuVisible) {
       this.closeMobileMenu()
     }
