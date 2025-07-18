@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
 import { CheckoutService } from '../../services/checkout.service'
 import { PaymentMethod } from '../../models/checkout.models'
+import { CheckoutNavigationComponent } from '../shared/checkout-navigation/checkout-navigation.component'
 
 @Component({
   selector: 'app-payment-step',
@@ -26,7 +27,8 @@ import { PaymentMethod } from '../../models/checkout.models'
     DropdownModule,
     DividerModule,
     CheckboxModule,
-    ToastModule
+    ToastModule,
+    CheckoutNavigationComponent
   ],
   providers: [MessageService],
   templateUrl: './payment-step.component.html',
@@ -43,6 +45,7 @@ export class PaymentStepComponent implements OnInit {
   selectedMethodId: string | null = null
   selectedQuickMethod: string | null = null
   showNewCardForm = false
+  showCardForm = true  // Show card form by default when card is selected
   saveNewCard = false
   selectedInstallments = 1
   
@@ -96,6 +99,10 @@ export class PaymentStepComponent implements OnInit {
   ngOnInit(): void {
     // Load any saved payment methods if needed
     this.loadSavedPaymentMethods()
+  }
+
+  toggleCardForm(): void {
+    this.showCardForm = !this.showCardForm
   }
 
   loadSavedPaymentMethods(): void {

@@ -8,6 +8,7 @@ import { MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
 import { CheckoutService } from '../../services/checkout.service'
 import { CartService } from '../../../cart/services/cart.service'
+import { CheckoutNavigationComponent } from '../shared/checkout-navigation/checkout-navigation.component'
 
 @Component({
   selector: 'app-confirmation-step',
@@ -17,7 +18,8 @@ import { CartService } from '../../../cart/services/cart.service'
     ButtonModule,
     CardModule,
     DividerModule,
-    ToastModule
+    ToastModule,
+    CheckoutNavigationComponent
   ],
   providers: [MessageService],
   templateUrl: './confirmation-step.component.html',

@@ -1,0 +1,26 @@
+<div class="checkout-navigation">
+  <div class="step-actions">
+    <button 
+      *ngIf="showBack"
+      class="btn-back"
+      [disabled]="isLoading"
+      (click)="handleBack()">
+      <i [class]="backIcon"></i>
+      <span>{{ backLabel }}</span>
+    </button>
+    
+    <div class="spacer" *ngIf="!showBack"></div>
+    
+    <button 
+      *ngIf="showContinue"
+      class="btn-continue"
+      [disabled]="continueDisabled || isLoading"
+      [class.loading]="isLoading"
+      (click)="handleContinue()">
+      <span *ngIf="!isLoading">{{ continueLabel }}</span>
+      <i *ngIf="!isLoading" [class]="continueIcon"></i>
+      <i *ngIf="isLoading" class="pi pi-spinner pi-spin"></i>
+      <span *ngIf="isLoading">Processando...</span>
+    </button>
+  </div>
+</div>

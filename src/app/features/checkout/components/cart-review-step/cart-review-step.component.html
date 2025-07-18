@@ -1,0 +1,47 @@
+<div class="cart-review-step">
+    <div class="review-main">
+        <div class="step-header">
+            <h2>Revisar itens</h2>
+            <p>Confirme os produtos antes de continuar</p>
+        </div>
+
+        <div class="cart-items" *ngIf="orderSummary">
+            <div class="items-list">
+            <div
+                *ngFor="let item of orderSummary.items"
+                class="cart-item-review"
+            >
+                <div class="item-image">
+                <img [src]="item.image" [alt]="item.name" />
+                </div>
+                <div class="item-details">
+                <h4>{{ item.name }}</h4>
+                <p class="item-price">
+                    {{ item.quantity }}x R$
+                    {{ item.unitPrice | number : '1.2-2' }}
+                </p>
+                </div>
+                <div class="item-total">
+                <span>R$ {{ item.totalPrice | number : '1.2-2' }}</span>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-actions">
+        <button type="button" class="btn-back" (click)="goToCart()">
+        <i class="pi pi-arrow-left"></i>
+            Voltar ao Carrinho
+        </button>
+
+        <button
+            type="button"
+            class="btn-continue"
+            (click)="continueToShipping()"
+        >
+        Continuar para Entrega
+        <i class="pi pi-arrow-right"></i>
+        </button>
+    </div>
+</div>

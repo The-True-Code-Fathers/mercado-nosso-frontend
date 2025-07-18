@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
 import { CheckoutService } from '../../services/checkout.service'
 import { ShippingAddress } from '../../models/checkout.models'
+import { CheckoutNavigationComponent } from '../shared/checkout-navigation/checkout-navigation.component'
 
 @Component({
   selector: 'app-shipping-step',
@@ -22,7 +23,8 @@ import { ShippingAddress } from '../../models/checkout.models'
     RadioButtonModule,
     InputTextModule,
     DropdownModule,
-    ToastModule
+    ToastModule,
+    CheckoutNavigationComponent
   ],
   providers: [MessageService],
   templateUrl: './shipping-step.component.html',
@@ -35,6 +37,7 @@ export class ShippingStepComponent implements OnInit {
   savedAddresses: ShippingAddress[] = []
   selectedAddressId: string | null = null
   newAddress: ShippingAddress = this.createEmptyAddress()
+  showNewAddressForm: boolean = false
 
   states = [
     { name: 'São Paulo', code: 'SP' },
@@ -48,6 +51,10 @@ export class ShippingStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSavedAddresses()
+  }
+
+  toggleNewAddressForm(): void {
+    this.showNewAddressForm = !this.showNewAddressForm
   }
 
   private createEmptyAddress(): ShippingAddress {
@@ -72,6 +79,11 @@ export class ShippingStepComponent implements OnInit {
       if (defaultAddress) {
         this.selectedAddressId = defaultAddress.id!
         this.onAddressSelect(defaultAddress)
+      }
+      
+      // Show form if no saved addresses
+      if (addresses.length === 0) {
+        this.showNewAddressForm = true
       }
     })
   }

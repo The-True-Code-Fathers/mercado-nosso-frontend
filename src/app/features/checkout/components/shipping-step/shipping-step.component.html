@@ -9,26 +9,28 @@
     <div class="addresses-section" *ngIf="savedAddresses.length > 0">
       <h3>Endereços Salvos</h3>
       <div class="addresses-list">
-        <p-card 
+        <div 
           *ngFor="let address of savedAddresses" 
           class="address-card"
           [class.selected]="selectedAddressId === address.id"
+          (click)="onAddressSelect(address)"
         >
           <div class="address-selection">
             <p-radioButton
               [value]="address.id"
               [(ngModel)]="selectedAddressId"
-              (onChange)="onAddressSelect(address)"
               [inputId]="'address-' + address.id"
             >
             </p-radioButton>
             
             <div class="address-info">
               <h4>{{ address.fullName }}</h4>
-              <p>{{ address.street }}, {{ address.number }}</p>
-              <p *ngIf="address.complement">{{ address.complement }}</p>
-              <p>{{ address.neighborhood }} - {{ address.city }}/{{ address.state }}</p>
-              <p>CEP: {{ address.zipCode }}</p>
+              <div class="address-details">
+                <p>{{ address.street }}, {{ address.number }}</p>
+                <p *ngIf="address.complement">{{ address.complement }}</p>
+                <p>{{ address.neighborhood }} - {{ address.city }}/{{ address.state }}</p>
+                <p>CEP: {{ address.zipCode }}</p>
+              </div>
               <span 
                 *ngIf="address.isDefault" 
                 class="default-badge"
@@ -37,17 +39,38 @@
               </span>
             </div>
           </div>
-        </p-card>
+        </div>
       </div>
     </div>
 
     <!-- New Address Form -->
     <div class="new-address-section">
-      <h3>
-        {{ savedAddresses.length > 0 ? 'Novo Endereço' : 'Endereço de Entrega' }}
-      </h3>
+      <div class="section-header" (click)="toggleNewAddressForm()" 
+           [attr.aria-expanded]="showNewAddressForm"
+           [attr.aria-label]="savedAddresses.length > 0 ? 'Adicionar novo endereço' : 'Preencher endereço de entrega'">
+        <div class="header-content">
+          <h3>
+            {{ savedAddresses.length > 0 ? 'Adicionar Novo Endereço' : 'Endereço de Entrega' }}
+          </h3>
+          <p class="header-subtitle" *ngIf="savedAddresses.length > 0">
+            {{ showNewAddressForm ? 'Clique para fechar' : 'Clique para adicionar um novo endereço' }}
+          </p>
+        </div>
+        <button 
+          type="button" 
+          class="toggle-btn"
+          *ngIf="savedAddresses.length > 0"
+          [title]="showNewAddressForm ? 'Fechar formulário' : 'Abrir formulário'"
+        >
+          <i 
+            class="pi" 
+            [class.pi-plus]="!showNewAddressForm"
+            [class.pi-minus]="showNewAddressForm"
+          ></i>
+        </button>
+      </div>
       
-      <p-card class="address-form-card">
+      <div class="address-form-container" [class.collapsed]="savedAddresses.length > 0 && !showNewAddressForm">
         <div class="address-form">
           <div class="form-row">
             <div class="form-field full-width">
@@ -148,28 +171,22 @@
             </div>
           </div>
         </div>
-      </p-card>
+      </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="step-actions">
-      <p-button
-        label="Voltar"
-        icon="pi pi-arrow-left"
-        styleClass="p-button-outlined"
-        (click)="goBack()"
-      >
-      </p-button>
-      
-      <p-button
-        label="Continuar"
-        icon="pi pi-arrow-right"
-        iconPos="right"
-        (click)="continueToPayment()"
-        [disabled]="!canContinue()"
-      >
-      </p-button>
-    </div>
+    <!-- Navigation -->
+    <app-checkout-navigation
+      [showBack]="true"
+      [showContinue]="true"
+      [continueDisabled]="!canContinue()"
+      backLabel="Voltar"
+      continueLabel="Continuar"
+      backIcon="pi pi-arrow-left"
+      continueIcon="pi pi-arrow-right"
+      step="shipping"
+      (onBack)="goBack()"
+      (onContinue)="continueToPayment()"
+    ></app-checkout-navigation>
   </div>
 </div>
 

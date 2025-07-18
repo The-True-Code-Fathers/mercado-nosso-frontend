@@ -14,6 +14,7 @@ import { ListingService, Listing } from '../listing/services/listing.service'
 import { UserService, UserResponse } from '../user/services/user.service'
 import { CheckoutStepsComponent } from './components/checkout-steps/checkout-steps.component'
 import { OrderSummaryComponent } from './components/order-summary/order-summary.component'
+import { CartReviewStepComponent } from './components/cart-review-step/cart-review-step.component'
 import { ShippingStepComponent } from './components/shipping-step/shipping-step.component'
 import { PaymentStepComponent } from './components/payment-step/payment-step.component'
 import { ConfirmationStepComponent } from './components/confirmation-step/confirmation-step.component'
@@ -29,6 +30,7 @@ import { CheckoutItem } from './models/checkout.models'
     ToastModule,
     CheckoutStepsComponent,
     OrderSummaryComponent,
+    CartReviewStepComponent,
     ShippingStepComponent,
     PaymentStepComponent,
     ConfirmationStepComponent,
@@ -315,11 +317,4 @@ export class CheckoutComponent implements OnInit {
     })
   }
 
-  goToCart(): void {
-    this.router.navigate(['/cart'])
-  }
-
-  continueToShipping(): void {
-    this.checkoutService.nextStep()
-  }
 }
