@@ -45,7 +45,6 @@ export class PaymentStepComponent implements OnInit {
   selectedMethodId: string | null = null
   selectedQuickMethod: string | null = null
   showNewCardForm = false
-  showCardForm = true  // Show card form by default when card is selected
   saveNewCard = false
   selectedInstallments = 1
   
@@ -101,13 +100,9 @@ export class PaymentStepComponent implements OnInit {
     this.loadSavedPaymentMethods()
   }
 
-  toggleCardForm(): void {
-    this.showCardForm = !this.showCardForm
-  }
-
   loadSavedPaymentMethods(): void {
     // Load from service or mock data
-    this.checkoutService.getMockPaymentMethods().subscribe(methods => {
+    this.checkoutService.getPaymentMethods().subscribe(methods => {
       this.savedPaymentMethods = methods
     })
   }

@@ -25,11 +25,11 @@
             </p-radioButton>
             <div class="payment-option-info">
               <div class="payment-icon">
-                <img src="/public/images/pix.png" alt="PIX" />
+                <i class="pi pi-qrcode"></i>
               </div>
               <div class="payment-details">
                 <h4>PIX</h4>
-                <p>Pagamento instantâneo e gratuito</p>
+                <p>Instantâneo e gratuito</p>
               </div>
             </div>
           </div>
@@ -50,11 +50,11 @@
             </p-radioButton>
             <div class="payment-option-info">
               <div class="payment-icon">
-                <img src="/public/images/payment-icons-3x.png" alt="Cartão de Crédito" />
+                <i class="pi pi-credit-card"></i>
               </div>
               <div class="payment-details">
                 <h4>Cartão de Crédito</h4>
-                <p>Parcelamento em até 12x sem juros</p>
+                <p>Até 12x sem juros</p>
               </div>
             </div>
           </div>
@@ -75,11 +75,11 @@
             </p-radioButton>
             <div class="payment-option-info">
               <div class="payment-icon">
-                <img src="/public/images/Mastercard-logo.svg.png" alt="Cartão de Débito" />
+                <i class="pi pi-credit-card"></i>
               </div>
               <div class="payment-details">
                 <h4>Cartão de Débito</h4>
-                <p>Débito direto na conta</p>
+                <p>Débito direto</p>
               </div>
             </div>
           </div>
@@ -91,24 +91,14 @@
         *ngIf="selectedPaymentType === 'CREDIT_CARD' || selectedPaymentType === 'DEBIT_CARD'"
         class="card-details-section"
       >
-        <div class="section-header" (click)="toggleCardForm()">
+        <div class="section-header-static">
           <div class="header-content">
             <h3>Dados do Cartão</h3>
-            <p class="header-subtitle">Preencha os dados do seu cartão de crédito/débito</p>
+            <p class="header-subtitle">Preencha os dados do seu cartão de {{ selectedPaymentType === 'CREDIT_CARD' ? 'crédito' : 'débito' }}</p>
           </div>
-          <button 
-            type="button" 
-            class="toggle-btn"
-          >
-            <i 
-              class="pi" 
-              [class.pi-chevron-down]="!showCardForm"
-              [class.pi-chevron-up]="showCardForm"
-            ></i>
-          </button>
         </div>
         
-        <div class="card-form-container" [class.collapsed]="!showCardForm">
+        <div class="card-form-container">
           <div class="card-form">
             <div class="form-row">
               <div class="form-field full-width">
