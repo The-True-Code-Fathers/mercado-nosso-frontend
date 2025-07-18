@@ -7,11 +7,13 @@
   <div class="confirmation-content">
     <!-- Order Items -->
     <div class="order-items-section">
-      <h3>
-        <i class="pi pi-shopping-bag"></i>
-        Produtos ({{ orderSummary()?.itemsCount || 0 }})
-      </h3>
-      <p-card class="items-card">
+      <div class="items-card">
+        <div class="section-header">
+          <h3>
+            <i class="pi pi-shopping-bag"></i>
+            Produtos ({{ orderSummary()?.itemsCount || 0 }})
+          </h3>
+        </div>
         <div class="items-list">
           <div 
             *ngFor="let item of checkoutItems()" 
@@ -34,73 +36,74 @@
             </div>
           </div>
         </div>
-      </p-card>
+      </div>
     </div>
 
     <!-- Shipping Address -->
     <div class="shipping-section">
-      <h3>
-        <i class="pi pi-map-marker"></i>
-        Endereço de Entrega
-      </h3>
-      <p-card class="address-card" *ngIf="shippingAddress()">
-        <div class="address-info">
-          <h4>{{ shippingAddress()?.fullName }}</h4>
-          <p>{{ shippingAddress()?.street }}, {{ shippingAddress()?.number }}</p>
-          <p *ngIf="shippingAddress()?.complement">{{ shippingAddress()?.complement }}</p>
-          <p>{{ shippingAddress()?.neighborhood }} - {{ shippingAddress()?.city }}/{{ shippingAddress()?.state }}</p>
-          <p>CEP: {{ shippingAddress()?.zipCode }}</p>
+      <div class="address-card" *ngIf="shippingAddress()">
+        <div class="address-selection">
+          <div class="address-info">
+            <h4>{{ shippingAddress()?.fullName }}</h4>
+            <div class="address-details">
+              <p>{{ shippingAddress()?.street }}, {{ shippingAddress()?.number }}</p>
+              <p *ngIf="shippingAddress()?.complement">{{ shippingAddress()?.complement }}</p>
+              <p>{{ shippingAddress()?.neighborhood }} - {{ shippingAddress()?.city }}/{{ shippingAddress()?.state }}</p>
+              <p>CEP: {{ shippingAddress()?.zipCode }}</p>
+            </div>
+          </div>
+          <div class="edit-section">
+            <button
+              class="btn-edit"
+              (click)="editShipping()"
+            >
+              <i class="pi pi-pencil"></i>
+              Alterar
+            </button>
+          </div>
         </div>
-        <div class="edit-section">
-          <button
-            class="btn-edit"
-            (click)="editShipping()"
-          >
-            <i class="pi pi-pencil"></i>
-            Alterar
-          </button>
-        </div>
-      </p-card>
+      </div>
     </div>
 
     <!-- Payment Method -->
     <div class="payment-section">
-      <h3>
-        <i class="pi pi-credit-card"></i>
-        Forma de Pagamento
-      </h3>
-      <p-card class="payment-card" *ngIf="paymentMethod()">
-        <div class="payment-info">
-          <div class="payment-icon">
-            <i [class]="getPaymentIcon(paymentMethod()?.type!)"></i>
+      <div class="payment-card" *ngIf="paymentMethod()">
+        <div class="address-selection">
+          <div class="payment-info">
+            <div class="payment-icon">
+              <i [class]="getPaymentIcon(paymentMethod()?.type!)"></i>
+            </div>
+            <div class="payment-details">
+              <h4>{{ getPaymentTitle(paymentMethod()?.type!) }}</h4>
+              <p *ngIf="paymentMethod()?.cardNumber">{{ paymentMethod()?.cardNumber }}</p>
+              <p *ngIf="paymentMethod()?.installments && paymentMethod()?.installments! > 1">
+                {{ paymentMethod()?.installments }}x sem juros
+              </p>
+            </div>
           </div>
-          <div class="payment-details">
-            <h4>{{ getPaymentTitle(paymentMethod()?.type!) }}</h4>
-            <p *ngIf="paymentMethod()?.cardNumber">{{ paymentMethod()?.cardNumber }}</p>
-            <p *ngIf="paymentMethod()?.installments && paymentMethod()?.installments! > 1">
-              {{ paymentMethod()?.installments }}x sem juros
-            </p>
+          <div class="edit-section">
+            <button
+              class="btn-edit"
+              (click)="editPayment()"
+            >
+              <i class="pi pi-pencil"></i>
+              Alterar
+            </button>
           </div>
         </div>
-        <div class="edit-section">
-          <button
-            class="btn-edit"
-            (click)="editPayment()"
-          >
-            <i class="pi pi-pencil"></i>
-            Alterar
-          </button>
-        </div>
-      </p-card>
+      </div>
     </div>
 
     <!-- Order Summary -->
+    <!-- 
     <div class="summary-section">
-      <h3>
-        <i class="pi pi-receipt"></i>
-        Resumo do Pedido
-      </h3>
-      <p-card class="summary-card" *ngIf="orderSummary()">
+      <div class="summary-card" *ngIf="orderSummary()">
+        <div class="section-header">
+          <h3>
+            <i class="pi pi-receipt"></i>
+            Resumo do Pedido
+          </h3>
+        </div>
         <div class="summary-breakdown">
           <div class="summary-line">
             <span>Subtotal ({{ orderSummary()?.itemsCount }} {{ orderSummary()?.itemsCount === 1 ? 'item' : 'itens' }}):</span>
@@ -117,15 +120,15 @@
             <span class="discount">-R$ {{ orderSummary()?.discountTotal | number : '1.2-2' }}</span>
           </div>
           
-          <p-divider></p-divider>
+          <div class="summary-divider"></div>
           
           <div class="summary-line total-line">
             <span>Total:</span>
             <span class="total">R$ {{ orderSummary()?.total | number : '1.2-2' }}</span>
           </div>
         </div>
-      </p-card>
-    </div>
+      </div>
+    </div> -->
 
     <!-- Navigation -->
     <app-checkout-navigation

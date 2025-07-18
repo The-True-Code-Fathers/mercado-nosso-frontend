@@ -2,8 +2,6 @@ import { Component, inject, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { ButtonModule } from 'primeng/button'
-import { CardModule } from 'primeng/card'
-import { DividerModule } from 'primeng/divider'
 import { MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
 import { CheckoutService } from '../../services/checkout.service'
@@ -16,8 +14,6 @@ import { CheckoutNavigationComponent } from '../shared/checkout-navigation/check
   imports: [
     CommonModule,
     ButtonModule,
-    CardModule,
-    DividerModule,
     ToastModule,
     CheckoutNavigationComponent
   ],
@@ -54,6 +50,12 @@ export class ConfirmationStepComponent implements OnInit {
   }
 
   async placeOrder(): Promise<void> {
+    console.log('Placing order...')
+    console.log('Shipping Address:', this.shippingAddress())
+    console.log('Payment Method:', this.paymentMethod())
+    console.log('Order Summary:', this.orderSummary())
+    
+    /*    
     this.isPlacingOrder = true
     try {
       const order = await this.checkoutService.placeOrder().toPromise()
@@ -84,7 +86,7 @@ export class ConfirmationStepComponent implements OnInit {
       })
     } finally {
       this.isPlacingOrder = false
-    }
+    } */
   }
 
   canPlaceOrder(): boolean {
