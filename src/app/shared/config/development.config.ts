@@ -17,3 +17,8 @@ export const DEVELOPMENT_CONFIG = {
     DEFAULT_ITEMS_SELECTED: true,
   },
 }
+
+// Permite atualizar o DEFAULT_USER_ID em tempo de execução
+export function setDevelopmentUserId(id: string) {
+  DEVELOPMENT_CONFIG.DEFAULT_USER_ID = id
+}
