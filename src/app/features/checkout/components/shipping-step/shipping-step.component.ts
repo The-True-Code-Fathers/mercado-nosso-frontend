@@ -55,6 +55,18 @@ export class ShippingStepComponent implements OnInit {
 
   toggleNewAddressForm(): void {
     this.showNewAddressForm = !this.showNewAddressForm
+    
+    // If showing the form, clear any selected address
+    if (this.showNewAddressForm) {
+      this.selectedAddressId = 'new'
+      this.newAddress = this.createEmptyAddress()
+    }
+  }
+
+  selectNewAddress(): void {
+    this.selectedAddressId = 'new'
+    this.showNewAddressForm = true
+    this.newAddress = this.createEmptyAddress()
   }
 
   private createEmptyAddress(): ShippingAddress {
@@ -71,7 +83,7 @@ export class ShippingStepComponent implements OnInit {
   }
 
   private loadSavedAddresses(): void {
-    this.checkoutService.getMockAddresses().subscribe(addresses => {
+    this.checkoutService.getShippingAddresses().subscribe(addresses => {
       this.savedAddresses = addresses
       
       // Auto-select default address if available
@@ -84,12 +96,23 @@ export class ShippingStepComponent implements OnInit {
       // Show form if no saved addresses
       if (addresses.length === 0) {
         this.showNewAddressForm = true
+        this.selectedAddressId = 'new'
       }
     })
   }
 
   onAddressSelect(address: ShippingAddress): void {
+    console.log('Selected address:', address)
+    
+    // Set the selected address ID
+    this.selectedAddressId = address.id || null
+    
+    // Set the selected address in the service
     this.checkoutService.setShippingAddress(address)
+    
+    // Clear the new address form since we're using a saved address
+    this.newAddress = this.createEmptyAddress()
+    this.showNewAddressForm = false
   }
 
   onZipCodeChange(): void {
@@ -97,6 +120,14 @@ export class ShippingStepComponent implements OnInit {
     if (zipCode.length === 8) {
       // Mock address lookup - in real app, call CEP API
       this.mockAddressLookup(zipCode)
+    }
+  }
+
+  onNewAddressFieldChange(): void {
+    // When user starts typing in new address form, ensure new address is selected
+    if (this.selectedAddressId !== 'new') {
+      this.selectedAddressId = 'new'
+      this.showNewAddressForm = true
     }
   }
 
@@ -121,26 +152,39 @@ export class ShippingStepComponent implements OnInit {
   }
 
   canContinue(): boolean {
-    if (this.selectedAddressId) {
+    // If a saved address is selected, we can continue
+    if (this.selectedAddressId && this.selectedAddressId !== 'new') {
       return true
     }
     
-    // Check if new address is valid
-    return !!(
-      this.newAddress.fullName &&
-      this.newAddress.street &&
-      this.newAddress.number &&
-      this.newAddress.neighborhood &&
-      this.newAddress.city &&
-      this.newAddress.state &&
-      this.newAddress.zipCode
-    )
+    // If new address is selected, check if all required fields are filled
+    if (this.selectedAddressId === 'new') {
+      return !!(
+        this.newAddress.fullName &&
+        this.newAddress.street &&
+        this.newAddress.number &&
+        this.newAddress.neighborhood &&
+        this.newAddress.city &&
+        this.newAddress.state &&
+        this.newAddress.zipCode
+      )
+    }
+    
+    return false
   }
 
   continueToPayment(): void {
-    if (!this.selectedAddressId) {
-      // Use new address
+    // If new address is selected, use the new address
+    if (this.selectedAddressId === 'new') {
+      console.log('Using new address:', this.newAddress)
       this.checkoutService.setShippingAddress(this.newAddress)
+      
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Endereço salvo',
+        detail: 'Novo endereço definido para entrega',
+        life: 3000
+      })
     }
 
     this.checkoutService.nextStep()

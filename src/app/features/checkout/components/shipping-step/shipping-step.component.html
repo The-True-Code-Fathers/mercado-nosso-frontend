@@ -45,29 +45,30 @@
 
     <!-- New Address Form -->
     <div class="new-address-section">
-      <div class="section-header" (click)="toggleNewAddressForm()" 
+      <div class="section-header address-card" 
+           [class.selected]="selectedAddressId === 'new'"
+           (click)="selectNewAddress()"
            [attr.aria-expanded]="showNewAddressForm"
            [attr.aria-label]="savedAddresses.length > 0 ? 'Adicionar novo endereço' : 'Preencher endereço de entrega'">
-        <div class="header-content">
-          <h3>
-            {{ savedAddresses.length > 0 ? 'Adicionar Novo Endereço' : 'Endereço de Entrega' }}
-          </h3>
-          <p class="header-subtitle" *ngIf="savedAddresses.length > 0">
-            {{ showNewAddressForm ? 'Clique para fechar' : 'Clique para adicionar um novo endereço' }}
-          </p>
+        <div class="address-selection">
+          <p-radioButton
+            value="new"
+            [(ngModel)]="selectedAddressId"
+            inputId="new-address-option"
+            *ngIf="savedAddresses.length > 0"
+          >
+          </p-radioButton>
+          
+          <div class="header-content">
+            <h3>
+              {{ savedAddresses.length > 0 ? 'Adicionar Novo Endereço' : 'Endereço de Entrega' }}
+            </h3>
+            <p class="header-subtitle" *ngIf="savedAddresses.length > 0">
+              Preencha os dados para um novo endereço de entrega
+            </p>
+          </div>
         </div>
-        <button 
-          type="button" 
-          class="toggle-btn"
-          *ngIf="savedAddresses.length > 0"
-          [title]="showNewAddressForm ? 'Fechar formulário' : 'Abrir formulário'"
-        >
-          <i 
-            class="pi" 
-            [class.pi-plus]="!showNewAddressForm"
-            [class.pi-minus]="showNewAddressForm"
-          ></i>
-        </button>
+        
       </div>
       
       <div class="address-form-container" [class.collapsed]="savedAddresses.length > 0 && !showNewAddressForm">
@@ -79,6 +80,7 @@
                 id="fullName"
                 pInputText
                 [(ngModel)]="newAddress.fullName"
+                (input)="onNewAddressFieldChange()"
                 placeholder="Seu nome completo"
                 class="w-full"
               />
@@ -92,6 +94,7 @@
                 id="zipCode"
                 pInputText
                 [(ngModel)]="newAddress.zipCode"
+                (input)="onNewAddressFieldChange()"
                 (blur)="onZipCodeChange()"
                 placeholder="00000-000"
                 class="w-full"
@@ -102,6 +105,7 @@
               <p-dropdown
                 id="state"
                 [(ngModel)]="newAddress.state"
+                (onChange)="onNewAddressFieldChange()"
                 [options]="states"
                 optionLabel="name"
                 optionValue="code"
@@ -119,6 +123,7 @@
                 id="street"
                 pInputText
                 [(ngModel)]="newAddress.street"
+                (input)="onNewAddressFieldChange()"
                 placeholder="Nome da rua"
                 class="w-full"
               />
@@ -129,6 +134,7 @@
                 id="number"
                 pInputText
                 [(ngModel)]="newAddress.number"
+                (input)="onNewAddressFieldChange()"
                 placeholder="123"
                 class="w-full"
               />
@@ -142,6 +148,7 @@
                 id="complement"
                 pInputText
                 [(ngModel)]="newAddress.complement"
+                (input)="onNewAddressFieldChange()"
                 placeholder="Apto, casa, etc."
                 class="w-full"
               />
@@ -152,6 +159,7 @@
                 id="neighborhood"
                 pInputText
                 [(ngModel)]="newAddress.neighborhood"
+                (input)="onNewAddressFieldChange()"
                 placeholder="Nome do bairro"
                 class="w-full"
               />
@@ -165,6 +173,7 @@
                 id="city"
                 pInputText
                 [(ngModel)]="newAddress.city"
+                (input)="onNewAddressFieldChange()"
                 placeholder="Nome da cidade"
                 class="w-full"
               />
