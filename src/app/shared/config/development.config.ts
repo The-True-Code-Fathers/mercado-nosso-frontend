@@ -1,6 +1,6 @@
 // Configurações para desenvolvimento
 const LOCAL_STORAGE_KEY = 'devUserId'
-let defaultUserId = '4f340ab7-b0ac-4a58-8672-9dca8f69e7bd'
+let defaultUserId = '0'
 if (typeof window !== 'undefined') {
   const stored = localStorage.getItem(LOCAL_STORAGE_KEY)
   if (stored) defaultUserId = stored

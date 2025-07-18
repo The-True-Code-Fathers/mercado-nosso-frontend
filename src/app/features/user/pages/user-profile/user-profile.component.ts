@@ -1,4 +1,5 @@
 import { Component } from '@angular/core'
+import { DEVELOPMENT_CONFIG } from '../../../../shared/config/development.config'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { ButtonModule } from 'primeng/button'
@@ -22,14 +23,36 @@ import { TabViewModule } from 'primeng/tabview'
       <p-tabView>
         <p-tabPanel header="Perfil" leftIcon="pi pi-user">
           <p-card>
-            <h3>Informações do Usuário</h3>
-            <p>Esta funcionalidade está em desenvolvimento.</p>
-            <p-button
-              label="Voltar para Home"
-              icon="pi pi-home"
-              routerLink="/home"
-            >
-            </p-button>
+            <h3>Perfil</h3>
+            <ng-container *ngIf="isLoggedIn(); else createAccount">
+              <p>Gerencie seu perfil e informações pessoais.</p>
+              <p-button
+                label="Editar Perfil"
+                icon="pi pi-user-edit"
+                routerLink="/edit-profile"
+                styleClass="p-button-primary"
+              ></p-button>
+            </ng-container>
+            <ng-template #createAccount>
+              <div style="margin-bottom: 1.5rem;">
+                <p>Já possui uma conta?</p>
+                <p-button
+                  label="Fazer Login"
+                  icon="pi pi-sign-in"
+                  routerLink="/login"
+                  styleClass="p-button-primary mb-2"
+                ></p-button>
+              </div>
+              <div>
+                <p>Não possui uma conta? Crie uma!</p>
+                <p-button
+                  label="Criar Conta"
+                  icon="pi pi-user-plus"
+                  routerLink="/register"
+                  styleClass="p-button-success"
+                ></p-button>
+              </div>
+            </ng-template>
           </p-card>
         </p-tabPanel>
 
@@ -60,19 +83,6 @@ import { TabViewModule } from 'primeng/tabview'
             </p-button>
           </p-card>
         </p-tabPanel>
-
-        <p-tabPanel header="Configurações" leftIcon="pi pi-cog">
-          <p-card>
-            <h3>Configurações da Conta</h3>
-            <p>Gerencie suas preferências e configurações.</p>
-            <p-button
-              label="Editar informações"
-              icon="pi pi-home"
-              routerLink="/edit-profile"
-            >
-            </p-button>
-          </p-card>
-        </p-tabPanel>
       </p-tabView>
     </div>
   `,
@@ -93,4 +103,11 @@ import { TabViewModule } from 'primeng/tabview'
     `,
   ],
 })
-export class UserProfileComponent {}
+export class UserProfileComponent {
+  isLoggedIn(): boolean {
+    return (
+      !!DEVELOPMENT_CONFIG.DEFAULT_USER_ID &&
+      DEVELOPMENT_CONFIG.DEFAULT_USER_ID.length > 10
+    )
+  }
+}
