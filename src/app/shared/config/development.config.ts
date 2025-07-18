@@ -1,14 +1,19 @@
 // Configurações para desenvolvimento
 const LOCAL_STORAGE_KEY = 'devUserId'
-let defaultUserId = '0'
-if (typeof window !== 'undefined') {
-  const stored = localStorage.getItem(LOCAL_STORAGE_KEY)
-  if (stored) defaultUserId = stored
+
+function getDevelopmentUserId(): string {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY)
+    return stored || '0'
+  }
+  return '0'
 }
 
 export const DEVELOPMENT_CONFIG = {
   // User ID fixo para desenvolvimento (substitua por um AuthService real)
-  DEFAULT_USER_ID: defaultUserId,
+  get DEFAULT_USER_ID() {
+    return getDevelopmentUserId()
+  },
 
   // URLs da API
   API_BASE_URL: 'http://localhost:8080',
@@ -27,8 +32,16 @@ export const DEVELOPMENT_CONFIG = {
 
 // Permite atualizar o DEFAULT_USER_ID em tempo de execução e persiste no localStorage
 export function setDevelopmentUserId(id: string) {
-  DEVELOPMENT_CONFIG.DEFAULT_USER_ID = id
   if (typeof window !== 'undefined') {
     localStorage.setItem(LOCAL_STORAGE_KEY, id)
+  }
+}
+
+// Limpa o userId de desenvolvimento e outros ids relacionados (para logout)
+export function clearDevelopmentUserId() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(LOCAL_STORAGE_KEY)
+    localStorage.removeItem('currentUserId')
+    localStorage.removeItem('userId')
   }
 }

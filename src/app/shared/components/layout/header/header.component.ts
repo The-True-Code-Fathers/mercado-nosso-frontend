@@ -16,6 +16,10 @@ import { FormsModule } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import { SearchService } from '../../../services/search.service'
+import {
+  clearDevelopmentUserId,
+  DEVELOPMENT_CONFIG,
+} from '../../../config/development.config'
 import { ButtonModule } from 'primeng/button'
 import { BadgeModule } from 'primeng/badge'
 import { TooltipModule } from 'primeng/tooltip'
@@ -46,8 +50,8 @@ import { OverlayPanel } from 'primeng/overlaypanel'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   logout() {
-    localStorage.setItem('userId', '0')
-    this.isLoggedIn = false
+    clearDevelopmentUserId()
+    this.syncLoginState()
     this.username = null
     this.router.navigate(['/login'])
   }
@@ -63,7 +67,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userMenuVisible = false
   cartItemsCount = 3
   username: string | null = 'Matheus'
-  isLoggedIn = true
+  isLoggedIn = false
 
   // Responsive properties
   isMobile = false
@@ -87,6 +91,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.checkScreenSize()
+    this.syncLoginState()
+
+    window.addEventListener('storage', this.handleStorageChange)
 
     // Subscribe to search term changes from the service
     const searchTermSub = this.searchService.searchTerm$.subscribe(term => {
@@ -98,6 +105,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const routerSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
+        this.syncLoginState()
         if (event.url === '/' || event.url === '/home') {
           this.searchService.clearSearchTerm()
         }
@@ -114,11 +122,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout)
     }
-
+    window.removeEventListener('storage', this.handleStorageChange)
     // Unsubscribe from all subscriptions
     this.subscriptions.forEach(sub => sub.unsubscribe())
-
     // TODO: Unsubscribe from cart service
+  }
+
+  handleStorageChange = (event: StorageEvent) => {
+    if (event.key === 'devUserId') {
+      this.syncLoginState()
+    }
   }
 
   onCategoriesHover(event: Event) {
@@ -319,6 +332,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } else {
       this.currentScreenSize = 'desktop'
     }
+  }
+
+  private syncLoginState() {
+    this.isLoggedIn = DEVELOPMENT_CONFIG.DEFAULT_USER_ID !== '0'
   }
 
   // Get categories for current screen size
