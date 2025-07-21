@@ -10,6 +10,7 @@ import {
   ReviewService,
   ReviewResponse,
 } from '../../../user/services/review.service'
+import { finalize } from 'rxjs/operators';
 
 // Estender Review para incluir propriedades do frontend
 export interface ReviewWithFrontendData extends ReviewResponse {
@@ -141,7 +142,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   descriptionCharLimit: number = 500
 
   // Related Products
-  relatedProducts: any[] = []
+  relatedProducts: Listing[] = []
 
   // Reviews and Ratings
   // Usar getter para o rating médio baseado nos reviews reais
@@ -256,7 +257,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     private reviewService: ReviewService,
   ) {
     this.initializeGalleryImages()
-    this.initializeRelatedProducts()
+    // this.initializeRelatedProducts()
     this.initializeReviews()
   }
 
@@ -292,7 +293,8 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
         // Buscar nome do vendedor
         this.loadSellerName(listing.sellerId)
-
+        console.log('SKU do produto principal:', listing.sku)
+        this.loadRelatedProducts(listing.sku)
         this.isLoading.set(false)
       },
       error: err => {
@@ -713,37 +715,39 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     this.freteCalculado = true
   }
 
-  private initializeRelatedProducts(): void {
-    this.relatedProducts = [
-      {
-        id: 2,
-        title: 'Placa-mãe ASUS Z690-A Prime',
-        price: 899.99,
-        originalPrice: 1199.99,
-        image: '/images/banner.png',
-        rating: 4.6,
-        reviews: 87,
-      },
-      {
-        id: 3,
-        title: 'Memória DDR5 32GB Corsair',
-        price: 1299.99,
-        originalPrice: 1599.99,
-        image: '/images/banner-lg.jpg',
-        rating: 4.9,
-        reviews: 203,
-      },
-      {
-        id: 4,
-        title: 'SSD NVMe 1TB Samsung 980 Pro',
-        price: 549.99,
-        originalPrice: 699.99,
-        image: '/images/banner.png',
-        rating: 4.7,
-        reviews: 156,
-      },
-    ]
+
+// Substitua a função antiga por esta nova:
+private loadRelatedProducts(sku: string): void {
+  if (!sku) {
+    console.error('EXECUÇÃO PARADA: SKU é nulo ou vazio.');
+    this.relatedProducts = [];
+    return;
   }
+
+  console.log(`Buscando recomendações para o SKU: ${sku}`);
+
+  this.listingService.getRelatedProductsBySku(sku)
+    .pipe(
+      // ✨ ADICIONE ESTE BLOCO FINALIZE ✨
+      finalize(() => {
+        console.log('CHAMADA DE API FINALIZADA (seja com sucesso ou erro).');
+      })
+    )
+    .subscribe({
+      next: (recommendedProducts) => {
+        console.log('API retornou com sucesso:', recommendedProducts);
+        this.relatedProducts = recommendedProducts.filter(p => p.sku !== sku);
+      },
+      error: (err) => {
+        console.error('A chamada para a API de recomendações FALHOU. Erro:', err);
+        this.relatedProducts = [];
+      }
+    });
+  }
+
+  
+
+
 
   private initializeReviews(): void {
     // Usar dados reais do backend quando disponíveis
@@ -889,15 +893,12 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   }
 
   // Navigation Methods
-  goToProduct(productId: number): void {
-    // Navegar para o produto
-    console.log('Navegando para produto:', productId)
-    // Implementar navegação real quando roteamento estiver configurado
+  goToProduct(productId: string): void { // Mude de 'number' para 'string'
+    console.log('Navegando para produto:', productId);
     this.router.navigate(['/listing', productId]).catch(err => {
-      console.error('Erro na navegação:', err)
-      // Fallback: recarregar a página atual com novo ID
-      window.location.href = `/listing/${productId}`
-    })
+      console.error('Erro na navegação:', err);
+      window.location.href = `/listing/${productId}`;
+    });
   }
 
   openImageModal(image: string): void {
