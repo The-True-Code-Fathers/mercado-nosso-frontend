@@ -187,7 +187,7 @@
       <div class="results-header">
         <div class="results-info">
           <h2 class="results-title">{{ totalItems }} Resultados</h2>
-          <span class="results-subtitle" *ngIf="pagedResponse()">
+        <span class="results-subtitle" *ngIf="pagedResponse()">
             Página {{ pagedResponse()!.page + 1 }} de
             {{ pagedResponse()!.totalPages }}
           </span>
