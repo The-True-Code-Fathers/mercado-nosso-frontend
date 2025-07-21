@@ -5,13 +5,15 @@ import {Observable} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-
 export class DashboardService {
-    private apiUrl = 'http://localhost:8080/api/orders/sellerdashboard';
+    private apiUrl = 'http://localhost:8080/api/orders/seller';
 
     constructor(private http: HttpClient) {}
 
-    getDashboardData(sellerId: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${sellerId}/dashboard`);
+    getDashboardData(sellerId: string, period: string): Observable<any> {
+        console.log('DEBUG Service - calling API with period:', period);
+        return this.http.get<any>(`${this.apiUrl}/${sellerId}/dashboard`, {
+            params: { period: period }
+        });
     }
 }
