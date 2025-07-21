@@ -1,47 +1,38 @@
+<!-- Checkout Steps Navigation -->
+<app-checkout-steps [steps]="steps()"></app-checkout-steps>
+
 <div class="checkout-container">
-  <div class="checkout-card">
-    <div class="checkout-header">
-      <h1>Muito Obrigado por comprar conosco!!!</h1>
-      <p>O vendedor já foi notificado e seu pedido será logo enviado</p>
-    </div>
-
-    <p-divider></p-divider>
-
-    <div class="order-details">
-      <div class="order-info">
-        <span class="order-number">Pedido {{ orderData.orderNumber }} - {{ orderData.date }}</span>
+  <div class="checkout-content">
+    <div class="checkout-main">
+      <!-- Step 0: Cart Review -->
+      <div *ngIf="currentStep() === 0" class="step-container">
+        <app-cart-review-step [orderSummary]="orderSummary()"></app-cart-review-step>
       </div>
 
-      <div class="order-content">
-        <div class="product-section">
-          <div class="product-image">
-            <img [src]="orderData.product.image" [alt]="orderData.product.name" />
-          </div>
-          <div class="product-info">
-            <h3>{{ orderData.product.name }}</h3>
-            <p class="product-price">{{ orderData.product.quantity }}x {{ orderData.product.price }}</p>
-          </div>
-        </div>
+      <!-- Step 1: Shipping -->
+      <app-shipping-step *ngIf="currentStep() === 1"></app-shipping-step>
 
-        <div class="delivery-section">
-          <div class="delivery-icon">
-            <i class="pi pi-truck"></i>
-          </div>
-          <div class="delivery-info">
-            <p class="delivery-date">Chegará entre {{ orderData.delivery.estimatedDate }}</p>
-            <p class="delivery-type">{{ orderData.delivery.type }}</p>
-          </div>
+      <!-- Step 2: Payment -->
+      <app-payment-step *ngIf="currentStep() === 2"></app-payment-step>
+
+      <!-- Step 3: Confirmation -->
+      <app-confirmation-step *ngIf="currentStep() === 3"></app-confirmation-step>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading()" class="loading-state">
+        <div class="loading-content">
+          <i class="pi pi-spin pi-spinner loading-icon"></i>
+          <h3>Processando...</h3>
+          <p>Preparando seu checkout</p>
         </div>
       </div>
     </div>
 
-    <div class="checkout-actions">
-      <p-button 
-        label="Continuar comprando" 
-        (onClick)="continueShopping()"
-        [outlined]="true"
-        styleClass="continue-button">
-      </p-button>
+    <!-- Order Summary Sidebar -->
+    <div class="checkout-sidebar">
+      <app-order-summary [orderSummary]="orderSummary()"></app-order-summary>
     </div>
   </div>
 </div>
+
+<p-toast></p-toast>

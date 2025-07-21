@@ -14,7 +14,7 @@ import { CheckboxModule } from 'primeng/checkbox'
 import { ConfirmationService, MessageService } from 'primeng/api'
 import { CartService, CartResponse } from './services/cart.service'
 import { ListingService, Listing } from '../listing/services/listing.service'
-import { forkJoin, of } from 'rxjs'
+import { forkJoin, of, Observable } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 
 export interface CartItem {
@@ -27,6 +27,7 @@ export interface CartItem {
   category: string
   selected: boolean
   shippingPrice: number
+  stock: number // Adicionando informação de estoque
 }
 
 @Component({
@@ -74,6 +75,16 @@ export class CartComponent implements OnInit {
   // Getter for total items in cart (regardless of selection)
   get totalItemsInCart(): number {
     return this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+  }
+
+  // Getter for selected items (for checkout)
+  get selectedItems(): CartItem[] {
+    return this.cartItems().filter(item => item.selected)
+  }
+
+  // Method to get selected items as Observable for services
+  getSelectedItems(): Observable<CartItem[]> {
+    return of(this.selectedItems)
   }
 
   constructor(
@@ -161,7 +172,7 @@ export class CartComponent implements OnInit {
             const listing = listings[index]
             console.log('Processando listing:', listing)
             console.log('ImagesUrl do listing:', listing.imagesUrl)
-            
+
             const unitPrice =
               listing.price || cartItem.price / cartItem.quantity || 0
 
@@ -183,6 +194,7 @@ export class CartComponent implements OnInit {
               category: listing.category || 'Produto', // Categoria do listing
               selected: true,
               shippingPrice: cartItem.shippingPrice || 0,
+              stock: listing.stock || 0, // Adicionando estoque do listing
             }
           },
         )
@@ -246,6 +258,7 @@ export class CartComponent implements OnInit {
         category: 'Frutas',
         selected: true,
         shippingPrice: 0.25,
+        stock: 10, // Estoque disponível
       },
       {
         listingId: '2',
@@ -257,6 +270,7 @@ export class CartComponent implements OnInit {
         category: 'Laticínios',
         selected: true,
         shippingPrice: 0.18,
+        stock: 5, // Estoque disponível
       },
     ]
 
@@ -265,6 +279,22 @@ export class CartComponent implements OnInit {
   }
 
   updateQuantity(itemId: string, newQuantity: number) {
+    // Primeiro, verificar se o item existe e obter informações de estoque
+    const currentItem = this.cartItems().find(item => item.listingId === itemId)
+    if (!currentItem) {
+      return
+    }
+
+    // Validar se a nova quantidade não excede o estoque disponível
+    if (newQuantity > currentItem.stock) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Estoque Limitado',
+        detail: `Apenas ${currentItem.stock} unidades disponíveis em estoque`,
+      })
+      return
+    }
+
     if (newQuantity <= 0) {
       // Quando quantidade for 0, usar o método de remoção com confirmação
       this.confirmationService.confirm({
@@ -498,20 +528,18 @@ export class CartComponent implements OnInit {
       return
     }
 
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Checkout',
-      detail: `Processando ${selectedItems.length} item(s) selecionado(s)...`,
+    // Navigate to checkout page with selected items in state
+    this.router.navigate(['/checkout'], {
+      state: {
+        selectedCartItems: selectedItems,
+        source: 'cart',
+      },
     })
   }
 
   continueShopping() {
-    // Navigate back to products - this would use Router in a real app
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Redirecionando',
-      detail: 'Voltando para a lista de produtos...',
-    })
+    // Navigate back to products
+    this.router.navigate(['/listing'])
   }
 
   private updateTotals() {
@@ -639,7 +667,12 @@ export class CartComponent implements OnInit {
 
   // Método para lidar com erro de carregamento de imagem
   onImageError(event: any, item: CartItem): void {
-    console.error('Erro ao carregar imagem:', event.target.src, 'para o item:', item.name)
+    console.error(
+      'Erro ao carregar imagem:',
+      event.target.src,
+      'para o item:',
+      item.name,
+    )
     // Definir uma imagem de fallback
     event.target.src = 'https://via.placeholder.com/80x80?text=📦'
   }

@@ -1,0 +1,177 @@
+<div class="my-purchases-container">
+  <!-- Toast for notifications -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="pi pi-shopping-bag"></i>
+        Minhas Compras
+      </h1>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-grid">
+      <div
+        class="listing-card-skeleton"
+        *ngFor="let item of [1, 2, 3, 4, 5, 6]"
+      >
+        <p-skeleton
+          width="100%"
+          height="200px"
+          borderRadius="8px"
+          class="mb-3"
+        ></p-skeleton>
+        <p-skeleton width="80%" height="1.5rem" class="mb-2"></p-skeleton>
+        <p-skeleton width="60%" height="1.2rem" class="mb-3"></p-skeleton>
+        <div class="skeleton-stats">
+          <p-skeleton width="40%" height="1rem"></p-skeleton>
+          <p-skeleton width="30%" height="1rem"></p-skeleton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading() && error()" class="error-state">
+      <div class="error-content">
+        <i class="pi pi-exclamation-triangle error-icon"></i>
+        <h3>Erro ao carregar compras</h3>
+        <p>{{ error() }}</p>
+        <p-button
+          label="Tentar Novamente"
+          icon="pi pi-refresh"
+          (click)="reloadPurchases()"
+          styleClass="p-button-outlined"
+        ></p-button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="!isLoading() && !error() && purchases().length === 0"
+      class="empty-state"
+    >
+      <div class="empty-content">
+        <i class="pi pi-shopping-bag empty-icon"></i>
+        <h3>Nenhuma compra encontrada</h3>
+        <p>Você ainda não fez nenhuma compra.</p>
+      </div>
+    </div>
+
+    <!-- Purchases Grid -->
+    <div
+      *ngIf="!isLoading() && !error() && purchases().length > 0"
+      class="listings-grid"
+    >
+      <div
+        class="listing-card"
+        [ngClass]="'status-' + purchase.status"
+        *ngFor="let purchase of purchases()"
+      >
+        <div class="card-image" (click)="viewPurchase(purchase.listingId)">
+          <img
+            [src]="purchase.imagesUrl[0] || '/images/banner.png'"
+            [alt]="purchase.title"
+          />
+        </div>
+
+        <div class="card-content">
+          <div class="content-header">
+            <p-tag value="Comprado" severity="success" styleClass="status-tag">
+            </p-tag>
+          </div>
+
+          <h3 class="listing-title" (click)="viewPurchase(purchase.listingId)">
+            {{ purchase.title }}
+          </h3>
+          <div class="listing-price">
+            <span class="price-main"
+              >R$ {{ purchase.price | number : '1.2-2' }}</span
+            >
+          </div>
+
+          <div class="listing-stats">
+            <div class="stat-item">
+              <i class="pi pi-shopping-cart"></i>
+              <span>
+                {{ purchase.quantityPurchased }} comprado{{
+                  purchase.quantityPurchased > 1 ? 's' : ''
+                }}
+              </span>
+            </div>
+            <div class="stat-item">
+              <i class="pi pi-calendar"></i>
+              <span>{{ purchase.purchaseDate | date : 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="listing-meta">
+            <span class="category">{{ purchase.category }}</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <p-button
+            label="Ver Produto"
+            icon="pi pi-eye"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (onClick)="viewPurchase(purchase.listingId)"
+            styleClass="action-button"
+          >
+          </p-button>
+          <!-- Botão de Avaliar - Estado Dinâmico -->
+          <p-button
+            *ngIf="!reviewedListings().has(purchase.listingId)"
+            label="Avaliar"
+            icon="pi pi-star"
+            severity="info"
+            [outlined]="true"
+            size="small"
+            (onClick)="ratePurchase(purchase)"
+            styleClass="action-button"
+          >
+          </p-button>
+
+          <!-- Botão quando já foi avaliado -->
+          <p-button
+            *ngIf="reviewedListings().has(purchase.listingId)"
+            label="Avaliado"
+            icon="pi pi-check"
+            severity="success"
+            [disabled]="true"
+            size="small"
+            styleClass="action-button evaluated-button"
+          >
+          </p-button>
+          <p-button
+            label="Contatar"
+            icon="pi pi-comments"
+            severity="help"
+            [outlined]="true"
+            size="small"
+            (onClick)="contactSeller(purchase)"
+            styleClass="action-button"
+          >
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Review Modal -->
+<app-review-modal
+  [visible]="showReviewModal()"
+  [purchase]="selectedPurchase()"
+  (visibleChange)="showReviewModal.set($event)"
+  (reviewSubmitted)="onReviewSubmitted()"
+></app-review-modal>

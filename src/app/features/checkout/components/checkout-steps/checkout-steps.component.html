@@ -1,0 +1,38 @@
+<div class="checkout-steps">
+  <div class="steps-container">
+    <div 
+      *ngFor="let step of steps; let i = index" 
+      class="step-item"
+      [class.active]="step.active"
+      [class.completed]="step.completed"
+    >
+      <!-- Step Circle -->
+      <div class="step-circle">
+        <i 
+          *ngIf="step.completed" 
+          class="pi pi-check"
+          aria-hidden="true"
+        ></i>
+        <span 
+          *ngIf="!step.completed"
+          class="step-number"
+        >
+          {{ i + 1 }}
+        </span>
+      </div>
+
+      <!-- Step Content -->
+      <div class="step-content">
+        <h4 class="step-title">{{ step.title }}</h4>
+        <p class="step-description">{{ step.description }}</p>
+      </div>
+
+      <!-- Connector Line -->
+      <div 
+        *ngIf="i < steps.length - 1" 
+        class="step-connector"
+        [class.completed]="step.completed"
+      ></div>
+    </div>
+  </div>
+</div>

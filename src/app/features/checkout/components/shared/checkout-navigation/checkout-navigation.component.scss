@@ -1,0 +1,162 @@
+/* Checkout Navigation Shell */
+.checkout-navigation {
+  width: 100%;
+  margin-top: var(--spacing-lg);
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.step-actions::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.step-actions:hover::before {
+  opacity: 0.3;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn-back,
+.btn-continue {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-back::before,
+.btn-continue::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-back:hover::before,
+.btn-continue:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn-back {
+  background: var(--color-elevation-1);
+  color: var(--color-text-secondary);
+  border: 2px solid var(--color-border);
+}
+
+.btn-back:hover:not(:disabled) {
+  background: var(--color-elevation-2);
+  border-color: var(--color-primary-light);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-continue {
+  background: var(--color-primary);
+  color: white;
+  border: 2px solid var(--color-primary);
+}
+
+.btn-continue:hover:not(:disabled) {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+}
+
+.btn-continue:disabled {
+  background: var(--color-text-muted);
+  border-color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-continue.loading {
+  cursor: wait;
+}
+
+.btn-continue i {
+  transition: transform 0.3s ease;
+}
+
+.btn-continue:hover:not(:disabled) i {
+  transform: translateX(2px);
+}
+
+.btn-back i {
+  transition: transform 0.3s ease;
+}
+
+.btn-back:hover:not(:disabled) i {
+  transform: translateX(-2px);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .step-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+  }
+
+  .btn-back,
+  .btn-continue {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .spacer {
+    display: none;
+  }
+}
+
+/* Loading spinner animation */
+.pi-spin {
+  animation: pi-spin 1s linear infinite;
+}
+
+@keyframes pi-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

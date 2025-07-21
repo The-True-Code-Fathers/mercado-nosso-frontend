@@ -3,7 +3,7 @@
   [class.centered-content]="cartItems().length === 0 || isLoading()"
 >
   <!-- Header só aparece quando há items -->
-  <div *ngIf="cartItems().length > 0" class="cart-header">
+  <div *ngIf="cartItems().length > 0 && !isLoading()" class="cart-header">
     <h1>
       <i class="pi pi-shopping-cart cart-title-icon"></i>
       Meu Carrinho
@@ -42,7 +42,9 @@
     class="cart-content"
   >
     <div class="cart-items">
-      <div class="items-header"></div>
+      <div class="items-header">
+        <!-- Cabeçalho opcional para os itens -->
+      </div>
 
       <div class="items-list">
         <p-card *ngFor="let item of cartItems()" class="cart-item">
@@ -60,17 +62,12 @@
 
             <!-- Product Image -->
             <div class="item-image">
-              <img 
-                [src]="item.image" 
-                [alt]="item.name" 
+              <img
+                [src]="item.image"
+                [alt]="item.name"
                 (error)="onImageError($event, item)"
                 loading="lazy"
               />
-              <p-badge
-                [value]="item.category"
-                severity="secondary"
-                class="category-badge"
-              ></p-badge>
             </div>
 
             <!-- Product Details -->
@@ -100,7 +97,7 @@
                   [ngModel]="item.quantity"
                   (ngModelChange)="updateQuantity(item.listingId, $event)"
                   [min]="0"
-                  [max]="99"
+                  [max]="item.stock"
                   [showButtons]="true"
                   buttonLayout="horizontal"
                   spinnerMode="horizontal"
@@ -158,7 +155,8 @@
               icon="pi pi-arrow-left"
               styleClass="p-button-outlined w-full mb-2"
               routerLink="/products"
-              (click)="continueShopping()">
+              (click)="continueShopping()"
+            >
             </p-button>
 
             <div class="action-buttons-row">

@@ -5,9 +5,14 @@ import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
 import { ListingService, Listing, Review } from '../../services/listing.service'
 import { CartService } from '../../../cart/services/cart.service'
+import { UserService, UserResponse } from '../../../user/services/user.service'
+import {
+  ReviewService,
+  ReviewResponse,
+} from '../../../user/services/review.service'
 
 // Estender Review para incluir propriedades do frontend
-export interface ReviewWithFrontendData extends Review {
+export interface ReviewWithFrontendData extends ReviewResponse {
   helpful?: number
 }
 
@@ -110,7 +115,9 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   // Cart functionality
   addingToCart: boolean = false
+  buyingNow: boolean = false
   quantity: number = 1
+  sellerName = signal<string>('Carregando...')
 
   // Gallery images for PrimeNG Galleria
   galleriaImages: any[] = []
@@ -245,6 +252,8 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private cartService: CartService,
     private messageService: MessageService,
+    private userService: UserService,
+    private reviewService: ReviewService,
   ) {
     this.initializeGalleryImages()
     this.initializeRelatedProducts()
@@ -280,6 +289,10 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         this.listing.set(listing)
         this.updateBreadcrumb(listing.title)
         this.initializeReviews() // Inicializar reviews com dados reais
+
+        // Buscar nome do vendedor
+        this.loadSellerName(listing.sellerId)
+
         this.isLoading.set(false)
       },
       error: err => {
@@ -736,9 +749,9 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     // Usar dados reais do backend quando disponíveis
     const listing = this.listing()
     if (listing && listing.listingId) {
-      // Carregar reviews reais da API
-      this.listingService.getReviewsByListingId(listing.listingId).subscribe({
-        next: (reviews: Review[]) => {
+      // Carregar reviews reais da API com nomes dos usuários
+      this.reviewService.getReviewsByListing(listing.listingId).subscribe({
+        next: (reviews: ReviewResponse[]) => {
           // Adicionar propriedades do frontend aos reviews
           this.reviews = reviews.map(review => ({
             ...review,
@@ -759,7 +772,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
             this.updateListingRating(listing, averageRating)
 
             // Calcular distribuição de ratings baseada nos dados reais
-            this.calculateRatingDistribution(reviews, totalReviews)
+            this.calculateRatingDistribution(reviews as Review[], totalReviews)
 
             this.summaryText = `Avaliações baseadas nas experiências reais dos ${totalReviews} clientes que compraram este produto.`
             this.summaryHighlights = [
@@ -1203,12 +1216,108 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
       })
   }
 
+  buyNow(): void {
+    if (!this.listingId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Produto não encontrado',
+        life: 3000,
+      })
+      return
+    }
+
+    this.buyingNow = true
+
+    // Get current product price
+    const productPrice = this.displayPrice
+    const listing = this.listing()
+
+    if (!listing) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Informações do produto não disponíveis',
+        life: 3000,
+      })
+      this.buyingNow = false
+      return
+    }
+
+    // Create checkout item from current product
+    const checkoutItem = {
+      listingId: this.listingId,
+      name: listing.title || `Produto ${this.listingId}`,
+      unitPrice: productPrice,
+      quantity: this.quantity,
+      totalPrice: productPrice * this.quantity,
+      image:
+        listing.imagesUrl && listing.imagesUrl.length > 0
+          ? listing.imagesUrl[0]
+          : 'https://via.placeholder.com/80x80?text=📦',
+      sellerId: listing.sellerId || 'unknown',
+      sellerName:
+        this.sellerName() || `Vendedor ${listing.sellerId || 'Desconhecido'}`,
+      shippingPrice: 0, // Will be calculated later
+    }
+
+    // Navigate to checkout with the single item
+    this.router
+      .navigate(['/checkout'], {
+        state: {
+          directBuyItem: checkoutItem,
+          source: 'buyNow',
+        },
+      })
+      .then(() => {
+        this.buyingNow = false
+      })
+      .catch(err => {
+        this.buyingNow = false
+        console.error('Error navigating to checkout:', err)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível ir para o checkout',
+          life: 3000,
+        })
+      })
+  }
+
   goToCart(): void {
     this.router.navigate(['/cart'])
   }
 
+  loadSellerName(sellerId: string): void {
+    console.log('🔍 Buscando vendedor com ID:', sellerId)
+    console.log('🌐 URL da API:', `http://localhost:8080/api/users/${sellerId}`)
+
+    this.userService.getUserById(sellerId).subscribe({
+      next: seller => {
+        console.log('✅ Vendedor encontrado:', seller)
+        this.sellerName.set(seller.fullName)
+      },
+      error: error => {
+        console.error('❌ Erro ao buscar vendedor:', error)
+        console.error('Status:', error.status)
+        console.error('Message:', error.message)
+
+        if (error.status === 404) {
+          this.sellerName.set('Vendedor não cadastrado')
+        } else if (error.status === 0) {
+          this.sellerName.set('Serviço indisponível')
+        } else {
+          this.sellerName.set('Erro ao carregar vendedor')
+        }
+      },
+    })
+  }
+
   increaseQuantity(): void {
-    this.quantity++
+    const currentStock = this.listing()?.stock || 0
+    if (this.quantity < currentStock) {
+      this.quantity++
+    }
   }
 
   decreaseQuantity(): void {
@@ -1216,4 +1325,6 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
       this.quantity--
     }
   }
+
+  // Related Products methods
 }

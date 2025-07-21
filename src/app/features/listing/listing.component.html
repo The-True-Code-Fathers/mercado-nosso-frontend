@@ -6,14 +6,16 @@
         <button
           class="custom-mobile-btn"
           [class.active]="showMobileFilters"
-          (click)="toggleMobileFilters()">
+          (click)="toggleMobileFilters()"
+        >
           <i class="pi pi-filter"></i>
           <span>Filtrar</span>
         </button>
         <button
           class="custom-mobile-btn"
           [class.active]="showMobileSorting"
-          (click)="toggleMobileSorting()">
+          (click)="toggleMobileSorting()"
+        >
           <i class="pi pi-sort-alt"></i>
           <span>Ordenar</span>
         </button>
@@ -29,14 +31,16 @@
           icon="pi pi-trash"
           styleClass="p-button-text p-button-sm clear-all-btn"
           (click)="clearFilters()"
-          pTooltip="Limpar todos os filtros">
+          pTooltip="Limpar todos os filtros"
+        >
         </p-button>
         <!-- Mobile Close Button -->
         <p-button
           *ngIf="showMobileFilters"
           icon="pi pi-times"
           styleClass="p-button-text p-button-sm close-panel-btn mobile-only"
-          (click)="showMobileFilters = false">
+          (click)="showMobileFilters = false"
+        >
         </p-button>
       </div>
 
@@ -52,9 +56,12 @@
               *ngFor="let condition of conditionOptions"
               [label]="condition.label"
               [outlined]="selectedCondition !== condition.value"
-              [severity]="selectedCondition === condition.value ? 'primary' : 'secondary'"
+              [severity]="
+                selectedCondition === condition.value ? 'primary' : 'secondary'
+              "
               styleClass="condition-btn"
-              (click)="selectCondition(condition.value)">
+              (click)="selectCondition(condition.value)"
+            >
             </p-button>
           </div>
         </div>
@@ -76,7 +83,8 @@
                   currency="BRL"
                   locale="pt-BR"
                   placeholder="R$ 0"
-                  styleClass="price-input">
+                  styleClass="price-input"
+                >
                 </p-inputNumber>
               </div>
               <div class="price-input-group">
@@ -88,7 +96,8 @@
                   currency="BRL"
                   locale="pt-BR"
                   placeholder="R$ 1000"
-                  styleClass="price-input">
+                  styleClass="price-input"
+                >
                 </p-inputNumber>
               </div>
             </div>
@@ -107,28 +116,32 @@
               [label]="'Condição: ' + getConditionLabel(selectedCondition)"
               [removable]="true"
               (onRemove)="clearCondition()"
-              styleClass="active-filter-chip">
+              styleClass="active-filter-chip"
+            >
             </p-chip>
             <p-chip
               *ngIf="minPrice"
-              [label]="'Mín: R$ ' + (minPrice | number:'1.2-2')"
+              [label]="'Mín: R$ ' + (minPrice | number : '1.2-2')"
               [removable]="true"
               (onRemove)="clearMinPrice()"
-              styleClass="active-filter-chip">
+              styleClass="active-filter-chip"
+            >
             </p-chip>
             <p-chip
               *ngIf="maxPrice"
-              [label]="'Máx: R$ ' + (maxPrice | number:'1.2-2')"
+              [label]="'Máx: R$ ' + (maxPrice | number : '1.2-2')"
               [removable]="true"
               (onRemove)="clearMaxPrice()"
-              styleClass="active-filter-chip">
+              styleClass="active-filter-chip"
+            >
             </p-chip>
             <p-chip
               *ngIf="selectedCategory"
               [label]="'Categoria: ' + selectedCategory"
               [removable]="true"
               (onRemove)="clearCategory()"
-              styleClass="active-filter-chip">
+              styleClass="active-filter-chip"
+            >
             </p-chip>
           </div>
         </div>
@@ -136,13 +149,18 @@
     </aside>
 
     <!-- Mobile Sorting Panel -->
-    <div class="mobile-sorting-panel" [class.mobile-only]="true" [class.mobile-hidden]="!showMobileSorting">
+    <div
+      class="mobile-sorting-panel"
+      [class.mobile-only]="true"
+      [class.mobile-hidden]="!showMobileSorting"
+    >
       <div class="mobile-panel-header">
         <h3 class="mobile-panel-title">Ordenar por</h3>
         <p-button
           icon="pi pi-times"
           styleClass="p-button-text p-button-sm close-panel-btn"
-          (click)="showMobileSorting = false">
+          (click)="showMobileSorting = false"
+        >
         </p-button>
       </div>
       <div class="mobile-panel-content">
@@ -151,9 +169,13 @@
             *ngFor="let option of sortOptions"
             class="sort-option-item"
             [class.selected]="sortBy === option.value"
-            (click)="selectSortOption(option.value)">
+            (click)="selectSortOption(option.value)"
+          >
             <span class="sort-option-label">{{ option.label }}</span>
-            <i *ngIf="sortBy === option.value" class="pi pi-check sort-check-icon"></i>
+            <i
+              *ngIf="sortBy === option.value"
+              class="pi pi-check sort-check-icon"
+            ></i>
           </div>
         </div>
       </div>
@@ -164,11 +186,10 @@
       <!-- Results Header -->
       <div class="results-header">
         <div class="results-info">
-          <h2 class="results-title">
-            {{ totalItems }} Resultados
-          </h2>
+          <h2 class="results-title">{{ totalItems }} Resultados</h2>
           <span class="results-subtitle" *ngIf="pagedResponse()">
-            Página {{ pagedResponse()!.page + 1 }} de {{ pagedResponse()!.totalPages }}
+            Página {{ pagedResponse()!.page + 1 }} de
+            {{ pagedResponse()!.totalPages }}
           </span>
         </div>
 
@@ -182,7 +203,8 @@
               (onChange)="onSortChange()"
               optionLabel="label"
               optionValue="value"
-              styleClass="sort-dropdown">
+              styleClass="sort-dropdown"
+            >
             </p-dropdown>
           </div>
         </div>
@@ -191,7 +213,10 @@
       <!-- Loading State -->
       <div *ngIf="isLoading()" class="loading-section">
         <div class="loading-content">
-          <p-progressSpinner strokeWidth="3" animationDuration="1s"></p-progressSpinner>
+          <p-progressSpinner
+            strokeWidth="3"
+            animationDuration="1s"
+          ></p-progressSpinner>
           <h3>Carregando produtos...</h3>
           <p>Aguarde enquanto buscamos os melhores produtos para você.</p>
         </div>
@@ -206,26 +231,26 @@
           <p-button
             label="Tentar Novamente"
             icon="pi pi-refresh"
-            (click)="loadListings()">
+            (click)="loadListings()"
+          >
           </p-button>
         </div>
       </p-card>
 
       <!-- Products Grid -->
-      <div *ngIf="!isLoading() && !error() && listings().length > 0" class="products-container">
+      <div
+        *ngIf="!isLoading() && !error() && listings().length > 0"
+        class="products-container"
+      >
         <div class="products-grid" [ngClass]="'view-' + selectedView">
-          <app-product-card
+          <app-product-card-new
             *ngFor="let listing of listings(); trackBy: trackByListingId"
             [product]="mapListingToProductCard(listing)"
             [linkPath]="'/listing'"
-            [showAddToCart]="true"
-            [showRating]="false"
-            [showCondition]="true"
-            [showStock]="true"
-            (addToCart)="onAddToCart($event)"
-            (viewDetails)="onViewDetails($event)"
-            class="product-card-wrapper">
-          </app-product-card>
+            (cardClick)="onCardClick($event)"
+            class="product-card-wrapper"
+          >
+          </app-product-card-new>
         </div>
 
         <!-- Pagination -->
@@ -240,13 +265,17 @@
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} produtos"
             [showFirstLastIcon]="true"
             [showPageLinks]="true"
-            styleClass="custom-paginator">
+            styleClass="custom-paginator"
+          >
           </p-paginator>
         </div>
       </div>
 
       <!-- Empty State -->
-      <p-card *ngIf="!isLoading() && !error() && totalItems === 0" styleClass="empty-state-card">
+      <p-card
+        *ngIf="!isLoading() && !error() && totalItems === 0"
+        styleClass="empty-state-card"
+      >
         <div class="empty-state">
           <i class="pi pi-search empty-icon"></i>
           <h3>Nenhum produto encontrado</h3>

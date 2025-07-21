@@ -1,0 +1,51 @@
+<div class="order-summary-card" *ngIf="orderSummary">
+  <div class="summary-header">
+    <h3>
+      <i class="pi pi-receipt summary-icon"></i>
+      Resumo do Pedido
+    </h3>
+  </div>
+
+  <div class="summary-content">
+    <div class="items-count">
+      {{ orderSummary.itemsCount }} {{ orderSummary.itemsCount === 1 ? 'item' : 'itens' }}
+    </div>
+
+    <p-divider></p-divider>
+
+    <div class="price-breakdown">
+      <div class="summary-line">
+        <span>Subtotal:</span>
+        <span class="amount">R$ {{ orderSummary.subtotal | number : '1.2-2' }}</span>
+      </div>
+
+      <div class="summary-line" *ngIf="orderSummary.shippingTotal > 0">
+        <span>Frete:</span>
+        <span class="amount">R$ {{ orderSummary.shippingTotal | number : '1.2-2' }}</span>
+      </div>
+
+      <div class="summary-line" *ngIf="orderSummary.shippingTotal === 0">
+        <span>Frete:</span>
+        <span class="amount">Grátis</span>
+      </div>
+
+      <div class="summary-line" *ngIf="orderSummary.discountTotal > 0">
+        <span>Desconto:</span>
+        <span class="amount discount">-R$ {{ orderSummary.discountTotal | number : '1.2-2' }}</span>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="summary-line total">
+        <span>Total:</span>
+        <span class="amount">R$ {{ orderSummary.total | number : '1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="summary-loading" *ngIf="!orderSummary">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Calculando...</span>
+    </div>
+  </div>
+</div>

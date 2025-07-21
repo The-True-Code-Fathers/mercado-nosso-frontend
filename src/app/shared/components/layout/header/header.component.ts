@@ -16,6 +16,10 @@ import { FormsModule } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import { SearchService } from '../../../services/search.service'
+import {
+  clearDevelopmentUserId,
+  DEVELOPMENT_CONFIG,
+} from '../../../config/development.config'
 import { ButtonModule } from 'primeng/button'
 import { BadgeModule } from 'primeng/badge'
 import { TooltipModule } from 'primeng/tooltip'
@@ -24,6 +28,10 @@ import { IconFieldModule } from 'primeng/iconfield'
 import { InputIconModule } from 'primeng/inputicon'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { OverlayPanel } from 'primeng/overlaypanel'
+import {
+  UserService,
+  UserResponse,
+} from '../../../../features/user/services/user.service'
 // import { CartService } from '../../core/services/cart.service'; // Uncomment when cart service is implemented
 
 @Component({
@@ -45,16 +53,25 @@ import { OverlayPanel } from 'primeng/overlaypanel'
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  logout() {
+    clearDevelopmentUserId()
+    this.syncLoginState()
+    this.username = null
+    this.router.navigate(['/login'])
+  }
   @ViewChild('categoriesPanel') categoriesPanel!: OverlayPanel
+  @ViewChild('userMenuPanel') userMenuPanel!: OverlayPanel
 
   isDarkMode = false
   searchTerm: string = ''
   categoriesMenuVisible = false
   mobileMenuVisible = false
   mobileCategoriesVisible = false
-  mobileSearchVisible = false // Add mobile search state
-  cartItemsCount = 3 // TODO: This should come from CartService
-  username: string | null = 'Matheus' // TODO: Replace with actual user service
+  mobileSearchVisible = false
+  userMenuVisible = false
+  cartItemsCount = 3
+  username: string | null = ''
+  isLoggedIn = false
   isDashboardRoute = false // Track if current route is dashboard
 
   // Responsive properties
@@ -75,10 +92,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private searchService: SearchService, // private cartService: CartService // Inject when available
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
     this.checkScreenSize()
+    this.syncLoginState()
+    this.loadUsername()
+    window.addEventListener('storage', this.handleStorageChange)
 
     // Check initial route
     this.isDashboardRoute = this.router.url.includes('/dashboard')
@@ -89,10 +110,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     })
     this.subscriptions.push(searchTermSub)
 
-    // Listen to route changes to clear search on home navigation
+    // Listen to route changes to clear search on home navigation e dar F5 na home
     const routerSub = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
+        this.syncLoginState()
         if (event.url === '/' || event.url === '/home') {
           this.searchService.clearSearchTerm()
         }
@@ -111,11 +133,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout)
     }
-
+    window.removeEventListener('storage', this.handleStorageChange)
     // Unsubscribe from all subscriptions
     this.subscriptions.forEach(sub => sub.unsubscribe())
-
     // TODO: Unsubscribe from cart service
+  }
+
+  handleStorageChange = (event: StorageEvent) => {
+    if (event.key === 'devUserId') {
+      this.syncLoginState()
+    }
   }
 
   onCategoriesHover(event: Event) {
@@ -145,6 +172,43 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onCategorySelected() {
     this.categoriesPanel.hide()
+  }
+
+  // User menu methods
+  toggleUserMenu(event: Event) {
+    this.userMenuPanel.toggle(event)
+    this.userMenuVisible = !this.userMenuVisible
+  }
+
+  closeUserMenu() {
+    this.userMenuPanel.hide()
+    this.userMenuVisible = false
+  }
+
+  onUserMenuItemClick(action: string) {
+    this.closeUserMenu()
+
+    switch (action) {
+      case 'login':
+        this.router.navigate(['/login'])
+        break
+      case 'register':
+        this.router.navigate(['/register'])
+        break
+      case 'profile':
+        this.router.navigate(['/user/profile'])
+        break
+      case 'orders':
+        this.router.navigate(['/user/orders'])
+        break
+      case 'purchases':
+        this.router.navigate(['/user/purchases'])
+        break
+      case 'logout':
+        // TODO: Implement logout logic
+        console.log('Logout clicked')
+        break
+    }
   }
 
   categories = [
@@ -255,12 +319,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // HostListener to detect screen size changes
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     this.checkScreenSize()
 
-    // Close mobile menu when switching to desktop
     if (this.isDesktop && this.mobileMenuVisible) {
       this.closeMobileMenu()
     }
@@ -280,6 +342,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.currentScreenSize = 'tablet'
     } else {
       this.currentScreenSize = 'desktop'
+    }
+  }
+
+  private syncLoginState() {
+    this.isLoggedIn = DEVELOPMENT_CONFIG.DEFAULT_USER_ID !== '0'
+    if (this.isLoggedIn) {
+      this.loadUsername()
+    } else {
+      this.username = ''
+    }
+  }
+
+  private loadUsername() {
+    const userId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID
+    if (userId && userId !== '0') {
+      this.userService.getUserById(userId).subscribe({
+        next: (user: UserResponse) => {
+          this.username = user.fullName || ''
+        },
+        error: () => {
+          this.username = ''
+        },
+      })
+    } else {
+      this.username = ''
     }
   }
 

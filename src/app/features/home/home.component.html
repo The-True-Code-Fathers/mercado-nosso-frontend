@@ -9,11 +9,13 @@
       [autoplayInterval]="5000"
       [showIndicators]="true"
       [showNavigators]="true"
-      styleClass="hero-carousel">
-
+      styleClass="hero-carousel"
+    >
       <ng-template let-slide pTemplate="item">
-        <div class="hero-slide" [style.background-image]="'url(' + slide.image + ')'">
-        </div>
+        <div
+          class="hero-slide"
+          [style.background-image]="'url(' + slide.image + ')'"
+        ></div>
       </ng-template>
     </p-carousel>
   </section>
@@ -26,28 +28,19 @@
     </div>
 
     <div class="products-grid">
-      <p-card
-        class="product-card"
+      <app-product-card-new
         *ngFor="let product of featuredProducts"
-        [routerLink]="['/product', product.id]">
-        <ng-template pTemplate="header">
-          <div class="product-image">
-            <img [src]="product.image" [alt]="product.name" />
-          </div>
-        </ng-template>
-        <div class="product-content">
-          <h5>{{ product.name }}</h5>
-          <p class="product-price">{{ product.price | currency:'BRL' }}</p>
-          <div class="product-rating">
-            <p-rating
-              [ngModel]="product.rating"
-              [readonly]="true"
-              styleClass="product-rating-stars">
-            </p-rating>
-            <span class="rating-count">({{ product.reviews }})</span>
-          </div>
-        </div>
-      </p-card>
+        [product]="{
+          id: product.id.toString(),
+          title: product.name,
+          price: product.price,
+          image: product.image,
+          rating: product.rating,
+          reviews: product.reviews
+        }"
+        [linkPath]="'/product'"
+        class="product-card-wrapper"
+      ></app-product-card-new>
     </div>
   </section>
 

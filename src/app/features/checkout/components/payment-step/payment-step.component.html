@@ -1,0 +1,220 @@
+<div class="payment-step">
+  <div class="step-header">
+    <h2>Forma de Pagamento</h2>
+    <p>Escolha como você quer pagar seu pedido</p>
+  </div>
+
+  <div class="payment-content">
+    <!-- Payment Methods -->
+    <div class="payment-methods-section">
+      <h3>Métodos de Pagamento</h3>
+      
+      <div class="payment-options">
+        <!-- PIX -->
+        <div 
+          class="payment-option-card"
+          [class.selected]="selectedPaymentType === 'PIX'"
+          (click)="selectQuickMethod('PIX')"
+        >
+          <div class="payment-option-content">
+            <p-radioButton
+              value="PIX"
+              [(ngModel)]="selectedPaymentType"
+              inputId="pix-option"
+            >
+            </p-radioButton>
+            <div class="payment-option-info">
+              <div class="payment-icon">
+                <i class="pi pi-qrcode"></i>
+              </div>
+              <div class="payment-details">
+                <h4>PIX</h4>
+                <p>Instantâneo e gratuito</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cartão de Crédito -->
+        <div 
+          class="payment-option-card"
+          [class.selected]="selectedPaymentType === 'CREDIT_CARD'"
+          (click)="selectQuickMethod('CREDIT_CARD')"
+        >
+          <div class="payment-option-content">
+            <p-radioButton
+              value="CREDIT_CARD"
+              [(ngModel)]="selectedPaymentType"
+              inputId="credit-option"
+            >
+            </p-radioButton>
+            <div class="payment-option-info">
+              <div class="payment-icon">
+                <i class="pi pi-credit-card"></i>
+              </div>
+              <div class="payment-details">
+                <h4>Cartão de Crédito</h4>
+                <p>Até 12x sem juros</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cartão de Débito -->
+        <div 
+          class="payment-option-card"
+          [class.selected]="selectedPaymentType === 'DEBIT_CARD'"
+          (click)="selectQuickMethod('DEBIT_CARD')"
+        >
+          <div class="payment-option-content">
+            <p-radioButton
+              value="DEBIT_CARD"
+              [(ngModel)]="selectedPaymentType"
+              inputId="debit-option"
+            >
+            </p-radioButton>
+            <div class="payment-option-info">
+              <div class="payment-icon">
+                <i class="pi pi-credit-card"></i>
+              </div>
+              <div class="payment-details">
+                <h4>Cartão de Débito</h4>
+                <p>Débito direto</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Form Section -->
+      <div 
+        *ngIf="selectedPaymentType === 'CREDIT_CARD' || selectedPaymentType === 'DEBIT_CARD'"
+        class="card-details-section"
+      >
+        <div class="section-header-static">
+          <div class="header-content">
+            <h3>Dados do Cartão</h3>
+            <p class="header-subtitle">Preencha os dados do seu cartão de {{ selectedPaymentType === 'CREDIT_CARD' ? 'crédito' : 'débito' }}</p>
+          </div>
+        </div>
+        
+        <div class="card-form-container">
+          <div class="card-form">
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="cardNumber">Número do Cartão *</label>
+                <input
+                  id="cardNumber"
+                  pInputText
+                  [(ngModel)]="creditCard.number"
+                  placeholder="0000 0000 0000 0000"
+                  maxlength="19"
+                  (input)="formatCardNumber($event)"
+                  class="w-full"
+                />
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-field flex-2">
+                <label for="cardholderName">Nome do Portador *</label>
+                <input
+                  id="cardholderName"
+                  pInputText
+                  [(ngModel)]="creditCard.holderName"
+                  placeholder="Nome como está no cartão"
+                  class="w-full"
+                />
+              </div>
+              <div class="form-field">
+                <label for="cvv">CVV *</label>
+                <input
+                  id="cvv"
+                  pInputText
+                  [(ngModel)]="creditCard.cvv"
+                  placeholder="123"
+                  maxlength="4"
+                  (input)="formatCVV($event)"
+                  class="w-full"
+                />
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-field">
+                <label for="expiryMonth">Mês *</label>
+                <p-dropdown
+                  id="expiryMonth"
+                  [(ngModel)]="creditCard.expiryMonth"
+                  [options]="months"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="MM"
+                  class="w-full"
+                >
+                </p-dropdown>
+              </div>
+              <div class="form-field">
+                <label for="expiryYear">Ano *</label>
+                <p-dropdown
+                  id="expiryYear"
+                  [(ngModel)]="creditCard.expiryYear"
+                  [options]="years"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="AAAA"
+                  class="w-full"
+                >
+                </p-dropdown>
+              </div>
+              <div class="form-field" *ngIf="selectedPaymentType === 'CREDIT_CARD'">
+                <label for="installments">Parcelamento</label>
+                <p-dropdown
+                  id="installments"
+                  [(ngModel)]="creditCard.installments"
+                  [options]="installmentOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="À vista"
+                  class="w-full"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIX Instructions -->
+      <div *ngIf="selectedPaymentType === 'PIX'" class="pix-instructions">
+        <div class="pix-card">
+          <div class="pix-content">
+            <div class="pix-icon">
+              <i class="pi pi-qrcode"></i>
+            </div>
+            <div class="pix-info">
+              <h4>Como pagar com PIX</h4>
+              <p>Após finalizar o pedido, você receberá o código PIX para pagamento instantâneo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <app-checkout-navigation
+      [showBack]="true"
+      [showContinue]="true"
+      [continueDisabled]="!canContinue()"
+      backLabel="Voltar"
+      continueLabel="Revisar Pedido"
+      backIcon="pi pi-arrow-left"
+      continueIcon="pi pi-arrow-right"
+      step="payment"
+      (onBack)="goBack()"
+      (onContinue)="continueToConfirmation()"
+    ></app-checkout-navigation>
+  </div>
+</div>
+
+<p-toast></p-toast>

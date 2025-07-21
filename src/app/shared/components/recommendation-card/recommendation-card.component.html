@@ -1,0 +1,77 @@
+<p-card
+  styleClass="recommendation-card"
+  (click)="onViewDetails()"
+  [routerLink]="[linkPath, product.id]"
+>
+  <ng-template pTemplate="header">
+    <div class="product-image-container">
+      <img
+        [src]="getImageUrl()"
+        [alt]="product.title"
+        class="product-image"
+        loading="lazy"
+      />
+
+      <!-- Discount Badge -->
+      <p-badge
+        *ngIf="hasDiscount()"
+        [value]="getDiscountPercentage() + '% OFF'"
+        severity="danger"
+        styleClass="discount-badge"
+      >
+      </p-badge>
+    </div>
+  </ng-template>
+
+  <div class="product-content">
+    <!-- Product Title -->
+    <h4 class="product-title">{{ product.title }}</h4>
+
+    <!-- Rating Section -->
+    <div class="product-rating" *ngIf="showRating && product.rating">
+      <div class="custom-rating">
+        <span
+          *ngFor="let star of getStarsArray(); let i = index"
+          class="rating-star"
+          [ngClass]="{
+            'star-full': i < mathFloor(product.rating),
+            'star-half':
+              i === mathFloor(product.rating) && product.rating % 1 >= 0.5,
+            'star-empty': i >= mathCeil(product.rating)
+          }"
+        >
+          ★
+        </span>
+      </div>
+      <span class="rating-text" *ngIf="product.reviews">
+        ({{ product.reviews }})
+      </span>
+    </div>
+
+    <!-- Condition -->
+    <div class="product-condition" *ngIf="showCondition && product.condition">
+      <p-tag
+        [value]="product.condition"
+        [severity]="getConditionSeverity()"
+        styleClass="condition-tag"
+      >
+      </p-tag>
+    </div>
+
+    <!-- Stock Info -->
+    <div class="stock-info" *ngIf="product.stock !== undefined">
+      <span class="stock-text"> {{ product.stock }} disponível </span>
+    </div>
+
+    <!-- Price Section -->
+    <div class="price-section">
+      <div class="original-price" *ngIf="hasDiscount()">
+        R$ {{ product.originalPrice | number : '1.2-2' }}
+      </div>
+      <div class="current-price">R$ {{ product.price | number : '1.2-2' }}</div>
+      <div class="product-installments">
+        12x de R$ {{ product.price / 12 | number : '1.2-2' }} sem juros
+      </div>
+    </div>
+  </div>
+</p-card>

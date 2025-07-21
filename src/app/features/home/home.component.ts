@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { BadgeModule } from 'primeng/badge';
-import { RatingModule } from 'primeng/rating';
-import { CarouselModule } from 'primeng/carousel';
+import { Component, OnInit } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { RouterModule, Router } from '@angular/router'
+import { FormsModule } from '@angular/forms'
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { ProductCardNewComponent } from '../../shared/components/product-card-new/product-card-new.component'
+import { InputTextModule } from 'primeng/inputtext'
+import { BadgeModule } from 'primeng/badge'
+import { RatingModule } from 'primeng/rating'
+import { CarouselModule } from 'primeng/carousel'
 
 @Component({
   selector: 'app-home',
@@ -18,16 +19,17 @@ import { CarouselModule } from 'primeng/carousel';
     FormsModule,
     ButtonModule,
     CardModule,
+    ProductCardNewComponent,
     InputTextModule,
     BadgeModule,
     RatingModule,
     CarouselModule,
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  searchTerm: string = '';
+  searchTerm: string = ''
 
   heroSlides = [
     {
@@ -38,12 +40,11 @@ export class HomeComponent implements OnInit {
       buttonText: 'Explorar Produtos',
       buttonLink: '/products',
     },
-  ];
+  ]
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Inicialização se necessária
   }
 
   categories = [
@@ -89,7 +90,7 @@ export class HomeComponent implements OnInit {
       icon: 'pi pi-heart',
       count: '780+',
     },
-  ];
+  ]
 
   featuredProducts = [
     {
@@ -124,14 +125,14 @@ export class HomeComponent implements OnInit {
       rating: 4.3,
       reviews: 156,
     },
-  ];
+  ]
 
   onHeroSearch() {
     if (this.searchTerm.trim()) {
       // Navegar para página de produtos com termo de busca
       this.router.navigate(['/products'], {
         queryParams: { search: this.searchTerm },
-      });
+      })
     }
   }
 }

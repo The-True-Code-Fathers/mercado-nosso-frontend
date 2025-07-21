@@ -12,7 +12,7 @@
         @if (username) {
         <span class="user-greeting">Bem vindo de volta, {{ username }}!</span>
         } @else {
-        <span class="user-greeting">Bem vido ao mercado nosso!</span>
+        <span class="user-greeting">Bem vindo ao mercado nosso!</span>
         }
       </div>
     </div>
@@ -117,13 +117,109 @@
           </p-button>
         </div>
 
+        <!-- Botão do usuário (ícone) -->
         <p-button
           icon="pi pi-user"
           styleClass="p-button-text p-button-rounded user-action"
           pTooltip="Minha Conta"
-          routerLink="/user"
-        >
-        </p-button>
+          (click)="toggleUserMenu($event)"
+        ></p-button>
+        <p-overlayPanel #userMenuPanel [showCloseIcon]="true" appendTo="body">
+          <div
+            class="user-menu-list"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: stretch;
+              gap: 0.3rem;
+            "
+          >
+            <button
+              pButton
+              type="button"
+              label="Login"
+              icon="pi pi-sign-in"
+              routerLink="/login"
+              (click)="userMenuPanel.hide()"
+              *ngIf="!isLoggedIn"
+              style="
+                min-width: 160px;
+                max-width: 220px;
+                width: 90%;
+                margin-bottom: 0.4rem;
+              "
+            ></button>
+            <button
+              pButton
+              type="button"
+              label="Cadastrar"
+              icon="pi pi-user-plus"
+              routerLink="/register"
+              (click)="userMenuPanel.hide()"
+              *ngIf="!isLoggedIn"
+              style="
+                min-width: 160px;
+                max-width: 220px;
+                width: 90%;
+                margin-bottom: 0.4rem;
+              "
+            ></button>
+            <button
+              pButton
+              type="button"
+              label="Editar Perfil"
+              icon="pi pi-user-edit"
+              routerLink="/edit-profile"
+              (click)="userMenuPanel.hide()"
+              *ngIf="isLoggedIn"
+              style="
+                min-width: 160px;
+                max-width: 220px;
+                width: 90%;
+                margin-bottom: 0.4rem;
+              "
+            ></button>
+            <button
+              pButton
+              type="button"
+              label="Meus Anúncios"
+              icon="pi pi-list"
+              routerLink="/user/my-listings"
+              (click)="userMenuPanel.hide()"
+              *ngIf="isLoggedIn"
+              style="
+                min-width: 160px;
+                max-width: 220px;
+                width: 90%;
+                margin-bottom: 0.4rem;
+              "
+            ></button>
+            <button
+              pButton
+              type="button"
+              label="Minhas Compras"
+              icon="pi pi-shopping-bag"
+              routerLink="/user/my-purchases"
+              (click)="userMenuPanel.hide()"
+              *ngIf="isLoggedIn"
+              style="min-width: 160px; max-width: 220px; width: 90%"
+            ></button>
+            <button
+              pButton
+              type="button"
+              label="Sair"
+              icon="pi pi-sign-out"
+              (click)="logout(); userMenuPanel.hide()"
+              *ngIf="isLoggedIn"
+              style="
+                min-width: 160px;
+                max-width: 220px;
+                width: 90%;
+                margin-top: 0.4rem;
+              "
+            ></button>
+          </div>
+        </p-overlayPanel>
 
         <p-button
           icon="pi pi-home"
@@ -153,39 +249,46 @@
           {{ getCategoriesButtonLabel() }}
         </span>
 
-          <p-overlayPanel
-            #categoriesPanel
-            styleClass="categories-overlay-panel"
-            (onHide)="categoriesMenuVisible = false"
-            (onShow)="categoriesMenuVisible = true"
-            [showCloseIcon]="false"
-            [dismissable]="false"
-            appendTo="body">
-            <div class="categories-mega-content"
-                 (mouseenter)="onOverlayPanelEnter()"
-                 (mouseleave)="onOverlayPanelLeave()">
-              <div class="categories-grid">
-                <a *ngFor="let category of categories"
-                   [routerLink]="['/listing']"
-                   [queryParams]="{category: category.key}"
-                   class="category-item"
-                   (click)="onCategorySelected()">
-                  <i [class]="category.icon"></i>
-                  <span>{{ category.label }}</span>
-                </a>
-              </div>
+        <p-overlayPanel
+          #categoriesPanel
+          styleClass="categories-overlay-panel"
+          (onHide)="categoriesMenuVisible = false"
+          (onShow)="categoriesMenuVisible = true"
+          [showCloseIcon]="false"
+          [dismissable]="false"
+          appendTo="body"
+        >
+          <div
+            class="categories-mega-content"
+            (mouseenter)="onOverlayPanelEnter()"
+            (mouseleave)="onOverlayPanelLeave()"
+          >
+            <div class="categories-grid">
+              <a
+                *ngFor="let category of categories"
+                [routerLink]="['/listing']"
+                [queryParams]="{ category: category.key }"
+                class="category-item"
+                (click)="onCategorySelected()"
+              >
+                <i [class]="category.icon"></i>
+                <span>{{ category.label }}</span>
+              </a>
             </div>
-          </p-overlayPanel>
-        </div>
-
-        <!-- Responsive quick categories -->
-        <span class="category-link"
-              *ngFor="let category of getQuickCategoriesForScreen()"
-              [routerLink]="['/listing']"
-              [queryParams]="{category: category.key}">
-          {{ category.label }}
-        </span>
+          </div>
+        </p-overlayPanel>
       </div>
+
+      <!-- Responsive quick categories -->
+      <span
+        class="category-link"
+        *ngFor="let category of getQuickCategoriesForScreen()"
+        [routerLink]="['/listing']"
+        [queryParams]="{ category: category.key }"
+      >
+        {{ category.label }}
+      </span>
+    </div>
   </div>
 
   <!-- Mobile Menu Button - Remove old structure -->
@@ -194,13 +297,19 @@
   <div class="mobile-menu" [class.mobile-menu-active]="mobileMenuVisible">
     <!-- Main Navigation Actions -->
     <div class="mobile-nav-section">
-      <div
-        class="mobile-nav-item"
-        routerLink="/user"
-        (click)="closeMobileMenu()"
-      >
+      <div class="mobile-nav-item" (click)="toggleUserMenu($event)">
         <i class="pi pi-user"></i>
         <span>Minha conta</span>
+        <i class="pi pi-angle-right"></i>
+      </div>
+
+      <div
+        class="mobile-nav-item"
+        routerLink="/user/my-purchases"
+        (click)="closeMobileMenu()"
+      >
+        <i class="pi pi-shopping-bag"></i>
+        <span>Minhas compras</span>
       </div>
 
       <div
@@ -224,11 +333,13 @@
 
     <!-- Quick Categories Section -->
     <div class="mobile-quick-categories-section">
-      <div class="mobile-quick-category-item"
-           *ngFor="let category of quickCategories.slice(0, 4)"
-           [routerLink]="['/listing']"
-           [queryParams]="{category: category.key}"
-           (click)="closeMobileMenu()">
+      <div
+        class="mobile-quick-category-item"
+        *ngFor="let category of quickCategories.slice(0, 4)"
+        [routerLink]="['/listing']"
+        [queryParams]="{ category: category.key }"
+        (click)="closeMobileMenu()"
+      >
         <i [class]="category.icon"></i>
         <span>{{ category.label }}</span>
       </div>
@@ -253,11 +364,13 @@
         [class.mobile-categories-active]="mobileCategoriesVisible"
       >
         <div class="mobile-non-quick-categories">
-          <div class="mobile-category-item"
-               *ngFor="let category of getNonQuickCategories()"
-               [routerLink]="['/listing']"
-               [queryParams]="{category: category.key}"
-               (click)="closeMobileMenu()">
+          <div
+            class="mobile-category-item"
+            *ngFor="let category of getNonQuickCategories()"
+            [routerLink]="['/listing']"
+            [queryParams]="{ category: category.key }"
+            (click)="closeMobileMenu()"
+          >
             <i [class]="category.icon"></i>
             <span>{{ category.label }}</span>
           </div>

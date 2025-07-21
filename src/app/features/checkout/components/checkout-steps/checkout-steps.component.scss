@@ -1,0 +1,139 @@
+.checkout-steps {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-lg) 0;
+  margin-bottom: var(--spacing-xl);
+}
+
+.steps-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  position: relative;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  padding: 0 var(--spacing-sm);
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-elevation-2);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-sm);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.step-item.active .step-circle {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.step-item.completed .step-circle {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: white;
+}
+
+.step-number {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.step-content {
+  max-width: 120px;
+}
+
+.step-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.step-item.active .step-title {
+  color: var(--color-primary);
+}
+
+.step-description {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.step-connector {
+  position: absolute;
+  top: 20px;
+  left: calc(50% + 20px);
+  right: calc(-50% + 20px);
+  height: 2px;
+  background: var(--color-border);
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.step-connector.completed {
+  background: var(--color-success);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .steps-container {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .step-item {
+    padding: 0 var(--spacing-xs);
+  }
+
+  .step-circle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .step-content {
+    max-width: 80px;
+  }
+
+  .step-title {
+    font-size: 0.8rem;
+  }
+
+  .step-description {
+    font-size: 0.7rem;
+  }
+
+  .step-connector {
+    top: 16px;
+    left: calc(50% + 16px);
+    right: calc(-50% + 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .step-description {
+    display: none;
+  }
+
+  .step-content {
+    max-width: 60px;
+  }
+}

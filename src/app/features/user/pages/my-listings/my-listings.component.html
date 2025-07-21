@@ -131,23 +131,6 @@
               styleClass="status-tag"
             >
             </p-tag>
-            <div class="menu-container">
-              <p-button
-                icon="pi pi-ellipsis-v"
-                severity="secondary"
-                [text]="true"
-                size="small"
-                (onClick)="menu.toggle($event)"
-                styleClass="menu-button"
-              >
-              </p-button>
-              <p-menu
-                #menu
-                [model]="getMenuItems(listing)"
-                [popup]="true"
-                [appendTo]="'body'"
-              ></p-menu>
-            </div>
           </div>
 
           <h3 class="listing-title" (click)="viewListing(listing.listingId)">

@@ -1,0 +1,55 @@
+<div
+  class="product-card-new"
+  (click)="onCardClick()"
+  [routerLink]="[linkPath, product.id]"
+>
+  <!-- Product Image -->
+  <div class="product-image-container">
+    <img
+      [src]="getImageUrl()"
+      [alt]="product.title"
+      class="product-image"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Product Content -->
+  <div class="product-content">
+    <!-- Product Title -->
+    <h3 class="product-title">{{ product.title }}</h3>
+
+    <!-- Rating Stars -->
+    <div class="product-rating">
+      <div class="stars-container">
+        <span
+          *ngFor="let star of getStarsArray(); let i = index"
+          class="star"
+          [ngClass]="{
+            'star-filled': i < mathFloor(product.rating || 0),
+            'star-half':
+              i === mathFloor(product.rating || 0) &&
+              (product.rating || 0) % 1 >= 0.5,
+            'star-empty': i >= mathCeil(product.rating || 0)
+          }"
+        >
+          ★
+        </span>
+      </div>
+      <span class="rating-count">({{ product.reviews || 0 }})</span>
+    </div>
+
+    <!-- Price Section -->
+    <div class="price-section">
+      <div class="price-current">R$ {{ product.price | number : '1.2-2' }}</div>
+      <div class="price-original" *ngIf="product.originalPrice">
+        R$ {{ product.originalPrice | number : '1.2-2' }}
+      </div>
+      <div class="installments">
+        <span *ngIf="product.price"
+          >ou 12x de R$ {{ product.price / 12 | number : '1.2-2' }} sem
+          juros</span
+        >
+      </div>
+    </div>
+  </div>
+</div>
