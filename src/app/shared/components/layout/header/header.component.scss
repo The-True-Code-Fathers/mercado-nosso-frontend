@@ -55,14 +55,27 @@
   padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: 0;
 
   @media (max-width: 768px) {
     justify-content: space-between;
   }
+
+  &.dashboard-header {
+    justify-content: space-between;
+    gap: 0;
+
+    .brand {
+       margin-left: auto;
+    margin-right: auto;
+    }
+    
+    @media (max-width: 768px) {
+      justify-content: space-between;
+    }
+  }
 }
 
-/* Brand */
 .brand {
   display: flex;
   align-items: center;

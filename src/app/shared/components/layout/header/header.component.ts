@@ -72,6 +72,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   cartItemsCount = 3
   username: string | null = ''
   isLoggedIn = false
+  isDashboardRoute = false // Track if current route is dashboard
 
   // Responsive properties
   isMobile = false
@@ -100,6 +101,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.loadUsername()
     window.addEventListener('storage', this.handleStorageChange)
 
+    // Check initial route
+    this.isDashboardRoute = this.router.url.includes('/dashboard')
+
     // Subscribe to search term changes from the service
     const searchTermSub = this.searchService.searchTerm$.subscribe(term => {
       this.searchTerm = term
@@ -114,6 +118,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (event.url === '/' || event.url === '/home') {
           this.searchService.clearSearchTerm()
         }
+        // Check if current route is dashboard
+        this.isDashboardRoute = event.url.includes('/dashboard')
       })
     this.subscriptions.push(routerSub)
 
@@ -407,5 +413,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.categories.filter(
       category => !quickCategoryKeys.includes(category.key),
     )
+  }
+
+  // Get brand text based on current route
+  getBrandText(): string {
+    return this.isDashboardRoute ? 'Mercado Nosso Analytics' : 'Mercado Nosso'
   }
 }

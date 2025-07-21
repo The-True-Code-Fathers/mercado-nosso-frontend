@@ -1,57 +1,143 @@
-<div class="dashboard-content">
-  <!-- Top Cards -->
-  <div class="top-cards">
-    <p-card class="metric-card">
-      <div class="metric-content">
-        <h3>Total de Vendas</h3>
-        <div class="metric-value">{{ totalVendas }}</div>
-      </div>
-    </p-card>
-    
-    <p-card class="metric-card">
-      <div class="metric-content">
-        <h3>Novas Vendas</h3>
-        <div class="metric-value">{{ novasVendas }}</div>
-      </div>
-    </p-card>
+<div class="dashboard-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Acompanhe o desempenho das suas vendas</p>
+    </div>
   </div>
 
-  <!-- Chart Section -->
-  <div class="chart-section">
-    <p-card>
-      <div class="chart-header">
-        <h3>Vendas no Período</h3>
+  <!-- Top Section: Metrics + Quick Actions -->
+  <div class="top-section">
+    <div class="metric-card primary">
+      <div class="metric-icon">
+        <i class="pi pi-shopping-cart"></i>
+      </div>
+      <div class="metric-content">
+        <h3>Total de Vendas do Mês</h3>
+        <div class="metric-value">{{ totalVendasMes }}</div>
+        <div class="metric-change positive">
+          <i class="pi pi-arrow-up"></i>
+          Baseado nos seus produtos
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card secondary">
+      <div class="metric-icon">
+        <i class="pi pi-star"></i>
+      </div>
+      <div class="metric-content">
+        <h3>Média de Avaliação</h3>
+        <div class="metric-value">{{ mediaAvaliacoes }}</div>
+        <div class="metric-change positive">
+          <i class="pi pi-star"></i>
+          Baseado nas avaliações
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="quick-actions-card">
+      <div class="card-header">
+        <h3>Ações Rápidas</h3>
+      </div>
+      <div class="actions-grid">
+        <a class="action-button primary" routerLink="/create-listing">
+          <i class="pi pi-plus"></i>
+          <span>Novo Produto</span>
+        </a>
+        <a class="action-button secondary" routerLink="/user/my-listings">
+          <i class="pi pi-list"></i>
+          <span>Meus Produtos</span>
+        </a>
+        <a class="action-button neutral">
+          <i class="pi pi-chart-bar"></i>
+          <span>Relatórios</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="chart-card">
+      <div class="card-header">
+        <h3>Vendas</h3>
+        <div class="chart-filters">
+          <p-dropdown 
+            [options]="dateFilterOptions" 
+            [(ngModel)]="selectedDateFilter" 
+            (onChange)="onDateFilterChange()"
+            placeholder="Filtrar por período"
+            optionLabel="label"
+            optionValue="value"
+            class="date-filter">
+          </p-dropdown>
+        </div>
       </div>
       <div class="chart-container">
         <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
       </div>
-    </p-card>
+    </div>
+
+    <!-- Bar Chart for Best Selling Products -->
+    <div class="chart-card bar-chart-card">
+      <div class="card-header">
+        <h3>Produtos Mais Vendidos</h3>
+        <div class="chart-info">
+          <span>Top 5 produtos por quantidade</span>
+        </div>
+      </div>
+      <div class="chart-container">
+        <p-chart type="bar" [data]="barChartData" [options]="barChartOptions"></p-chart>
+      </div>
+    </div>
   </div>
 
-  <!-- Top Items Table -->
+  <!-- Products Table -->
   <div class="table-section">
-    <p-card>
-      <div class="table-header">
-        <h3>Itens Mais Vendidos</h3>
+    <div class="table-card">
+      <div class="card-header">
+        <h3>Seus Produtos Mais Vendidos</h3>
+        <div class="header-info">
+          <span>{{ itensMaisVendidos?.length || 0 }} produtos</span>
+        </div>
       </div>
-      <p-table [value]="itensMaisVendidos" [tableStyle]="{'min-width': '50rem'}">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Quantidade</th>
-            <th>R$ Acumulado</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-item>
-          <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.nome }}</td>
-            <td>{{ item.quantidade }}</td>
-            <td>{{ item.valorAcumulado }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
+      <div class="table-container">
+        <p-table [value]="itensMaisVendidos">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Produto</th>
+              <th>Quantidade Vendida</th>
+              <th>Receita Total</th>
+              <th>Performance</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>
+                <div class="product-info">
+                  <div class="product-avatar">{{ item.nome?.charAt(0) || 'P' }}</div>
+                  <span class="product-name">{{ item.nome }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="quantity-badge">{{ item.quantidade }} unidades</span>
+              </td>
+              <td>
+                <span class="revenue">R$ {{ item.valorAcumulado }}</span>
+              </td>
+              <td>
+                <span [class]="'performance-indicator ' + getPerformanceClass(item.performance)">
+                  <i [class]="'pi ' + getPerformanceIcon(item.performance)"></i>
+                  {{ getPerformanceText(item.performance) }}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
   </div>
 </div>

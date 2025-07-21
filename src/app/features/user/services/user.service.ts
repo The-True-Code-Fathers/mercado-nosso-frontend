@@ -8,14 +8,14 @@ export interface LoginRequest {
 }
 
 export interface UpdateUserRequest {
-  fullName: string
-  profilePictureUrl?: string
-  email: string
-  telephoneNumber?: string
-  cnpj?: string
-  socialReason?: string
-  isSeller?: boolean
-  cep?: string
+    fullName: string;
+    profilePictureUrl?: string;
+    email: string;
+    telephoneNumber?: string;
+    cnpj?: string;
+    socialReason?: string;
+    isSeller?: boolean;
+    cep?: string;
 }
 
 export interface BecomeSellerRequest {
@@ -27,16 +27,17 @@ export interface BecomeSellerRequest {
 }
 
 export interface CreateUserRequest {
-  fullName: string
-  email: string
-  passwordHash: string
-  cpf: string
-  cnpj: string
-  isSeller: boolean
+    fullName: string;
+    email: string;
+    passwordHash: string;
+    cpf: string;
+    cnpj: string;
+    isSeller: boolean;
+    cep?: string;
 }
 
 export interface UserResponse {
-  id: string
+    id: string
   fullName: string
   email: string
   isSeller: boolean
