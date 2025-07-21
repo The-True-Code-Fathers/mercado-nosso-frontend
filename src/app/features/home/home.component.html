@@ -41,6 +41,45 @@
         [linkPath]="'/product'"
         class="product-card-wrapper"
       ></app-product-card-new>
+    <app-product-card-new
+        *ngFor="let product of featuredProducts"
+        [product]="{
+          id: product.id.toString(),
+          title: product.name,
+          price: product.price,
+          image: product.image,
+          rating: product.rating,
+          reviews: product.reviews
+        }"
+        [linkPath]="'/product'"
+        class="product-card-wrapper"
+      ></app-product-card-new>
+      <app-product-card-new
+        *ngFor="let product of featuredProducts"
+        [product]="{
+          id: product.id.toString(),
+          title: product.name,
+          price: product.price,
+          image: product.image,
+          rating: product.rating,
+          reviews: product.reviews
+        }"
+        [linkPath]="'/product'"
+        class="product-card-wrapper"
+      ></app-product-card-new>
+      <app-product-card-new
+        *ngFor="let product of featuredProducts"
+        [product]="{
+          id: product.id.toString(),
+          title: product.name,
+          price: product.price,
+          image: product.image,
+          rating: product.rating,
+          reviews: product.reviews
+        }"
+        [linkPath]="'/product'"
+        class="product-card-wrapper"
+      ></app-product-card-new>
     </div>
   </section>
 
