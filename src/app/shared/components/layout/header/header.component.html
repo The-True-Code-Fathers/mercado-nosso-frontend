@@ -167,6 +167,21 @@
             <button
               pButton
               type="button"
+              label="Dashboard"
+              icon="pi pi-th-large"
+              routerLink="/dashboard"
+              (click)="userMenuPanel.hide()"
+              *ngIf="isLoggedIn"
+              style="
+                min-width: 160px;
+                max-width: 220px;
+                width: 90%;
+                margin-bottom: 0.4rem;
+              "
+            ></button>
+            <button
+              pButton
+              type="button"
               label="Editar Perfil"
               icon="pi pi-user-edit"
               routerLink="/edit-profile"
