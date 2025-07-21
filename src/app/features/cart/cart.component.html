@@ -140,30 +140,31 @@
             <span class="amount">R$ {{ total() | number : '1.2-2' }}</span>
           </div>
 
-          <div class="summary-actions">
-            <p-button
-              *ngIf="selectedItemsCount > 0"
-              label="Remover Selecionados ({{ selectedItemsCount }})"
-              icon="pi pi-trash"
-              styleClass="p-button-outlined p-button-danger w-full mb-2"
-              (click)="removeSelectedItems()"
-            >
-            </p-button>
-
+          <div class="summary-actions" style="margin-top: 0">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem">
+              <p-button
+                label="Limpar Carrinho"
+                icon="pi pi-trash"
+                styleClass="p-button-outlined p-button-danger clear-btn w-full mb-2"
+                [ngStyle]="{ height: '2.2rem', fontSize: '1rem' }"
+                (click)="clearCart()"
+              >
+              </p-button>
+              <p-button
+                *ngIf="selectedItemsCount > 0"
+                label="Remover Selecionados ({{ selectedItemsCount }})"
+                icon="pi pi-trash"
+                styleClass="p-button-outlined p-button-danger w-full mb-2"
+                (click)="removeSelectedItems()"
+              >
+              </p-button>
+            </div>
             <div class="action-buttons-row">
               <p-button
                 label="Finalizar Compra"
                 icon="pi pi-credit-card"
                 styleClass="p-button-lg checkout-btn"
                 (click)="proceedToCheckout()"
-              >
-              </p-button>
-
-              <p-button
-                label="Limpar Carrinho"
-                icon="pi pi-trash"
-                styleClass="p-button-outlined p-button-danger p-button-lg clear-btn"
-                (click)="clearCart()"
               >
               </p-button>
             </div>
