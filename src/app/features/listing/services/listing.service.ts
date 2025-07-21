@@ -23,6 +23,7 @@ export interface Listing {
   salesCount?: number
   active?: boolean
   createdAt?: string
+  originalPrice?: number;
 }
 
 export interface Review {
@@ -68,13 +69,17 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class ListingService {
-  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/listings`
+  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api`
   private reviewsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
 
   constructor(private http: HttpClient) {}
 
   getListingById(id: string): Observable<Listing> {
-    return this.http.get<Listing>(`${this.apiUrl}/${id}`)
+    return this.http.get<Listing>(`${this.apiUrl}/listings/${id}`)
+  }
+
+  getListingBySku(id: string): Observable<Listing> {
+    return this.http.get<Listing>(`${this.apiUrl}/listings/item/${id}`)
   }
 
   getAllListings(): Observable<Listing[]> {
@@ -142,4 +147,15 @@ export class ListingService {
       }),
     )
   }
+
+  /**
+   * Busca produtos relacionados com base no SKU de um produto principal.
+   * @param sku O SKU do produto para o qual se deseja encontrar relacionados.
+   * @returns Um Observable com um array de Listings.
+   */
+  getRelatedProductsBySku(sku: string): Observable<Listing[]> {
+    // Este endpoint precisa existir no seu backend. Ex: GET /api/listings/related/SKU123
+    return this.http.get<Listing[]>(`${this.apiUrl}/recommendations/${sku}`);
+  }
+
 }

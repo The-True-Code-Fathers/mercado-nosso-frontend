@@ -22,6 +22,7 @@
   <div class="header-main">
     <!-- Mobile Search Header (replaces entire header when active) -->
     <div
+      *ngIf="!isDashboardRoute"
       class="mobile-search-header"
       [class.mobile-search-active]="mobileSearchVisible"
     >
@@ -54,17 +55,15 @@
       </div>
     </div>
 
-    <!-- Regular Header Content -->
-    <div class="header-container" [class.header-hidden]="mobileSearchVisible">
-      <!-- Logo/Brand -->
+    <div class="header-container" [class.header-hidden]="mobileSearchVisible" [class.dashboard-header]="isDashboardRoute">
       <div class="brand" routerLink="/home">
         <i class="pi pi-shopping-bag brand-icon"></i>
-        <span class="brand-text">Mercado Nosso</span>
+        <span class="brand-text">{{ getBrandText() }}</span>
       </div>
 
-      <!-- Mobile Actions -->
       <div class="mobile-actions">
         <p-button
+          *ngIf="!isDashboardRoute"
           icon="pi pi-search"
           styleClass="p-button-text p-button-rounded mobile-search-toggle"
           (click)="toggleMobileSearch()"
@@ -81,7 +80,7 @@
       </div>
 
       <!-- Desktop Navigation -->
-      <div class="desktop-nav">
+      <div class="desktop-nav" *ngIf="!isDashboardRoute">
         <!-- Search Bar - More prominent -->
         <div class="search-container">
           <div class="search-wrapper">
@@ -108,20 +107,6 @@
 
       <!-- User Actions -->
       <div class="user-actions desktop-only">
-        <!-- Categories Button -->
-        <div class="categories-container">
-          <p-button
-            label="Venda conosco"
-            icon="pi pi-shop"
-            styleClass="p-button-outlined categories-button"
-            routerLink="/create-listing"
-            [attr.aria-expanded]="categoriesMenuVisible"
-            [attr.aria-haspopup]="true"
-          />
-        </div>
-
-        <div class="action-separator"></div>
-
         <div class="cart-container">
           <p-button
             icon="pi pi-shopping-cart"
@@ -237,6 +222,14 @@
         </p-overlayPanel>
 
         <p-button
+          icon="pi pi-home"
+          styleClass="p-button-text p-button-rounded home-action"
+          pTooltip="Página Inicial"
+          routerLink="/home"
+        >
+        </p-button>
+
+        <p-button
           [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
           styleClass="p-button-text p-button-rounded theme-action"
           [pTooltip]="isDarkMode ? 'Modo Claro' : 'Modo Escuro'"
@@ -245,7 +238,7 @@
         </p-button>
       </div>
     </div>
-    <div class="quick-categories">
+    <div class="quick-categories" *ngIf="!isDashboardRoute">
       <div class="all-categories-container">
         <span
           class="category-link all-categories-trigger"
