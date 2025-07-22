@@ -59,11 +59,19 @@ export interface SearchParams {
     | 'NAME_DESC'
     | 'CREATED_AT_ASC'
     | 'CREATED_AT_DESC'
+    | 'RATING_DESC'
   condition?: 'NEW' | 'USED'
   minPrice?: number
   maxPrice?: number
   page?: number
   size?: number
+}
+
+export interface CategorySummary {
+  key: string;      // ex: 'electronics'
+  name: string;     // ex: 'Eletrônicos'
+  icon?: string;    // ex: 'pi pi-desktop'
+  count?: number;   // ex: 2500
 }
 
 @Injectable({
@@ -74,6 +82,33 @@ export class ListingService {
   private reviewsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
 
   constructor(private http: HttpClient) {}
+
+  // =========================================================
+  // NOVO MÉTODO PARA BUSCAR PRODUTOS EM DESTAQUE
+  // =========================================================
+  /**
+   * Busca os listings mais bem avaliados de forma paginada.
+   * @param limit O número de produtos a serem retornados.
+   */
+  getFeaturedListings(limit: number = 4): Observable<PagedListingResponse> {
+    const params: SearchParams = {
+      ordering: 'RATING_DESC', // Usa a nova ordenação
+      page: 0,
+      size: limit,
+    };
+    return this.searchListingsPaginated(params);
+  }
+
+  // =========================================================
+  // NOVO MÉTODO PARA BUSCAR CATEGORIAS
+  // =========================================================
+  /**
+   * Busca um resumo de todas as categorias de produtos.
+   * Requer um endpoint na API: GET /api/categories
+   */
+  getCategories(): Observable<CategorySummary[]> {
+    return this.http.get<CategorySummary[]>(`${this.apiUrl}/categories`);
+  }
 
   getListingById(id: string): Observable<Listing> {
     return this.http.get<Listing>(`${this.apiUrl}/listings/${id}`)

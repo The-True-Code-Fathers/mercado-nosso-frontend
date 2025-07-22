@@ -10,6 +10,9 @@ import { BadgeModule } from 'primeng/badge'
 import { RatingModule } from 'primeng/rating'
 import { CarouselModule } from 'primeng/carousel'
 
+import { Document } from 'bson'; 
+import { ListingService, Listing, PagedListingResponse } from '../listing/services/listing.service'
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -29,110 +32,50 @@ import { CarouselModule } from 'primeng/carousel'
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  searchTerm: string = ''
+  searchTerm: string = '';
 
-  heroSlides = [
-    {
-      id: 1,
-      image: '/images/banner-lg.jpg',
-      title: 'Compre e venda com segurança',
-      subtitle: 'Milhares de produtos esperando por você no Mercado Nosso',
-      buttonText: 'Explorar Produtos',
-      buttonLink: '/products',
-    },
-  ]
+  // 👈 FIX: Usar o tipo 'Document' para o array de categorias
+  categories: Document[] = [];
+  // 👈 FIX: Usar o tipo 'Listing' para os produtos
+  featuredProducts: Listing[] = [];
 
-  constructor(private router: Router) {}
+  heroSlides = [ /* ... seu slide ... */ ];
+
+  // A injeção de dependência agora funciona porque o ListingService foi importado
+  constructor(private router: Router, private listingService: ListingService) {}
 
   ngOnInit() {
+    this.loadCategories();
+    this.loadFeaturedProducts();
   }
 
-  categories = [
-    {
-      key: 'electronics',
-      name: 'Eletrônicos',
-      description: 'Celulares, notebooks, TVs',
-      icon: 'pi pi-desktop',
-      count: '2.5k+',
-    },
-    {
-      key: 'clothing',
-      name: 'Roupas e Calçados',
-      description: 'Moda masculina e feminina',
-      icon: 'pi pi-user',
-      count: '1.8k+',
-    },
-    {
-      key: 'home',
-      name: 'Casa e Jardim',
-      description: 'Móveis, decoração, ferramentas',
-      icon: 'pi pi-home',
-      count: '3.2k+',
-    },
-    {
-      key: 'sports',
-      name: 'Esportes',
-      description: 'Equipamentos e acessórios',
-      icon: 'pi pi-star',
-      count: '950+',
-    },
-    {
-      key: 'books',
-      name: 'Livros',
-      description: 'Literatura, técnicos, didáticos',
-      icon: 'pi pi-book',
-      count: '1.2k+',
-    },
-    {
-      key: 'beauty',
-      name: 'Beleza',
-      description: 'Cosméticos, perfumes, cuidados',
-      icon: 'pi pi-heart',
-      count: '780+',
-    },
-  ]
+  loadCategories() {
+    this.listingService.getCategories().subscribe({
+      // 👈 FIX: Adicionar o tipo para 'data'
+      next: (data: Document[]) => {
+        this.categories = data;
+      },
+      // 👈 FIX: Adicionar o tipo para 'err'
+      error: (err: any) => console.error('Erro ao carregar categorias:', err),
+    });
+  }
 
-  featuredProducts = [
-    {
-      id: 1,
-      name: 'Smartphone Samsung Galaxy A54',
-      price: 1299.99,
-      image: 'https://via.placeholder.com/300x200?text=Samsung+Galaxy+A54',
-      rating: 4.5,
-      reviews: 128,
-    },
-    {
-      id: 2,
-      name: 'Notebook Dell Inspiron 15',
-      price: 2499.99,
-      image: 'https://via.placeholder.com/300x200?text=Dell+Inspiron+15',
-      rating: 4.2,
-      reviews: 89,
-    },
-    {
-      id: 3,
-      name: 'Smart TV LG 55" 4K',
-      price: 1899.99,
-      image: 'https://via.placeholder.com/300x200?text=LG+Smart+TV+55',
-      rating: 4.7,
-      reviews: 203,
-    },
-    {
-      id: 4,
-      name: 'Fone Bluetooth JBL Tune 510BT',
-      price: 199.99,
-      image: 'https://via.placeholder.com/300x200?text=JBL+Tune+510BT',
-      rating: 4.3,
-      reviews: 156,
-    },
-  ]
+  loadFeaturedProducts() {
+    this.listingService.getFeaturedListings(4).subscribe({
+      // 👈 FIX: Adicionar o tipo para 'pagedResponse'
+      next: (pagedResponse: PagedListingResponse) => {
+        this.featuredProducts = pagedResponse.content;
+      },
+      // 👈 FIX: Adicionar o tipo para 'err'
+      error: (err: any) => console.error('Erro ao carregar produtos em destaque:', err),
+    });
+  }
 
   onHeroSearch() {
     if (this.searchTerm.trim()) {
-      // Navegar para página de produtos com termo de busca
       this.router.navigate(['/products'], {
-        queryParams: { search: this.searchTerm },
-      })
+        queryParams: { name: this.searchTerm },
+      });
     }
   }
 }
