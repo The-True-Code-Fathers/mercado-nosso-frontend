@@ -105,54 +105,25 @@ export class ListingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('🏃 ListingComponent ngOnInit called')
-
-    // Subscribe to query parameters and reload when they change
+    console.log('🏃 ListingComponent ngOnInit called');
+  
+    // This subscribes to the URL and will re-run whenever the parameters change
     this.route.queryParams.subscribe(params => {
-      console.log('📍 URL params changed:', params)
-
-      let shouldReload = false
-
-      // Check if category parameter changed
-      const newCategory = params['category'] || ''
-      if (this.selectedCategory !== newCategory) {
-        console.log(
-          '📂 Category changed from',
-          this.selectedCategory,
-          'to',
-          newCategory,
-        )
-        this.selectedCategory = newCategory
-        shouldReload = true
-      }
-
-      // Check if search term parameter changed
-      const newSearchTerm = params['name'] || ''
-      if (this.searchTerm !== newSearchTerm) {
-        console.log(
-          '🔍 Search term changed from',
-          this.searchTerm,
-          'to',
-          newSearchTerm,
-        )
-        this.searchTerm = newSearchTerm
-
-        // Update the search service to sync with header
-        this.searchService.setSearchTerm(newSearchTerm)
-
-        shouldReload = true
-      }
-
-      // Reset to first page when parameters change
-      if (shouldReload) {
-        console.log('🔄 Parameters changed, resetting to first page')
-        this.currentPage = 0
-      }
-
-      // Always load listings (including initial load)
-      console.log('🚀 Loading listings...')
-      this.loadListings()
-    })
+      console.log('📍 URL params received:', params);
+  
+      // Get the category and name from the URL, providing empty strings as defaults
+      const categoryFromUrl = params['category'] || '';
+      const nameFromUrl = params['name'] || '';
+  
+      // Update the component's state from the URL's parameters
+      this.selectedCategory = categoryFromUrl;
+      this.searchTerm = nameFromUrl;
+      this.currentPage = 0; // Reset to the first page on any filter change
+  
+      // Now, load the listings using these newly updated parameters
+      console.log('🚀 Loading listings with new params...');
+      this.loadListings();
+    });
   }
 
   loadListings(): void {
@@ -192,19 +163,16 @@ export class ListingComponent implements OnInit {
       params.category = this.selectedCategory;
     }
   
-    // The rest of your logic for condition, price, etc. is correct
+    // Handle the rest of the filters
     if (this.selectedCondition) {
       params.condition = this.selectedCondition as 'NEW' | 'USED';
     }
-  
     if (this.minPrice && this.minPrice > 0) {
       params.minPrice = this.minPrice;
     }
-  
     if (this.maxPrice && this.maxPrice > 0) {
       params.maxPrice = this.maxPrice;
     }
-  
     if (this.sortBy) {
       params.ordering = this.sortBy as any;
     }

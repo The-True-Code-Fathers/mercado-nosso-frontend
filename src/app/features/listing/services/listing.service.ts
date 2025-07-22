@@ -141,6 +141,10 @@ export class ListingService {
       httpParams = httpParams.set('page', params.page.toString())
     if (params.size !== undefined)
       httpParams = httpParams.set('size', params.size.toString())
+    if (params.category) {
+      httpParams = httpParams.set('category', params.category)
+    }
+  
 
     return this.http.get<PagedListingResponse>(
       `${this.apiUrl}/listings/search/paginated`,
