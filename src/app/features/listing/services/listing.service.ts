@@ -128,7 +128,7 @@ export class ListingService {
 
   updateListing(listing: Listing): Observable<Listing> {
     return this.http.put<Listing>(
-      `${this.apiUrl}/${listing.listingId}`,
+      `${this.apiUrl}/listings/${listing.listingId}`,
       listing,
     )
   }
