@@ -10,7 +10,7 @@ import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
 export interface Listing {
   listingId: string
   sellerId: string
-  sku: stringgi
+  sku: string
   productRecommendation: string[]
   title: string
   description: string
