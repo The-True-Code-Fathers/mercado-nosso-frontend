@@ -29,7 +29,7 @@ describe('ListingService', () => {
 
   it('should fetch listing by id', () => {
     const mockListing: Listing = {
-      listingId: '1',
+      id: '1',
       sellerId: 'seller-123',
       sku: 'SKU-001',
       productRecommendation: [],
@@ -58,7 +58,7 @@ describe('ListingService', () => {
   it('should fetch all listings', () => {
     const mockListings: Listing[] = [
       {
-        listingId: '1',
+        id: '1',
         sellerId: 'seller-123',
         sku: 'SKU-001',
         productRecommendation: [],

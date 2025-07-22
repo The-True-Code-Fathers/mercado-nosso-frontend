@@ -363,8 +363,8 @@ export class ListingComponent implements OnInit {
       price: listing.price,
       originalPrice: undefined,
       image: listing.imagesUrl[0] || '/images/placeholder.png',
-      rating: 0, // Força rating 0 para todos os produtos
-      reviews: 0, // Força 0 reviews para todos os produtos
+      rating: listing.rating, // Força rating 0 para todos os produtos
+      reviews: listing.reviewsId.length, // Força 0 reviews para todos os produtos
       installments: `12x de R$ ${(listing.price / 12).toFixed(2)} sem juros`,
     }
   }

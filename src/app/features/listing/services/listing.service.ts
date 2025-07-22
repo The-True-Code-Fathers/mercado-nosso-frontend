@@ -1,11 +1,9 @@
 import { Injectable, inject } from '@angular/core'
-import { HttpClient, HttpParams } from '@angular/common/http' 
+import { HttpClient, HttpParams } from '@angular/common/http'
 import { of } from 'rxjs'
 import { Observable } from 'rxjs'
 import { tap, catchError, map } from 'rxjs/operators'
 import { throwError } from 'rxjs'
-
-
 
 import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
 
@@ -26,7 +24,7 @@ export interface Listing {
   salesCount?: number
   active?: boolean
   createdAt?: string
-  originalPrice?: number;
+  originalPrice?: number
 }
 
 export interface Review {
@@ -158,20 +156,19 @@ export class ListingService {
    */
   getRelatedProductsBySku(sku: string): Observable<Listing[]> {
     // Este endpoint precisa existir no seu backend. Ex: GET /api/listings/related/SKU123
-    return this.http.get<Listing[]>(`${this.apiUrl}/recommendations/${sku}`);
+    return this.http.get<Listing[]>(`${this.apiUrl}/recommendations/${sku}`)
   }
 
   getListingsBySkus(skus: string[]): Observable<Listing[]> {
-  // If the input array is empty, don't make an API call
-  if (!skus || skus.length === 0) {
-    return of([]);
-  }
+    // If the input array is empty, don't make an API call
+    if (!skus || skus.length === 0) {
+      return of([])
+    }
 
-  const url = `${this.apiUrl}/listings/by-skus`;
-  
-  // Change from http.get to http.post
-  // The 'skus' array is now sent as the request body, not as URL params.
-  return this.http.post<Listing[]>(url, skus);
-}
-  
+    const url = `${this.apiUrl}/listings/by-skus`
+
+    // Change from http.get to http.post
+    // The 'skus' array is now sent as the request body, not as URL params.
+    return this.http.post<Listing[]>(url, skus)
+  }
 }
