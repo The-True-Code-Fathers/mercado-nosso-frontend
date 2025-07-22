@@ -9,14 +9,12 @@ import {
   ReviewService,
   ReviewResponse,
 } from '../../../user/services/review.service'
-import { finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators'
 import { switchMap } from 'rxjs/operators'
 import { of } from 'rxjs'
-import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-
-
+import { Observable } from 'rxjs'
+import { Injectable } from '@angular/core'
+import { HttpClient, HttpParams } from '@angular/common/http'
 
 // Estender Review para incluir propriedades do frontend
 export interface ReviewWithFrontendData extends ReviewResponse {
@@ -721,44 +719,54 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     this.freteCalculado = true
   }
 
-
-
-// Substitua a função antiga por esta nova:
-private loadRelatedProducts(sku: string): void {
-  if (!sku) {
-    this.relatedProducts = [];
-    return;
-  }
-
-  this.listingService.getRelatedProductsBySku(sku).pipe(
-    // Use switchMap to take the result of the first call and start a new one
-    switchMap((response: any) => {
-      // Check if the response has the 'recommendations' array
-      if (response && Array.isArray(response.recommendations) && response.recommendations.length > 0) {
-        // If yes, call the new service method with the list of SKUs
-        return this.listingService.getListingsBySkus(response.recommendations);
-      } else {
-        // If no recommendations, return an empty observable to stop the chain
-        return of([]);
-      }
-    })
-  ).subscribe({
-    next: (finalProducts) => {
-      // This 'finalProducts' variable now contains the full details we need
-      this.relatedProducts = finalProducts.filter(p => p.sku !== sku);
-    },
-    error: (err) => {
-      console.error('An error occurred while fetching related products:', err);
-      this.relatedProducts = [];
+  // Substitua a função antiga por esta nova:
+  private loadRelatedProducts(sku: string): void {
+    if (!sku) {
+      this.relatedProducts = []
+      return
     }
-    });
+
+    this.listingService
+      .getRelatedProductsBySku(sku)
+      .pipe(
+        // Use switchMap to take the result of the first call and start a new one
+        switchMap((response: any) => {
+          // Check if the response has the 'recommendations' array
+          if (
+            response &&
+            Array.isArray(response.recommendations) &&
+            response.recommendations.length > 0
+          ) {
+            // If yes, call the new service method with the list of SKUs
+            return this.listingService.getListingsBySkus(
+              response.recommendations,
+            )
+          } else {
+            // If no recommendations, return an empty observable to stop the chain
+            return of([])
+          }
+        }),
+      )
+      .subscribe({
+        next: finalProducts => {
+          // This 'finalProducts' variable now contains the full details we need
+          this.relatedProducts = finalProducts.filter(p => p.sku !== sku)
+        },
+        error: err => {
+          console.error(
+            'An error occurred while fetching related products:',
+            err,
+          )
+          this.relatedProducts = []
+        },
+      })
   }
   private initializeReviews(): void {
     // Usar dados reais do backend quando disponíveis
     const listing = this.listing()
-    if (listing && listing.listingId) {
+    if (listing && listing.id) {
       // Carregar reviews reais da API com nomes dos usuários
-      this.reviewService.getReviewsByListing(listing.listingId).subscribe({
+      this.reviewService.getReviewsByListing(listing.id).subscribe({
         next: (reviews: ReviewResponse[]) => {
           // Adicionar propriedades do frontend aos reviews
           this.reviews = reviews.map(review => ({
@@ -897,12 +905,13 @@ private loadRelatedProducts(sku: string): void {
   }
 
   // Navigation Methods
-  goToProduct(productId: string): void { // Mude de 'number' para 'string'
-    console.log('Navegando para produto:', productId);
+  goToProduct(productId: string): void {
+    // Mude de 'number' para 'string'
+    console.log('Navegando para produto:', productId)
     this.router.navigate(['/listing', productId]).catch(err => {
-      console.error('Erro na navegação:', err);
-      window.location.href = `/listing/${productId}`;
-    });
+      console.error('Erro na navegação:', err)
+      window.location.href = `/listing/${productId}`
+    })
   }
 
   openImageModal(image: string): void {
@@ -1330,7 +1339,4 @@ private loadRelatedProducts(sku: string): void {
       this.quantity--
     }
   }
-
-  
-
 }
