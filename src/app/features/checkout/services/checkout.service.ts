@@ -221,7 +221,6 @@ export class CheckoutService {
         zipCode: shippingAddress.zipCode,
         fullName: shippingAddress.fullName,
         id: shippingAddress.id,
-        isDefault: shippingAddress.isDefault,
       },
       paymentMethod: {
         id: paymentMethod.id,

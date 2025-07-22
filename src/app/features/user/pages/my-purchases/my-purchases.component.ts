@@ -102,8 +102,8 @@ export class MyPurchasesComponent implements OnInit {
           const allListingIds: string[] = []
 
           orders.forEach(order => {
-            order.listingID.forEach(listingId => {
-              allListingIds.push(listingId)
+            order.orderItems.forEach(item => {
+              allListingIds.push(item.listingId)
             })
           })
 
@@ -129,9 +129,10 @@ export class MyPurchasesComponent implements OnInit {
               // Contar quantas vezes cada listing aparece nas orders
               const listingQuantities = new Map<string, number>()
               orders.forEach(order => {
-                order.listingID.forEach(listingId => {
-                  const currentQuantity = listingQuantities.get(listingId) || 0
-                  listingQuantities.set(listingId, currentQuantity + 1)
+                order.orderItems.forEach(item => {
+                  const currentQuantity =
+                    listingQuantities.get(item.listingId) || 0
+                  listingQuantities.set(item.listingId, currentQuantity + 1)
                 })
               })
 
@@ -141,7 +142,9 @@ export class MyPurchasesComponent implements OnInit {
               validListings.forEach(listing => {
                 if (!uniquePurchases.has(listing.listingId)) {
                   const order = orders.find(o =>
-                    o.listingID.includes(listing.listingId),
+                    o.orderItems.some(
+                      item => item.listingId === listing.listingId,
+                    ),
                   )
 
                   const purchase: MyPurchase = {
@@ -267,9 +270,9 @@ export class MyPurchasesComponent implements OnInit {
   getOrderStatusLabel(status: Order['status']): string {
     const statusMap: Record<Order['status'], string> = {
       OPEN: 'Processando',
-      PROCESSING: 'Em Processamento',
+      INVOICED: 'Faturado',
       SHIPPED: 'Enviado',
-      DELIVERED: 'Entregue',
+      CLOSED: 'Entregue',
       CANCELLED: 'Cancelado',
     }
     return statusMap[status] || 'Processando'
@@ -283,9 +286,9 @@ export class MyPurchasesComponent implements OnInit {
       'success' | 'info' | 'warning' | 'danger'
     > = {
       OPEN: 'info',
-      PROCESSING: 'warning',
+      INVOICED: 'warning',
       SHIPPED: 'info',
-      DELIVERED: 'success',
+      CLOSED: 'success',
       CANCELLED: 'danger',
     }
     return severityMap[status] || 'info'
