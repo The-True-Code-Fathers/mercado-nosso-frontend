@@ -8,6 +8,7 @@ import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { DashboardService } from './dashboard.service';
 import { DEVELOPMENT_CONFIG } from '../../shared/config/development.config';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +19,8 @@ import { DEVELOPMENT_CONFIG } from '../../shared/config/development.config';
     CardModule,
     ChartModule,
     TableModule,
-    DropdownModule
+    DropdownModule,
+    DialogModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -42,6 +44,7 @@ export class DashboardComponent implements OnInit {
   barChartOptions: any;
   itensMaisVendidos: any[] = [];
   dashboardRawData: any; // Armazena os dados brutos do backend
+  showExportModal = false; // NOVO: controla o modal
 
   constructor(private dashboardService: DashboardService) {}
 
@@ -53,7 +56,7 @@ export class DashboardComponent implements OnInit {
     const period = this.selectedDateFilter;
     const sellerId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID;
     console.log('DEBUG sellerId:', sellerId, 'period:', period);
-    
+
     this.dashboardService.getDashboardData(sellerId, period).subscribe({
       next: (data) => {
         console.log('DEBUG dashboard response:', data);
@@ -171,20 +174,20 @@ export class DashboardComponent implements OnInit {
       },
       scales: {
         x: {
-          ticks: { 
-            color: '#757575', 
-            font: { size: 10 }, 
-            maxRotation: 45, 
-            minRotation: 0 
+          ticks: {
+            color: '#757575',
+            font: { size: 10 },
+            maxRotation: 45,
+            minRotation: 0
           },
           grid: { display: false }
         },
         y: {
           beginAtZero: true,
-          ticks: { 
-            color: '#757575', 
-            font: { size: 11 }, 
-            callback: (value: any) => value + ' un' 
+          ticks: {
+            color: '#757575',
+            font: { size: 11 },
+            callback: (value: any) => value + ' un'
           },
           grid: { color: '#E0E0E0', display: true }
         }
@@ -195,7 +198,7 @@ export class DashboardComponent implements OnInit {
   updateLineChart() {
     // Gera dados simulados baseados no período selecionado e nos dados reais
     const { labels, data } = this.generateChartDataByPeriod();
-    
+
     this.chartData = {
       labels: labels,
       datasets: [
@@ -261,34 +264,34 @@ export class DashboardComponent implements OnInit {
 
   generateChartDataByPeriod(): { labels: string[], data: number[] } {
     const currentTotal = parseFloat(this.totalVendasMes) || 0;
-    
+
     switch(this.selectedDateFilter) {
       case '7d':
         return {
           labels: ['6 dias', '5 dias', '4 dias', '3 dias', '2 dias', 'Ontem', 'Hoje'],
           data: this.generateDataPoints(7, currentTotal, 0.3)
         };
-      
+
       case '30d':
         return {
           labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
           data: this.generateDataPoints(4, currentTotal, 0.4)
         };
-      
+
       case '3m':
         const last3Months = this.getLast3MonthsLabels();
         return {
           labels: last3Months,
           data: this.generateDataPoints(3, currentTotal, 0.6)
         };
-      
+
       case '1y':
         const last12Months = this.getLast12MonthsLabels();
         return {
           labels: last12Months,
           data: this.generateDataPoints(12, currentTotal, 0.8)
         };
-      
+
       default:
         return {
           labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
@@ -300,7 +303,7 @@ export class DashboardComponent implements OnInit {
   generateDataPoints(count: number, total: number, variance: number): number[] {
     const data: number[] = [];
     const baseValue = total / count;
-    
+
     for (let i = 0; i < count; i++) {
       // Gera variação mais realística, com crescimento no final
       const growthFactor = (i + 1) / count; // 0.2, 0.4, 0.6, 0.8, 1.0
@@ -308,35 +311,35 @@ export class DashboardComponent implements OnInit {
       const value = Math.max(0, baseValue * (0.5 + growthFactor + randomVariance));
       data.push(Math.round(value));
     }
-    
+
     return data;
   }
 
   getLast3MonthsLabels(): string[] {
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     const currentMonth = new Date().getMonth();
     const labels = [];
-    
+
     for (let i = 2; i >= 0; i--) {
       const monthIndex = (currentMonth - i + 12) % 12;
       labels.push(months[monthIndex]);
     }
-    
+
     return labels;
   }
 
   getLast12MonthsLabels(): string[] {
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     const currentMonth = new Date().getMonth();
     const labels = [];
-    
+
     for (let i = 11; i >= 0; i--) {
       const monthIndex = (currentMonth - i + 12) % 12;
       labels.push(months[monthIndex]);
     }
-    
+
     return labels;
   }
 
@@ -389,4 +392,19 @@ export class DashboardComponent implements OnInit {
       default: return 18.3;
     }
   }
+
+  exportReport(type: 'pdf' | 'excel') {
+  const sellerId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID;
+  this.dashboardService.exportReport(sellerId, type).subscribe(blob => {
+    const fileType = type === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const fileExtension = type === 'pdf' ? 'pdf' : 'xlsx';
+    const url = window.URL.createObjectURL(new Blob([blob], { type: fileType }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `relatorio.${fileExtension}`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    this.showExportModal = false;
+  });
+}
 }

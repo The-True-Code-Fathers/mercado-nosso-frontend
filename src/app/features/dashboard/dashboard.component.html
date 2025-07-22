@@ -51,7 +51,7 @@
           <i class="pi pi-list"></i>
           <span>Meus Produtos</span>
         </a>
-        <a class="action-button neutral">
+        <a class="action-button neutral" (click)="showExportModal = true">
           <i class="pi pi-chart-bar"></i>
           <span>Relatórios</span>
         </a>
@@ -134,9 +134,7 @@
                 </div>
               </td>
               <td>
-                <span class="quantity-badge"
-                  >{{ item.quantidade }} unidades</span
-                >
+                <span class="quantity-badge">{{ item.quantidade }} unidades</span>
               </td>
               <td>
                 <span class="revenue">R$ {{ item.valorAcumulado }}</span>
@@ -158,4 +156,11 @@
       </div>
     </div>
   </div>
+
+  <p-dialog header="Exportar Relatório" [(visible)]="showExportModal" [modal]="true" [closable]="true" [style]="{width: '350px'}">
+    <div class="export-options" style="display: flex; flex-direction: column; gap: 1rem;">
+      <button pButton type="button" label="Exportar PDF" icon="pi pi-file-pdf" (click)="exportReport('pdf')"></button>
+      <button pButton type="button" label="Exportar Excel" icon="pi pi-file-excel" (click)="exportReport('excel')"></button>
+    </div>
+  </p-dialog>
 </div>
