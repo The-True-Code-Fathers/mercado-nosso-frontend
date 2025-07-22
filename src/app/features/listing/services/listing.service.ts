@@ -106,7 +106,7 @@ export class ListingService {
       httpParams = httpParams.set('size', params.size.toString())
 
     return this.http.get<PagedListingResponse>(
-      `${this.apiUrl}/search/paginated`,
+      `${this.apiUrl}/listings/search/paginated`,
       {
         params: httpParams,
       },
