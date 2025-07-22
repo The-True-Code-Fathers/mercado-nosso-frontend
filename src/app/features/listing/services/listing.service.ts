@@ -108,15 +108,15 @@ export class ListingService {
    * Requer um endpoint na API: GET /api/categories
    */
   getCategories(): Observable<CategorySummary[]> {
-    return this.http.get<CategorySummary[]>(`${this.apiUrl}/listings/categories`);
+    return this.http.get<CategorySummary[]>(`${this.apiUrl}/categories`);
   }
 
   getListingById(id: string): Observable<Listing> {
-    return this.http.get<Listing>(`${this.apiUrl}/listings/${id}`)
+    return this.http.get<Listing>(`${this.apiUrl}/${id}`)
   }
 
   getListingBySku(id: string): Observable<Listing> {
-    return this.http.get<Listing>(`${this.apiUrl}/listings/item/${id}`)
+    return this.http.get<Listing>(`${this.apiUrl}/item/${id}`)
   }
 
   getAllListings(): Observable<Listing[]> {
@@ -147,7 +147,7 @@ export class ListingService {
   
 
     return this.http.get<PagedListingResponse>(
-      `${this.apiUrl}/listings/search/paginated`,
+      `${this.apiUrl}/search/paginated`,
       {
         params: httpParams,
       },
@@ -163,18 +163,18 @@ export class ListingService {
   }
 
   getReviewsByListingId(listingId: string): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.reviewsApiUrl}/listing/${listingId}`)
+    return this.http.get<Review[]>(`${this.reviewsApiUrl}/${listingId}`)
   }
 
   updateListing(listing: Listing): Observable<Listing> {
     return this.http.put<Listing>(
-      `${this.apiUrl}/listings/${listing.listingId}`,
+      `${this.apiUrl}/${listing.listingId}`,
       listing,
     )
   }
 
   getListingsBySellerId(sellerId: string): Observable<Listing[]> {
-    return this.http.get<Listing[]>(`${this.apiUrl}/listings`).pipe(
+    return this.http.get<Listing[]>(`${this.apiUrl}`).pipe(
       map(listings => {
         console.log('Todos os listings recebidos:', listings.length)
         console.log('Filtrando por sellerId:', sellerId)
@@ -205,7 +205,7 @@ export class ListingService {
       return of([])
     }
 
-    const url = `${this.apiUrl}/listings/by-skus`
+    const url = `${this.apiUrl}/by-skus`
 
     // Change from http.get to http.post
     // The 'skus' array is now sent as the request body, not as URL params.
