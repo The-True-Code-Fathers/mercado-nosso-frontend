@@ -13,12 +13,22 @@
       </div>
 
       <div class="form-field">
-        <label for="password"> Senha </label>
-        <input id="password" pInputText formControlName="password" />
-        @if (isInvalid('password')) {
-        <p-message severity="error" text="A senha é obrigatória"></p-message>
-        }
-      </div>
+  <label for="password"> Senha </label>
+  <div class="input-password-wrapper">
+    <input id="password"
+      pInputText
+      formControlName="password"
+      [type]="hidePassword ? 'password' : 'text'"
+      required
+    />
+    <button type="button" class="toggle-password" (click)="hidePassword = !hidePassword">
+      <i class="pi" [ngClass]="hidePassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+    </button>
+  </div>
+  @if (isInvalid('password')) {
+    <p-message severity="error" text="A senha é obrigatória"></p-message>
+  }
+</div>
 
       <div class="button-container">
         <p-button type="submit" label="Entrar" styleClass="w-full"></p-button>
