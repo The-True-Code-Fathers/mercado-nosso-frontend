@@ -15,11 +15,11 @@ import { CheckoutNavigationComponent } from '../shared/checkout-navigation/check
     CommonModule,
     ButtonModule,
     ToastModule,
-    CheckoutNavigationComponent
+    CheckoutNavigationComponent,
   ],
   providers: [MessageService],
   templateUrl: './confirmation-step.component.html',
-  styleUrl: './confirmation-step.component.scss'
+  styleUrl: './confirmation-step.component.scss',
 })
 export class ConfirmationStepComponent implements OnInit {
   private checkoutService = inject(CheckoutService)
@@ -43,50 +43,86 @@ export class ConfirmationStepComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'Informações de entrega ou pagamento incompletas'
+        detail: 'Informações de entrega ou pagamento incompletas',
       })
       this.checkoutService.setCurrentStep(0)
     }
   }
 
   async placeOrder(): Promise<void> {
+    if (!this.canPlaceOrder()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Informações incompletas para finalizar o pedido',
+      })
+      return
+    }
+
     console.log('Placing order...')
     console.log('Shipping Address:', this.shippingAddress())
     console.log('Payment Method:', this.paymentMethod())
     console.log('Order Summary:', this.orderSummary())
-    
-    /*    
+
     this.isPlacingOrder = true
+
     try {
-      const order = await this.checkoutService.placeOrder().toPromise()
-      
-      if (order) {
+      const response = await this.checkoutService.placeOrder().toPromise()
+
+      if (response) {
         // Clear cart after successful order
-        await this.cartService.clearCart().toPromise()
-        
+        try {
+          await this.cartService.clearCart().toPromise()
+        } catch (cartError) {
+          console.warn('Failed to clear cart:', cartError)
+          // Don't block the success flow if cart clearing fails
+        }
+
         this.messageService.add({
           severity: 'success',
-          summary: 'Pedido Finalizado!',
-          detail: `Seu pedido #${order.orderNumber} foi criado com sucesso`,
-          life: 5000
+          summary: 'Pedido Criado!',
+          detail: `Seu pedido foi criado com sucesso`,
+          life: 5000,
         })
 
-        // Navigate to success page or order details
-        this.router.navigate(['/checkout/success'], { 
-          queryParams: { orderId: order.id } 
+        // Reset checkout state
+        this.checkoutService.resetCheckout()
+
+        // Navigate to success page or home
+        this.router.navigate(['/'], {
+          queryParams: { orderCreated: 'true' },
         })
       }
     } catch (error) {
-      console.error('Error completing order:', error)
+      console.error('Error creating order:', error)
+
+      let errorMessage =
+        'Ocorreu um erro ao processar seu pedido. Tente novamente.'
+
+      // Handle specific error types
+      if (error && typeof error === 'object' && 'status' in error) {
+        const httpError = error as any
+        if (httpError.status === 400) {
+          errorMessage =
+            'Dados inválidos. Verifique as informações e tente novamente.'
+        } else if (httpError.status === 404) {
+          errorMessage =
+            'Produto não encontrado. Verifique seu carrinho e tente novamente.'
+        } else if (httpError.status >= 500) {
+          errorMessage =
+            'Erro interno do servidor. Tente novamente em alguns minutos.'
+        }
+      }
+
       this.messageService.add({
         severity: 'error',
-        summary: 'Erro ao Finalizar Pedido',
-        detail: 'Ocorreu um erro ao processar seu pedido. Tente novamente.',
-        life: 5000
+        summary: 'Erro ao Criar Pedido',
+        detail: errorMessage,
+        life: 5000,
       })
     } finally {
       this.isPlacingOrder = false
-    } */
+    }
   }
 
   canPlaceOrder(): boolean {
@@ -134,21 +170,21 @@ export class ConfirmationStepComponent implements OnInit {
   async completeOrder(): Promise<void> {
     try {
       const order = await this.checkoutService.placeOrder().toPromise()
-      
+
       if (order) {
         // Clear cart after successful order
         await this.cartService.clearCart().toPromise()
-        
+
         this.messageService.add({
           severity: 'success',
           summary: 'Pedido Finalizado!',
           detail: `Seu pedido #${order.id} foi criado com sucesso`,
-          life: 5000
+          life: 5000,
         })
 
         // Navigate to success page or order details
-        this.router.navigate(['/checkout/success'], { 
-          queryParams: { orderId: order.id } 
+        this.router.navigate(['/checkout/success'], {
+          queryParams: { orderId: order.id },
         })
       }
     } catch (error) {
@@ -157,7 +193,7 @@ export class ConfirmationStepComponent implements OnInit {
         severity: 'error',
         summary: 'Erro ao Finalizar Pedido',
         detail: 'Ocorreu um erro ao processar seu pedido. Tente novamente.',
-        life: 5000
+        life: 5000,
       })
     }
   }
@@ -203,7 +239,9 @@ export class ConfirmationStepComponent implements OnInit {
     if (method.installments === 1) {
       return 'À vista'
     }
-    
-    return `${method.installments}x${method.installments <= 3 ? ' sem juros' : ' com juros'}`
+
+    return `${method.installments}x${
+      method.installments <= 3 ? ' sem juros' : ' com juros'
+    }`
   }
 }
