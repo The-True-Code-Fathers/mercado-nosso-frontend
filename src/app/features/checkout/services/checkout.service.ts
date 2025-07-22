@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core'
 import { BehaviorSubject, Observable, of } from 'rxjs'
+import { tap, catchError } from 'rxjs/operators'
 import { HttpClient } from '@angular/common/http'
 import {
   CheckoutItem,
@@ -10,6 +11,13 @@ import {
   CheckoutStep,
   CHECKOUT_STEPS,
 } from '../models/checkout.models'
+import { OrderService } from './order.service'
+import {
+  CreateOrderRequest,
+  OrderItemDTO,
+  PaymentType as ApiPaymentType,
+} from '../models/api.models'
+import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
 
 @Injectable({
   providedIn: 'root',
@@ -35,8 +43,8 @@ export class CheckoutService {
   private _steps = signal<CheckoutStep[]>([...CHECKOUT_STEPS])
   steps = this._steps.asReadonly()
 
-  constructor(private http: HttpClient) {}
- 
+  constructor(private http: HttpClient, private orderService: OrderService) {}
+
   initializeCheckout(checkoutItems: CheckoutItem[]): void {
     this._checkoutItems.set(checkoutItems)
     this.updateOrderSummary()
@@ -130,7 +138,7 @@ export class CheckoutService {
         state: 'SP',
         zipCode: '01234-567',
         isDefault: true,
-      }
+      },
     ]
     return of(mockAddresses)
   }
@@ -160,50 +168,92 @@ export class CheckoutService {
     return of(mockPayments)
   }
 
-  // Order placement
-  placeOrder(): Observable<Order> {
+  // Order placement with API integration
+  placeOrder(): Observable<any> {
+    const items = this._checkoutItems()
+    const shippingAddress = this._shippingAddress()
+    const paymentMethod = this._paymentMethod()
+    const orderSummary = this._orderSummary()
+
+    if (!items.length || !shippingAddress || !paymentMethod || !orderSummary) {
+      throw new Error('Missing required checkout data')
+    }
+
     this._isLoading.set(true)
 
-    // Simulate API call
-    const order: Order = {
-      id: 'order-' + Date.now(),
-      orderNumber: '#' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-      userId: 'user-123',
-      items: this._checkoutItems(),
-      shippingAddress: this._shippingAddress()!,
-      paymentMethod: this._paymentMethod()!,
-      status: 'CONFIRMED',
-      subtotal: this._orderSummary()!.subtotal,
-      shippingTotal: this._orderSummary()!.shippingTotal,
-      discountTotal: this._orderSummary()!.discountTotal,
-      total: this._orderSummary()!.total,
-      createdAt: new Date().toISOString(),
-      estimatedDelivery: this.calculateEstimatedDelivery(),
-      trackingCode:
-        'BR' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-    }
-
-    // Simulate network delay
-    return new Observable(observer => {
-      setTimeout(() => {
-        this._isLoading.set(false)
-        observer.next(order)
-        observer.complete()
-      }, 2000)
+    // Group items by seller
+    const itemsBySeller = new Map<string, CheckoutItem[]>()
+    items.forEach(item => {
+      const sellerId = item.sellerId
+      if (!itemsBySeller.has(sellerId)) {
+        itemsBySeller.set(sellerId, [])
+      }
+      itemsBySeller.get(sellerId)!.push(item)
     })
-  }
 
-  private calculateEstimatedDelivery(): string {
-    const deliveryDate = new Date()
-    deliveryDate.setDate(deliveryDate.getDate() + 7) // 7 days from now
-    const endDate = new Date(deliveryDate)
-    endDate.setDate(endDate.getDate() + 3) // 3-day window
-
-    const formatDate = (date: Date) => {
-      return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })
+    // Handle single seller case (most common)
+    if (itemsBySeller.size > 1) {
+      console.warn(
+        'Multiple sellers detected. Creating order for first seller only.',
+      )
     }
 
-    return `${formatDate(deliveryDate)} - ${formatDate(endDate)}`
+    const firstSellerId = Array.from(itemsBySeller.keys())[0]
+    const sellerItems = itemsBySeller.get(firstSellerId)!
+
+    // Map to API format
+    const orderItems: OrderItemDTO[] = sellerItems.map(item => ({
+      listingId: item.listingId,
+      quantity: item.quantity,
+    }))
+
+    const orderRequest: CreateOrderRequest = {
+      buyerId: DEVELOPMENT_CONFIG.DEFAULT_USER_ID,
+      sellerId: firstSellerId,
+      orderItems,
+      shippingAddress: {
+        street: shippingAddress.street,
+        number: shippingAddress.number,
+        complement: shippingAddress.complement,
+        neighborhood: shippingAddress.neighborhood,
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        zipCode: shippingAddress.zipCode,
+        fullName: shippingAddress.fullName,
+        id: shippingAddress.id,
+        isDefault: shippingAddress.isDefault,
+      },
+      paymentMethod: {
+        id: paymentMethod.id,
+        type: this.mapPaymentType(paymentMethod.type),
+        cardNumber: paymentMethod.cardNumber,
+        cardholderName: paymentMethod.cardholderName,
+        expiryDate: paymentMethod.expiryDate,
+        cvv: paymentMethod.cvv,
+        installments: paymentMethod.installments,
+      },
+      orderSummary: {
+        subtotal: orderSummary.subtotal,
+        shippingTotal: orderSummary.shippingTotal,
+        discountTotal: orderSummary.discountTotal,
+        total: orderSummary.total,
+        itemsCount: orderSummary.itemsCount,
+      },
+    }
+
+    console.log('Placing order with payload:', orderRequest)
+
+    return this.orderService.createOrder(orderRequest).pipe(
+      tap(response => {
+        console.log('Order placed successfully:', response)
+        this._isLoading.set(false)
+      }),
+      catchError(error => {
+        console.error('Error placing order:', error)
+        this._isLoading.set(false)
+        throw error
+      }),
+    )
   }
 
   // Reset checkout state
@@ -228,5 +278,18 @@ export class CheckoutService {
 
   canPlaceOrder(): boolean {
     return this.canProceedToConfirmation()
+  }
+
+  private mapPaymentType(type: string): ApiPaymentType {
+    switch (type) {
+      case 'CREDIT_CARD':
+        return ApiPaymentType.CREDIT_CARD
+      case 'DEBIT_CARD':
+        return ApiPaymentType.DEBIT_CARD
+      case 'PIX':
+        return ApiPaymentType.PIX
+      default:
+        throw new Error(`Unsupported payment type: ${type}`)
+    }
   }
 }
