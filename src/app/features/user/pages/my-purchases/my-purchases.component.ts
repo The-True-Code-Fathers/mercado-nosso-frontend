@@ -139,9 +139,9 @@ export class MyPurchasesComponent implements OnInit {
               const uniquePurchases = new Map<string, MyPurchase>()
 
               validListings.forEach(listing => {
-                if (!uniquePurchases.has(listing.listingId)) {
+                if (!uniquePurchases.has(listing.id)) {
                   const order = orders.find(o =>
-                    o.listingID.includes(listing.listingId),
+                    o.listingID.includes(listing.id),
                   )
 
                   const purchase: MyPurchase = {
@@ -150,8 +150,7 @@ export class MyPurchasesComponent implements OnInit {
                       listing.stock > 0
                         ? 'active'
                         : ('outOfStock' as 'active' | 'outOfStock'),
-                    quantityPurchased:
-                      listingQuantities.get(listing.listingId) || 1,
+                    quantityPurchased: listingQuantities.get(listing.id) || 1,
                     purchaseDate: new Date(
                       order?.creationTime || listing.createdAt || new Date(),
                     ),
@@ -159,7 +158,7 @@ export class MyPurchasesComponent implements OnInit {
                     orderStatus: order?.status || 'OPEN',
                   }
 
-                  uniquePurchases.set(listing.listingId, purchase)
+                  uniquePurchases.set(listing.id, purchase)
                 }
               })
 
@@ -201,7 +200,7 @@ export class MyPurchasesComponent implements OnInit {
   }
 
   checkExistingReviews(purchases: MyPurchase[]) {
-    const listingIds = purchases.map(purchase => purchase.listingId)
+    const listingIds = purchases.map(purchase => purchase.id)
 
     if (listingIds.length === 0) return
 
@@ -229,7 +228,7 @@ export class MyPurchasesComponent implements OnInit {
 
   ratePurchase(purchase: MyPurchase) {
     // Verificar se já foi avaliado
-    if (this.reviewedListings().has(purchase.listingId)) {
+    if (this.reviewedListings().has(purchase.id)) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Atenção',
@@ -247,7 +246,7 @@ export class MyPurchasesComponent implements OnInit {
     const purchase = this.selectedPurchase()
     if (purchase) {
       const updatedReviewed = new Set(this.reviewedListings())
-      updatedReviewed.add(purchase.listingId)
+      updatedReviewed.add(purchase.id)
       this.reviewedListings.set(updatedReviewed)
     }
 

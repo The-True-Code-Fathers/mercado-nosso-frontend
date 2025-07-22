@@ -54,17 +54,17 @@ export class MyListingsComponent implements OnInit {
       {
         label: 'Editar',
         icon: 'pi pi-pencil',
-        command: () => this.editListing(listing.listingId),
+        command: () => this.editListing(listing.id),
       },
       {
         label: listing.status === 'active' ? 'Marcar como Esgotado' : 'Ativar',
         icon: listing.status === 'active' ? 'pi pi-times' : 'pi pi-check',
-        command: () => this.toggleListingStatus(listing.listingId),
+        command: () => this.toggleListingStatus(listing.id),
       },
       {
         label: 'Duplicar',
         icon: 'pi pi-copy',
-        command: () => this.duplicateListing(listing.listingId),
+        command: () => this.duplicateListing(listing.id),
       },
       {
         separator: true,
@@ -73,7 +73,7 @@ export class MyListingsComponent implements OnInit {
         label: 'Excluir',
         icon: 'pi pi-trash',
         styleClass: 'text-red-500',
-        command: () => this.confirmDelete(listing.listingId),
+        command: () => this.confirmDelete(listing.id),
       },
     ]
   }
@@ -179,7 +179,7 @@ export class MyListingsComponent implements OnInit {
   }
 
   toggleListingStatus(id: string) {
-    const listing = this.listings().find(l => l.listingId === id)
+    const listing = this.listings().find(l => l.id === id)
     if (listing) {
       const newStatus = listing.status === 'active' ? 'outOfStock' : 'active'
       const action =
@@ -188,7 +188,7 @@ export class MyListingsComponent implements OnInit {
       // Atualizar status localmente
       this.listings.update(listings =>
         listings.map(l =>
-          l.listingId === id ? { ...l, status: newStatus as any } : l,
+          l.id === id ? { ...l, status: newStatus as any } : l,
         ),
       )
 
@@ -223,7 +223,7 @@ export class MyListingsComponent implements OnInit {
   }
 
   deleteListing(id: string) {
-    this.listings.update(listings => listings.filter(l => l.listingId !== id))
+    this.listings.update(listings => listings.filter(l => l.id !== id))
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',

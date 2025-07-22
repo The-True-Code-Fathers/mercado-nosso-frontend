@@ -539,13 +539,13 @@ export class ReviewModalComponent implements OnInit {
       // Verificar primeiro o cache local
       if (
         this.reviewService.hasSubmittedReview(
-          this.purchase.listingId,
+          this.purchase.id,
           DEVELOPMENT_CONFIG.DEFAULT_USER_ID,
         )
       ) {
         this.existingReview = {
           id: 'local-cache',
-          listingId: this.purchase.listingId,
+          listingId: this.purchase.id,
           buyerId: DEVELOPMENT_CONFIG.DEFAULT_USER_ID,
           rating: 0,
           message: 'Você já avaliou este produto nesta sessão.',
@@ -560,7 +560,7 @@ export class ReviewModalComponent implements OnInit {
       this.isLoadingReview = true
       this.reviewService
         .getUserReviewForListing(
-          this.purchase.listingId,
+          this.purchase.id,
           DEVELOPMENT_CONFIG.DEFAULT_USER_ID,
         )
         .subscribe({
@@ -590,7 +590,7 @@ export class ReviewModalComponent implements OnInit {
       // Verificação adicional para evitar dupla submissão
       if (
         this.reviewService.hasSubmittedReview(
-          this.purchase.listingId,
+          this.purchase.id,
           DEVELOPMENT_CONFIG.DEFAULT_USER_ID,
         )
       ) {
@@ -605,7 +605,7 @@ export class ReviewModalComponent implements OnInit {
       this.isSubmitting = true
 
       const reviewData: CreateReviewRequest = {
-        listingId: this.purchase.listingId,
+        listingId: this.purchase.id,
         buyerId: DEVELOPMENT_CONFIG.DEFAULT_USER_ID,
         rating: this.reviewForm.value.rating,
         message: this.reviewForm.value.message || undefined,
