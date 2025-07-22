@@ -12,9 +12,13 @@ import {
 import { finalize } from 'rxjs/operators'
 import { switchMap } from 'rxjs/operators'
 import { of } from 'rxjs'
-import { Observable } from 'rxjs'
-import { Injectable } from '@angular/core'
-import { HttpClient, HttpParams } from '@angular/common/http'
+import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { forkJoin} from 'rxjs';
+
+
+
 
 // Estender Review para incluir propriedades do frontend
 export interface ReviewWithFrontendData extends ReviewResponse {
@@ -265,14 +269,21 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     this.initializeReviews()
   }
 
-  ngOnInit(): void {
-    this.listingId = this.route.snapshot.paramMap.get('id')
-    this.initializeBreadcrumb()
-    if (this.listingId) {
-      this.loadListing(this.listingId)
+    ngOnInit(): void {
+    // Subscribe to changes in the URL parameters
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.listingId = id;
+        this.loadListing(id); // Reload data for the new product
+        window.scrollTo(0, 0); // Scroll to the top of the new page
+      }
+    });
+
+    this.setupScrollListener();
+    // The breadcrumb can be initialized here or moved inside loadListing
+    this.initializeBreadcrumb(); 
     }
-    this.setupScrollListener()
-  }
 
   private initializeGalleryImages(): void {
     this.galleriaImages = this.defaultProduct.images.map((img, index) => ({
@@ -719,48 +730,45 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     this.freteCalculado = true
   }
 
-  // Substitua a função antiga por esta nova:
-  private loadRelatedProducts(sku: string): void {
-    if (!sku) {
-      this.relatedProducts = []
-      return
-    }
 
-    this.listingService
-      .getRelatedProductsBySku(sku)
-      .pipe(
-        // Use switchMap to take the result of the first call and start a new one
-        switchMap((response: any) => {
-          // Check if the response has the 'recommendations' array
-          if (
-            response &&
-            Array.isArray(response.recommendations) &&
-            response.recommendations.length > 0
-          ) {
-            // If yes, call the new service method with the list of SKUs
-            return this.listingService.getListingsBySkus(
-              response.recommendations,
-            )
-          } else {
-            // If no recommendations, return an empty observable to stop the chain
-            return of([])
-          }
-        }),
-      )
-      .subscribe({
-        next: finalProducts => {
-          // This 'finalProducts' variable now contains the full details we need
-          this.relatedProducts = finalProducts.filter(p => p.sku !== sku)
-        },
-        error: err => {
-          console.error(
-            'An error occurred while fetching related products:',
-            err,
-          )
-          this.relatedProducts = []
-        },
-      })
+// Substitua a função antiga por esta nova:
+private loadRelatedProducts(sku: string): void {
+  if (!sku) {
+    this.relatedProducts = [];
+    return;
   }
+
+  this.listingService.getRelatedProductsBySku(sku).pipe(
+    switchMap((response: any) => {
+      // 1. Check if the response has the array of recommended SKUs
+      if (response && Array.isArray(response.recommendations) && response.recommendations.length > 0) {
+        
+        // 2. Create an array of API calls, one for each recommended SKU
+        const apiCalls: Observable<Listing>[] = response.recommendations.map(
+          (recommendedSku: string) => this.listingService.getListingBySku(recommendedSku)
+        );
+        
+        // 3. Use forkJoin to execute all calls and wait for them to complete
+        return forkJoin(apiCalls);
+
+      } else {
+        // If there are no recommendations, return an empty array
+        return of([]);
+      }
+    })
+  ).subscribe({
+    next: (productsArray) => {
+      // 4. The result is the final array of full product details
+      this.relatedProducts = productsArray;
+      console.log('Related products loaded successfully!', this.relatedProducts);
+    },
+    error: (err) => {
+      console.error('An error occurred while fetching related products individually:', err);
+      this.relatedProducts = [];
+    }
+  });
+}
+
   private initializeReviews(): void {
     // Usar dados reais do backend quando disponíveis
     const listing = this.listing()
