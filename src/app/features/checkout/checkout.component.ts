@@ -12,6 +12,7 @@ import {
 } from '../cart/services/cart.service'
 import { ListingService, Listing } from '../listing/services/listing.service'
 import { UserService, UserResponse } from '../user/services/user.service'
+import { DEVELOPMENT_CONFIG } from '../../shared/config/development.config'
 import { CheckoutStepsComponent } from './components/checkout-steps/checkout-steps.component'
 import { OrderSummaryComponent } from './components/order-summary/order-summary.component'
 import { CartReviewStepComponent } from './components/cart-review-step/cart-review-step.component'
@@ -59,6 +60,20 @@ export class CheckoutComponent implements OnInit {
   }
 
   private initializeCheckout(): void {
+    console.log('Intializing checkout...')
+    // Check if user is logged in
+    const currentUserId = DEVELOPMENT_CONFIG.DEFAULT_USER_ID
+    if (currentUserId === '0') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Login Necessário',
+        detail: 'Você precisa estar logado para finalizar uma compra',
+        life: 5000,
+      })
+      this.router.navigate(['/'])
+      return
+    }
+
     // Check navigation state to determine checkout source
     const navigation = this.router.getCurrentNavigation()
     const state = navigation?.extras?.state || history.state
@@ -316,5 +331,4 @@ export class CheckoutComponent implements OnInit {
       },
     })
   }
-
 }
