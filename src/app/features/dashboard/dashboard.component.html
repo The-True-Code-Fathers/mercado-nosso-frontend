@@ -65,19 +65,24 @@
       <div class="card-header">
         <h3>Vendas</h3>
         <div class="chart-filters">
-          <p-dropdown 
-            [options]="dateFilterOptions" 
-            [(ngModel)]="selectedDateFilter" 
+          <p-dropdown
+            [options]="dateFilterOptions"
+            [(ngModel)]="selectedDateFilter"
             (onChange)="onDateFilterChange()"
             placeholder="Filtrar por período"
             optionLabel="label"
             optionValue="value"
-            class="date-filter">
+            class="date-filter"
+          >
           </p-dropdown>
         </div>
       </div>
       <div class="chart-container">
-        <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+        <p-chart
+          type="line"
+          [data]="chartData"
+          [options]="chartOptions"
+        ></p-chart>
       </div>
     </div>
 
@@ -90,7 +95,11 @@
         </div>
       </div>
       <div class="chart-container">
-        <p-chart type="bar" [data]="barChartData" [options]="barChartOptions"></p-chart>
+        <p-chart
+          type="bar"
+          [data]="barChartData"
+          [options]="barChartOptions"
+        ></p-chart>
       </div>
     </div>
   </div>
@@ -101,7 +110,7 @@
       <div class="card-header">
         <h3>Seus Produtos Mais Vendidos</h3>
         <div class="header-info">
-          <span>{{ itensMaisVendidos?.length || 0 }} produtos</span>
+          <span>{{ itensMaisVendidos.length || 0 }} produtos</span>
         </div>
       </div>
       <div class="table-container">
@@ -118,18 +127,27 @@
             <tr>
               <td>
                 <div class="product-info">
-                  <div class="product-avatar">{{ item.nome?.charAt(0) || 'P' }}</div>
+                  <div class="product-avatar">
+                    {{ item.nome?.charAt(0) || 'P' }}
+                  </div>
                   <span class="product-name">{{ item.nome }}</span>
                 </div>
               </td>
               <td>
-                <span class="quantity-badge">{{ item.quantidade }} unidades</span>
+                <span class="quantity-badge"
+                  >{{ item.quantidade }} unidades</span
+                >
               </td>
               <td>
                 <span class="revenue">R$ {{ item.valorAcumulado }}</span>
               </td>
               <td>
-                <span [class]="'performance-indicator ' + getPerformanceClass(item.performance)">
+                <span
+                  [class]="
+                    'performance-indicator ' +
+                    getPerformanceClass(item.performance)
+                  "
+                >
                   <i [class]="'pi ' + getPerformanceIcon(item.performance)"></i>
                   {{ getPerformanceText(item.performance) }}
                 </span>
