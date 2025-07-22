@@ -10,7 +10,7 @@ import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
 export interface Listing {
   listingId: string
   sellerId: string
-  sku: string
+  sku: stringgi
   productRecommendation: string[]
   title: string
   description: string
@@ -134,7 +134,7 @@ export class ListingService {
   }
 
   getListingsBySellerId(sellerId: string): Observable<Listing[]> {
-    return this.http.get<Listing[]>(`${this.apiUrl}`).pipe(
+    return this.http.get<Listing[]>(`${this.apiUrl}/listings`).pipe(
       map(listings => {
         console.log('Todos os listings recebidos:', listings.length)
         console.log('Filtrando por sellerId:', sellerId)
@@ -165,16 +165,14 @@ export class ListingService {
       return of([])
     }
 
-  const url = `${this.apiUrl}/listings/by-skus`;
-  
-  // Change from http.get to http.post
-  // The 'skus' array is now sent as the request body, not as URL params.
-  return this.http.post<Listing[]>(url, skus);
-}
+    const url = `${this.apiUrl}/listings/by-skus`
 
-// getRelatedProductsBySku(sku: string): Observable<any> {
-//   return this.http.get<any>(`${this.apiUrl}/recommendations/${sku}`);
-// }
+    // Change from http.get to http.post
+    // The 'skus' array is now sent as the request body, not as URL params.
+    return this.http.post<Listing[]>(url, skus)
+  }
 
-  
+  // getRelatedProductsBySku(sku: string): Observable<any> {
+  //   return this.http.get<any>(`${this.apiUrl}/recommendations/${sku}`);
+  // }
 }

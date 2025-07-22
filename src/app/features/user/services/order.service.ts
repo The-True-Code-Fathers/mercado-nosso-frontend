@@ -3,11 +3,18 @@ import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { DEVELOPMENT_CONFIG } from '../../../shared/config/development.config'
 
+type OrderStatus = 'OPEN' | 'INVOICED' | 'SHIPPED' | 'CANCELLED' | 'CLOSED'
+
+export interface OrderItem {
+  listingId: string
+  quantity: number
+}
+
 export interface Order {
   orderId: string
   buyerId: string
-  listingID: string[]
-  status: 'OPEN' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
+  orderItems: OrderItem[]
+  status: OrderStatus
   creationTime: string
 }
 
