@@ -65,6 +65,7 @@ export interface SearchParams {
   maxPrice?: number
   page?: number
   size?: number
+  category?: string
 }
 
 export interface CategorySummary {
@@ -107,7 +108,7 @@ export class ListingService {
    * Requer um endpoint na API: GET /api/categories
    */
   getCategories(): Observable<CategorySummary[]> {
-    return this.http.get<CategorySummary[]>(`${this.apiUrl}/categories`);
+    return this.http.get<CategorySummary[]>(`${this.apiUrl}/listings/categories`);
   }
 
   getListingById(id: string): Observable<Listing> {

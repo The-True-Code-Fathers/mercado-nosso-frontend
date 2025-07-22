@@ -280,14 +280,13 @@
           >
             <div class="categories-grid">
               <a
-                *ngFor="let category of categories"
-                [routerLink]="['/listing']"
-                [queryParams]="{ category: category.key }"
-                class="category-item"
-                (click)="onCategorySelected()"
+              *ngFor="let category of categories"
+              (click)="navigateToCategory(category['key'])"
+              class="category-item"
+              style="cursor: pointer;"
               >
-                <i [class]="category.icon"></i>
-                <span>{{ category.label }}</span>
+              <i [class]="category['icon']"></i>
+              <span>{{ category['label'] }}</span>
               </a>
             </div>
           </div>
@@ -299,9 +298,9 @@
         class="category-link"
         *ngFor="let category of getQuickCategoriesForScreen()"
         [routerLink]="['/listing']"
-        [queryParams]="{ category: category.key }"
+        [queryParams]="{ category: category['key']}"
       >
-        {{ category.label }}
+        {{ category['label'] }}
       </span>
     </div>
   </div>
@@ -352,11 +351,11 @@
         class="mobile-quick-category-item"
         *ngFor="let category of quickCategories.slice(0, 4)"
         [routerLink]="['/listing']"
-        [queryParams]="{ category: category.key }"
+        [queryParams]="{ category: category['key'] }"
         (click)="closeMobileMenu()"
       >
-        <i [class]="category.icon"></i>
-        <span>{{ category.label }}</span>
+        <i [class]="category['icon']"></i>
+        <span>{{ category['label'] }}</span>
       </div>
     </div>
 
@@ -383,11 +382,11 @@
             class="mobile-category-item"
             *ngFor="let category of getNonQuickCategories()"
             [routerLink]="['/listing']"
-            [queryParams]="{ category: category.key }"
+            [queryParams]="{ category: category['key'] }"
             (click)="closeMobileMenu()"
           >
-            <i [class]="category.icon"></i>
-            <span>{{ category.label }}</span>
+            <i [class]="category['icon']"></i>
+            <span>{{ category['label'] }}</span>
           </div>
         </div>
       </div>

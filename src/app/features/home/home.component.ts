@@ -61,7 +61,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadFeaturedProducts() {
-    this.listingService.getFeaturedListings(4).subscribe({
+    this.listingService.getFeaturedListings(8).subscribe({
       // 👈 FIX: Adicionar o tipo para 'pagedResponse'
       next: (pagedResponse: PagedListingResponse) => {
         this.featuredProducts = pagedResponse.content;
@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit {
 
   onHeroSearch() {
     if (this.searchTerm.trim()) {
-      this.router.navigate(['/products'], {
+      this.router.navigate(['/listings'], {
         queryParams: { name: this.searchTerm },
       });
     }

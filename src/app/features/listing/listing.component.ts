@@ -180,47 +180,40 @@ export class ListingComponent implements OnInit {
     const params: SearchParams = {
       page: this.currentPage,
       size: this.itemsPerPage,
-    }
-
-    // Combine search term and category into name parameter for searching
-    let searchName = ''
+    };
+  
+    // Handle the text search term (name) separately
     if (this.searchTerm) {
-      searchName = this.searchTerm
+      params.name = this.searchTerm;
     }
+  
+    // Handle the category filter separately
     if (this.selectedCategory) {
-      searchName = searchName
-        ? `${searchName} ${this.selectedCategory}`
-        : this.selectedCategory
+      params.category = this.selectedCategory;
     }
-
-    if (searchName) {
-      params.name = searchName
-    }
-
+  
+    // The rest of your logic for condition, price, etc. is correct
     if (this.selectedCondition) {
-      params.condition = this.selectedCondition as 'NEW' | 'USED'
+      params.condition = this.selectedCondition as 'NEW' | 'USED';
     }
-
+  
     if (this.minPrice && this.minPrice > 0) {
-      params.minPrice = this.minPrice
+      params.minPrice = this.minPrice;
     }
-
+  
     if (this.maxPrice && this.maxPrice > 0) {
-      params.maxPrice = this.maxPrice
+      params.maxPrice = this.maxPrice;
     }
-
+  
     if (this.sortBy) {
-      params.ordering = this.sortBy as any
+      params.ordering = this.sortBy as any;
     }
-
-    console.log('🔧 Building search params:', {
-      searchTerm: this.searchTerm,
-      selectedCategory: this.selectedCategory,
-      searchName,
+  
+    console.log('🔧 Building CORRECT search params:', {
       finalParams: params,
-    })
-
-    return params
+    });
+  
+    return params;
   }
 
   onFilterChange(): void {

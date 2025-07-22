@@ -31,82 +31,19 @@
       <app-product-card-new
         *ngFor="let product of featuredProducts"
         [product]="{
-          id: product.id.toString(),
-          title: product.name,
+          id: product.listingId.toString(),
+          title: product.title,
           price: product.price,
-          image: product.image,
+          image: product.imagesUrl[0],
           rating: product.rating,
-          reviews: product.reviews
+          reviews: product.reviewsId.length
         }"
-        [linkPath]="'/product'"
-        class="product-card-wrapper"
-      ></app-product-card-new>
-    <app-product-card-new
-        *ngFor="let product of featuredProducts"
-        [product]="{
-          id: product.id.toString(),
-          title: product.name,
-          price: product.price,
-          image: product.image,
-          rating: product.rating,
-          reviews: product.reviews
-        }"
-        [linkPath]="'/product'"
-        class="product-card-wrapper"
-      ></app-product-card-new>
-      <app-product-card-new
-        *ngFor="let product of featuredProducts"
-        [product]="{
-          id: product.id.toString(),
-          title: product.name,
-          price: product.price,
-          image: product.image,
-          rating: product.rating,
-          reviews: product.reviews
-        }"
-        [linkPath]="'/product'"
-        class="product-card-wrapper"
-      ></app-product-card-new>
-      <app-product-card-new
-        *ngFor="let product of featuredProducts"
-        [product]="{
-          id: product.id.toString(),
-          title: product.name,
-          price: product.price,
-          image: product.image,
-          rating: product.rating,
-          reviews: product.reviews
-        }"
-        [linkPath]="'/product'"
+        [linkPath]="'/listing'"
         class="product-card-wrapper"
       ></app-product-card-new>
     </div>
   </section>
 
-  <!--
-
-  <section class="categories-section">
-    <div class="section-header">
-      <h2>Categorias</h2>
-      <p class="section-subtitle">Encontre o que você precisa</p>
-    </div>
-
-    <div class="categories-grid">
-      <div class="category-card"
-           *ngFor="let category of categories"
-           [routerLink]="['/listing']"
-           [queryParams]="{category: category.key}">
-        <div class="category-header">
-          <i [class]="category.icon + ' category-icon'"></i>
-        </div>
-        <div class="category-content">
-          <h4>{{ category.name }}</h4>
-          <p>{{ category.description }}</p>
-          <p-badge [value]="category.count" severity="info" class="category-badge"></p-badge>
-        </div>
-      </div>
-    </div>
-  </section> -->
 
   <!-- Benefits Section -->
   <section class="benefits-section">

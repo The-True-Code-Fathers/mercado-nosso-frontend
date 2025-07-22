@@ -34,6 +34,12 @@ import {
 } from '../../../../features/user/services/user.service'
 // import { CartService } from '../../core/services/cart.service'; // Uncomment when cart service is implemented
 
+
+import { Document } from 'bson';
+import { ListingService } from '../../../../features/listing/services/listing.service'
+
+
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -93,9 +99,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private searchService: SearchService, // private cartService: CartService // Inject when available
     private userService: UserService,
+    private listingService: ListingService
   ) {}
 
+  categories: Document[] = [];
+  quickCategories: Document[] = [];
+
   ngOnInit() {
+    this.loadCategories()
     this.checkScreenSize()
     this.syncLoginState()
     this.loadUsername()
@@ -211,42 +222,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  categories = [
-    { key: 'electronics', label: 'Eletrônicos', icon: 'pi pi-desktop' },
-    { key: 'clothing', label: 'Roupas e Acessórios', icon: 'pi pi-user' },
-    { key: 'home', label: 'Casa e Jardim', icon: 'pi pi-home' },
-    { key: 'books', label: 'Livros e Mídia', icon: 'pi pi-book' },
-    { key: 'sports', label: 'Esportes e Lazer', icon: 'pi pi-star' },
-    { key: 'toys', label: 'Brinquedos', icon: 'pi pi-heart' },
-    { key: 'health', label: 'Saúde e Beleza', icon: 'pi pi-heart' },
-    { key: 'auto', label: 'Automotivo', icon: 'pi pi-car' },
-    { key: 'food', label: 'Alimentos e Bebidas', icon: 'pi pi-shopping-cart' },
-    { key: 'pets', label: 'Pets', icon: 'pi pi-heart' },
-    { key: 'stationery', label: 'Papelaria', icon: 'pi pi-  pencil' },
-    { key: 'music', label: 'Instrumentos Musicais', icon: 'pi pi-music' },
-    { key: 'games', label: 'Games', icon: 'pi pi-gamepad' },
-    { key: 'baby', label: 'Bebês', icon: 'pi pi-baby' },
-    { key: 'tools', label: 'Ferramentas', icon: 'pi pi-wrench' },
-    { key: 'jewelry', label: 'Joias e Relógios', icon: 'pi pi-gem' },
-    { key: 'office', label: 'Escritório', icon: 'pi pi-briefcase' },
-    { key: 'garden', label: 'Jardinagem', icon: 'pi pi-leaf' },
-    { key: 'travel', label: 'Viagem', icon: 'pi pi-send' },
-    { key: 'services', label: 'Serviços', icon: 'pi pi-cog' },
-  ]
-
-  quickCategories = [
-    { key: 'electronics', label: 'Eletrônicos', icon: 'pi pi-desktop' },
-    { key: 'clothing', label: 'Roupas e Acessórios', icon: 'pi pi-user' },
-    { key: 'home', label: 'Casa e Jardim', icon: 'pi pi-home' },
-    { key: 'books', label: 'Livros e Mídia', icon: 'pi pi-book' },
-    { key: 'sports', label: 'Esportes e Lazer', icon: 'pi pi-star' },
-    { key: 'toys', label: 'Brinquedos', icon: 'pi pi-heart' },
-    { key: 'health', label: 'Saúde e Beleza', icon: 'pi pi-heart' },
-    { key: 'auto', label: 'Automotivo', icon: 'pi pi-car' },
-    { key: 'food', label: 'Alimentos e Bebidas', icon: 'pi pi-shopping-cart' },
-    { key: 'pets', label: 'Pets', icon: 'pi pi-heart' },
-    { key: 'stationery', label: 'Papelaria', icon: 'pi pi-pencil' },
-  ]
+  loadCategories() {
+    this.listingService.getCategories().subscribe({
+      next: (data: Document[]) => {
+        console.log('Categories loaded in Header:', data);
+        
+        // A API retorna { key, name, count }. O template espera { key, label, icon }.
+        // Vamos transformar os dados para o formato que o template precisa.
+        this.categories = data.map(category => ({
+          ...category,
+          label: category['name'] // Adiciona a propriedade 'label'
+        }));
+        
+        // Define as 'quickCategories' com base nas categorias carregadas
+        this.quickCategories = this.categories.slice(0, 11); 
+      },
+      error: (err: any) => {
+        console.error('Failed to load categories in Header', err);
+        this.categories = []; // Em caso de erro, define como vazio
+        this.quickCategories = [];
+      }
+    });
+  }
+  
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode
@@ -409,14 +407,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Get non-quick categories for mobile dropdown (excluding quick categories)
   getNonQuickCategories() {
-    const quickCategoryKeys = this.quickCategories.map(cat => cat.key)
+    const quickCategoryKeys = this.quickCategories.map(cat => cat['key'])
     return this.categories.filter(
-      category => !quickCategoryKeys.includes(category.key),
+      category => !quickCategoryKeys.includes(category["key"]),
     )
   }
 
   // Get brand text based on current route
   getBrandText(): string {
     return this.isDashboardRoute ? 'Mercado Nosso Analytics' : 'Mercado Nosso'
+  }
+
+  navigateToCategory(categoryKey: string) {
+    this.onCategorySelected(); // This closes the panel
+    
+    // Navigate programmatically, letting Angular handle the encoding
+    this.router.navigate(['/listing'], { 
+      queryParams: { category: categoryKey } 
+    });
   }
 }
