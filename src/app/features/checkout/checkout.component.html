@@ -6,7 +6,9 @@
     <div class="checkout-main">
       <!-- Step 0: Cart Review -->
       <div *ngIf="currentStep() === 0" class="step-container">
-        <app-cart-review-step [orderSummary]="orderSummary()"></app-cart-review-step>
+        <app-cart-review-step
+          [orderSummary]="orderSummary()"
+        ></app-cart-review-step>
       </div>
 
       <!-- Step 1: Shipping -->
@@ -16,7 +18,9 @@
       <app-payment-step *ngIf="currentStep() === 2"></app-payment-step>
 
       <!-- Step 3: Confirmation -->
-      <app-confirmation-step *ngIf="currentStep() === 3"></app-confirmation-step>
+      <app-confirmation-step
+        *ngIf="currentStep() === 3"
+      ></app-confirmation-step>
 
       <!-- Loading State -->
       <div *ngIf="isLoading()" class="loading-state">

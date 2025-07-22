@@ -9,8 +9,8 @@
     <div class="addresses-section" *ngIf="savedAddresses.length > 0">
       <h3>Endereços Salvos</h3>
       <div class="addresses-list">
-        <div 
-          *ngFor="let address of savedAddresses" 
+        <div
+          *ngFor="let address of savedAddresses"
           class="address-card"
           [class.selected]="selectedAddressId === address.id"
           (click)="onAddressSelect(address)"
@@ -22,19 +22,20 @@
               [inputId]="'address-' + address.id"
             >
             </p-radioButton>
-            
+
             <div class="address-info">
               <h4>{{ address.fullName }}</h4>
               <div class="address-details">
                 <p>{{ address.street }}, {{ address.number }}</p>
                 <p *ngIf="address.complement">{{ address.complement }}</p>
-                <p>{{ address.neighborhood }} - {{ address.city }}/{{ address.state }}</p>
+                <p>
+                  {{ address.neighborhood }} - {{ address.city }}/{{
+                    address.state
+                  }}
+                </p>
                 <p>CEP: {{ address.zipCode }}</p>
               </div>
-              <span 
-                *ngIf="address.isDefault" 
-                class="default-badge"
-              >
+              <span *ngIf="address.isDefault" class="default-badge">
                 Padrão
               </span>
             </div>
@@ -45,11 +46,17 @@
 
     <!-- New Address Form -->
     <div class="new-address-section">
-      <div class="section-header address-card" 
-           [class.selected]="selectedAddressId === 'new'"
-           (click)="selectNewAddress()"
-           [attr.aria-expanded]="showNewAddressForm"
-           [attr.aria-label]="savedAddresses.length > 0 ? 'Adicionar novo endereço' : 'Preencher endereço de entrega'">
+      <div
+        class="section-header address-card"
+        [class.selected]="selectedAddressId === 'new'"
+        (click)="selectNewAddress()"
+        [attr.aria-expanded]="showNewAddressForm"
+        [attr.aria-label]="
+          savedAddresses.length > 0
+            ? 'Adicionar novo endereço'
+            : 'Preencher endereço de entrega'
+        "
+      >
         <div class="address-selection">
           <p-radioButton
             value="new"
@@ -58,20 +65,26 @@
             *ngIf="savedAddresses.length > 0"
           >
           </p-radioButton>
-          
+
           <div class="header-content">
             <h3>
-              {{ savedAddresses.length > 0 ? 'Adicionar Novo Endereço' : 'Endereço de Entrega' }}
+              {{
+                savedAddresses.length > 0
+                  ? 'Adicionar Novo Endereço'
+                  : 'Endereço de Entrega'
+              }}
             </h3>
             <p class="header-subtitle" *ngIf="savedAddresses.length > 0">
               Preencha os dados para um novo endereço de entrega
             </p>
           </div>
         </div>
-        
       </div>
-      
-      <div class="address-form-container" [class.collapsed]="savedAddresses.length > 0 && !showNewAddressForm">
+
+      <div
+        class="address-form-container"
+        [class.collapsed]="savedAddresses.length > 0 && !showNewAddressForm"
+      >
         <div class="address-form">
           <div class="form-row">
             <div class="form-field full-width">
