@@ -79,7 +79,7 @@ export interface CategorySummary {
   providedIn: 'root',
 })
 export class ListingService {
-  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/listings`
+  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api`
   private reviewsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
 
   constructor(private http: HttpClient) {}
@@ -108,19 +108,19 @@ export class ListingService {
    * Requer um endpoint na API: GET /api/categories
    */
   getCategories(): Observable<CategorySummary[]> {
-    return this.http.get<CategorySummary[]>(`${this.apiUrl}/categories`);
+    return this.http.get<CategorySummary[]>(`${this.apiUrl}/listings/categories`);
   }
 
   getListingById(id: string): Observable<Listing> {
-    return this.http.get<Listing>(`${this.apiUrl}/${id}`)
+    return this.http.get<Listing>(`${this.apiUrl}/listings/${id}`)
   }
 
   getListingBySku(id: string): Observable<Listing> {
-    return this.http.get<Listing>(`${this.apiUrl}/item/${id}`)
+    return this.http.get<Listing>(`${this.apiUrl}/listings/item/${id}`)
   }
 
   getAllListings(): Observable<Listing[]> {
-    return this.http.get<Listing[]>(this.apiUrl)
+    return this.http.get<Listing[]>(`${this.apiUrl}/listings/`)
   }
 
   searchListingsPaginated(
@@ -147,7 +147,7 @@ export class ListingService {
   
 
     return this.http.get<PagedListingResponse>(
-      `${this.apiUrl}/search/paginated`,
+      `${this.apiUrl}/listings/search/paginated`,
       {
         params: httpParams,
       },
@@ -205,7 +205,7 @@ export class ListingService {
       return of([])
     }
 
-    const url = `${this.apiUrl}/by-skus`
+    const url = `${this.apiUrl}/listings/by-skus`
 
     // Change from http.get to http.post
     // The 'skus' array is now sent as the request body, not as URL params.
