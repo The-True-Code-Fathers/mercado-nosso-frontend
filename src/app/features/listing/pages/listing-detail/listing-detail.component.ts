@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { HttpClient } from '@angular/common/http'
 import { ListingService, Listing, Review } from '../../services/listing.service'
 import { CartService } from '../../../cart/services/cart.service'
 import { UserService, UserResponse } from '../../../user/services/user.service'
@@ -11,6 +10,13 @@ import {
   ReviewResponse,
 } from '../../../user/services/review.service'
 import { finalize } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators'
+import { of } from 'rxjs'
+import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+
+
 
 // Estender Review para incluir propriedades do frontend
 export interface ReviewWithFrontendData extends ReviewResponse {
@@ -716,39 +722,37 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   }
 
 
+
 // Substitua a função antiga por esta nova:
 private loadRelatedProducts(sku: string): void {
   if (!sku) {
-    console.error('EXECUÇÃO PARADA: SKU é nulo ou vazio.');
     this.relatedProducts = [];
     return;
   }
 
-  console.log(`Buscando recomendações para o SKU: ${sku}`);
-
-  this.listingService.getRelatedProductsBySku(sku)
-    .pipe(
-      // ✨ ADICIONE ESTE BLOCO FINALIZE ✨
-      finalize(() => {
-        console.log('CHAMADA DE API FINALIZADA (seja com sucesso ou erro).');
-      })
-    )
-    .subscribe({
-      next: (recommendedProducts) => {
-        console.log('API retornou com sucesso:', recommendedProducts);
-        this.relatedProducts = recommendedProducts.filter(p => p.sku !== sku);
-      },
-      error: (err) => {
-        console.error('A chamada para a API de recomendações FALHOU. Erro:', err);
-        this.relatedProducts = [];
+  this.listingService.getRelatedProductsBySku(sku).pipe(
+    // Use switchMap to take the result of the first call and start a new one
+    switchMap((response: any) => {
+      // Check if the response has the 'recommendations' array
+      if (response && Array.isArray(response.recommendations) && response.recommendations.length > 0) {
+        // If yes, call the new service method with the list of SKUs
+        return this.listingService.getListingsBySkus(response.recommendations);
+      } else {
+        // If no recommendations, return an empty observable to stop the chain
+        return of([]);
       }
+    })
+  ).subscribe({
+    next: (finalProducts) => {
+      // This 'finalProducts' variable now contains the full details we need
+      this.relatedProducts = finalProducts.filter(p => p.sku !== sku);
+    },
+    error: (err) => {
+      console.error('An error occurred while fetching related products:', err);
+      this.relatedProducts = [];
+    }
     });
   }
-
-  
-
-
-
   private initializeReviews(): void {
     // Usar dados reais do backend quando disponíveis
     const listing = this.listing()
@@ -1327,5 +1331,6 @@ private loadRelatedProducts(sku: string): void {
     }
   }
 
-  // Related Products methods
+  
+
 }
