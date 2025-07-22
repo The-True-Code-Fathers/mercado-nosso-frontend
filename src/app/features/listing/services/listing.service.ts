@@ -70,7 +70,7 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class ListingService {
-  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api`
+  private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/listings`
   private reviewsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
 
   constructor(private http: HttpClient) {}
