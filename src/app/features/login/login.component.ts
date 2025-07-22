@@ -1,4 +1,3 @@
-// Copie e cole TODO este conteúdo no seu arquivo.
 import { Component, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
@@ -14,7 +13,6 @@ import {
 import { InputTextModule } from 'primeng/inputtext'
 import { ButtonModule } from 'primeng/button'
 import { MessageModule } from 'primeng/message'
-import { InputNumber } from 'primeng/inputnumber'
 
 @Component({
   selector: 'app-login',
@@ -31,6 +29,7 @@ import { InputNumber } from 'primeng/inputnumber'
 })
 export class LoginComponent implements OnInit {
   exampleForm!: FormGroup
+  hidePassword = true;
 
   constructor(
     private fb: FormBuilder,
@@ -58,19 +57,11 @@ export class LoginComponent implements OnInit {
 
     const { email, password } = this.exampleForm.value
 
-    console.log('=== LOGIN FRONTEND ===')
-    console.log('Email:', email, '| typeof:', typeof email)
-    console.log('Password:', password, '| typeof:', typeof password)
-    console.log('======================')
-
     this.userService.login(email, password).subscribe({
       next: user => {
-        console.log('Login sucesso:', user)
-        // Não salva mais currentUserId, apenas devUserId
         localStorage.setItem('currentUserName', user.fullName)
         localStorage.setItem('currentUserEmail', user.email)
         setDevelopmentUserId(user.id)
-        // Força atualização do header na mesma aba
         window.dispatchEvent(new StorageEvent('storage', { key: 'devUserId' }))
       },
       error: err => {
