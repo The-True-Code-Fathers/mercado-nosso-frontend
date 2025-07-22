@@ -143,7 +143,7 @@ export class CartComponent implements OnInit {
           console.error(`Erro ao buscar listing ${item.listingId}:`, error)
           // Retorna um listing mocado em caso de erro
           return of({
-            id: item.listingId,
+            listingId: item.listingId,
             sellerId: 'unknown',
             sku: `SKU-${item.listingId}`,
             productRecommendation: [],

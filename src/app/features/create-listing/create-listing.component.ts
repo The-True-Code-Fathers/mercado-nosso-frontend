@@ -157,7 +157,7 @@ export class CreateListingComponent {
 
           // Redirecionar para a página do anúncio criado após 2 segundos
           setTimeout(() => {
-            this.router.navigate(['/listing', createdListing.id])
+            this.router.navigate(['/listing', createdListing.listingId])
           }, 2000)
         },
         error: error => {
