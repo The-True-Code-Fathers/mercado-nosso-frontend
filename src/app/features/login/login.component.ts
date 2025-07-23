@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { UserService } from '../user/services/user.service'
 import { setDevelopmentUserId } from '../../shared/config/development.config'
+import { AuthService } from '../../shared/services/auth.service'
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -29,12 +30,13 @@ import { MessageModule } from 'primeng/message'
 })
 export class LoginComponent implements OnInit {
   exampleForm!: FormGroup
-  hidePassword = true;
+  hidePassword = true
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private userService: UserService,
+    private auth: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +65,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('currentUserEmail', user.email)
         setDevelopmentUserId(user.id)
         window.dispatchEvent(new StorageEvent('storage', { key: 'devUserId' }))
+        this.auth.setUserId(user.id)
       },
       error: err => {
         console.log('Erro', err)

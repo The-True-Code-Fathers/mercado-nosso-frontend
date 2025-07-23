@@ -43,8 +43,8 @@ export class DashboardComponent implements OnInit {
   barChartData: any;
   barChartOptions: any;
   itensMaisVendidos: any[] = [];
-  dashboardRawData: any; // Armazena os dados brutos do backend
-  showExportModal = false; // NOVO: controla o modal
+  dashboardRawData: any; 
+  showExportModal = false; 
 
   constructor(private dashboardService: DashboardService) {}
 
@@ -70,7 +70,6 @@ export class DashboardComponent implements OnInit {
   }
 
   processData(data: any) {
-    // Mapeia os dados do backend para o formato esperado pelo HTML
     this.totalVendasMes = data.totalSalesMonth || data.totalSales;
     this.mediaAvaliacoes = data.averageRating;
 
@@ -87,7 +86,6 @@ export class DashboardComponent implements OnInit {
       performance: string;
     }
 
-    // Processa os produtos mais vendidos
     this.itensMaisVendidos = (data.topProducts as TopProduct[] || []).map((prod: TopProduct): ItemMaisVendido => ({
       nome: prod.productName,
       quantidade: prod.quantitySold,
@@ -97,7 +95,6 @@ export class DashboardComponent implements OnInit {
 
     this.produtosAtivos = this.itensMaisVendidos.length;
 
-    // Atualiza os gráficos
     this.updateBarChart();
     this.updateLineChart();
   }
@@ -121,7 +118,6 @@ export class DashboardComponent implements OnInit {
         }]
       };
     } else {
-      // Ordena por quantidade vendida e pega os top 5
       const topProducts = [...this.itensMaisVendidos]
         .sort((a, b) => b.quantidade - a.quantidade)
         .slice(0, 5);
@@ -196,7 +192,6 @@ export class DashboardComponent implements OnInit {
   }
 
   updateLineChart() {
-    // Gera dados simulados baseados no período selecionado e nos dados reais
     const { labels, data } = this.generateChartDataByPeriod();
 
     this.chartData = {
@@ -305,7 +300,6 @@ export class DashboardComponent implements OnInit {
     const baseValue = total / count;
 
     for (let i = 0; i < count; i++) {
-      // Gera variação mais realística, com crescimento no final
       const growthFactor = (i + 1) / count; // 0.2, 0.4, 0.6, 0.8, 1.0
       const randomVariance = (Math.random() - 0.5) * variance;
       const value = Math.max(0, baseValue * (0.5 + growthFactor + randomVariance));
@@ -349,11 +343,9 @@ export class DashboardComponent implements OnInit {
   }
 
   initChartData(chartBackendData?: any) {
-    // Método mantido para compatibilidade, mas lógica movida para updateLineChart
   }
 
   initBarChartData() {
-    // Método mantido para compatibilidade, mas lógica movida para updateBarChart
   }
 
   getPerformanceClass(performance: string): string {

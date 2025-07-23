@@ -158,54 +158,31 @@ export class CheckoutComponent implements OnInit {
     console.log('Processing item for checkout:', item)
     console.log('Seller ID:', item.sellerId)
 
-    // Check if we have a valid seller ID before making the API call
+    // O endereço do checkout deve ser sempre do usuário logado, não do vendedor
+    // Aqui só enriquecemos o nome do vendedor, nunca o endereço
     if (!this.isValidSellerId(item.sellerId)) {
-      // Use fallback seller name and proceed with checkout
       const enrichedItem = {
         ...item,
         sellerName: item.sellerName || 'Vendedor Desconhecido',
       }
-
-      console.log('Using fallback seller name (invalid ID):', enrichedItem)
       this.checkoutService.initializeCheckout([enrichedItem])
       return
     }
 
-    console.log('Making API call to fetch seller info for ID:', item.sellerId)
-    console.log(
-      'API URL will be:',
-      `http://localhost:8080/api/users/${item.sellerId}`,
-    )
-
     this.userService.getUserById(item.sellerId).subscribe({
       next: seller => {
-        console.log('✅ API call successful, received seller data:', seller)
         const enrichedItem = {
           ...item,
           sellerName: seller.fullName || `Vendedor ${item.sellerId}`,
         }
-
-        console.log(
-          'Successfully enriched item with seller info:',
-          enrichedItem,
-        )
         this.checkoutService.initializeCheckout([enrichedItem])
       },
-      error: error => {
-        console.error('❌ HttpErrorResponse details:')
-        console.error('- Status:', error.status)
-        console.error('- Status Text:', error.statusText)
-        console.error('- URL:', error.url)
-        console.error('- Error message:', error.message)
-        console.error('- Full error object:', error)
-
-        // Continue with original seller name as fallback
+      error: () => {
         const fallbackItem = {
           ...item,
           sellerName:
             item.sellerName || `Vendedor ${item.sellerId || 'Desconhecido'}`,
         }
-        console.log('Using fallback after API error:', fallbackItem)
         this.checkoutService.initializeCheckout([fallbackItem])
       },
     })

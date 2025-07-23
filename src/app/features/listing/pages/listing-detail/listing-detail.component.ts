@@ -1349,7 +1349,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   loadSellerName(sellerId: string): void {
     console.log('🔍 Buscando vendedor com ID:', sellerId)
-    console.log('🌐 URL da API:', `http://localhost:8080/api/users/${sellerId}`)
+    console.log('🌐 URL da API:', `http://localhost:8080/api/users/me`)
 
     this.userService.getUserById(sellerId).subscribe({
       next: seller => {
