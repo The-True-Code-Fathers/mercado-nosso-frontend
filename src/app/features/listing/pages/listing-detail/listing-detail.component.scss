@@ -1715,8 +1715,11 @@
 
   /* New horizontal layout for overview and summary */
   .reviews-overview-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    //display: grid;
+    //grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+
     gap: var(--spacing-2xl);
     margin-bottom: var(--spacing-3xl);
     max-width: 1200px;
@@ -1860,7 +1863,43 @@
 /* Reviews List - Enhanced */
 .reviews-list {
   max-width: 1200px;
-  margin: 3rem auto 0;
+  //margin: 3rem auto 0;
+
+  /* Empty Reviews State */
+  .empty-reviews-state {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+
+    .empty-reviews-content {
+      max-width: 400px;
+      margin: 0 auto;
+
+      .empty-reviews-icon {
+        font-size: 3rem;
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-lg);
+        opacity: 0.6;
+      }
+
+      h3 {
+        color: var(--color-text-primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 var(--spacing-sm) 0;
+      }
+
+      p {
+        color: var(--color-text-secondary);
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
 
   .review-item {
     background: var(--color-surface);
@@ -1869,6 +1908,7 @@
     padding: var(--spacing-xl);
     margin-bottom: var(--spacing-lg);
     transition: box-shadow 0.2s ease;
+    width: 100%;
 
     &:hover {
       box-shadow: var(--shadow-md);
@@ -2001,6 +2041,7 @@
 
 /* Additional Media Queries for New Sections */
 @media (max-width: 1024px) {
+  /*
   .reviews-overview-container {
     display: flex;
     flex-direction: column;
@@ -2008,12 +2049,12 @@
   }
 
   .summary-card {
-    order: 1; /* Summary card primeiro no tablet/mobile */
-  }
+    order: 1; /* Summary card primeiro no tablet/mobile 
+}
 
-  .rating-overview {
-    order: 2; /* Rating overview segundo no tablet/mobile */
-  }
+.rating-overview {
+  order: 2; /* Rating overview segundo no tablet/mobile 
+  } */
 }
 
 @media (max-width: 768px) {
@@ -2038,6 +2079,26 @@
 
   .rating-overview {
     order: 2; /* Rating overview vai para baixo no mobile */
+  }
+
+  .reviews-list {
+    .empty-reviews-state {
+      padding: var(--spacing-xl) var(--spacing-md);
+
+      .empty-reviews-content {
+        .empty-reviews-icon {
+          font-size: 2.5rem;
+        }
+
+        h3 {
+          font-size: 1.125rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+        }
+      }
+    }
   }
 
   .summary-card {
