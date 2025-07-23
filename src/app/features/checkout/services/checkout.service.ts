@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core'
 import { BehaviorSubject, Observable, of } from 'rxjs'
 import { tap, catchError } from 'rxjs/operators'
 import { HttpClient } from '@angular/common/http'
+import { UserService } from '../../user/services/user.service'
 import {
   CheckoutItem,
   ShippingAddress,
@@ -43,7 +44,11 @@ export class CheckoutService {
   private _steps = signal<CheckoutStep[]>([...CHECKOUT_STEPS])
   steps = this._steps.asReadonly()
 
-  constructor(private http: HttpClient, private orderService: OrderService) {}
+  constructor(
+    private http: HttpClient,
+    private orderService: OrderService,
+    private userService: UserService,
+  ) {}
 
   initializeCheckout(checkoutItems: CheckoutItem[]): void {
     this._checkoutItems.set(checkoutItems)
@@ -126,21 +131,55 @@ export class CheckoutService {
 
   // Mock data for development
   getShippingAddresses(): Observable<ShippingAddress[]> {
-    const mockAddresses: ShippingAddress[] = [
-      {
-        id: '1',
-        fullName: 'João Silva',
-        street: 'Rua das Flores',
-        number: '123',
-        complement: 'Apto 45',
-        neighborhood: 'Centro',
-        city: 'São Paulo',
-        state: 'SP',
-        zipCode: '01234-567',
-        isDefault: true,
-      },
-    ]
-    return of(mockAddresses)
+    // Busca o endereço real do usuário logado usando o CEP cadastrado
+    const userId = localStorage.getItem('userId') || '1'
+    return new Observable<ShippingAddress[]>(observer => {
+      this.userService.getUserById(userId).subscribe({
+        next: (user: any) => {
+          console.log('[CheckoutService] CEP do usuário retornado:', user.cep)
+          if (user.cep) {
+            // Remove qualquer caractere não numérico do CEP
+            const zipCode = (user.cep + '').replace(/\D/g, '')
+            if (zipCode.length === 8) {
+              this.http
+                .get(`https://brasilapi.com.br/api/cep/v2/${zipCode}`)
+                .subscribe({
+                  next: (data: any) => {
+                    const realAddress: ShippingAddress = {
+                      id: user.id,
+                      fullName: user.fullName,
+                      street: data.street || '',
+                      number: user.number || '',
+                      complement: user.complement || '',
+                      neighborhood: data.neighborhood || '',
+                      city: data.city || '',
+                      state: data.state || '',
+                      zipCode: user.cep,
+                      isDefault: true,
+                    }
+                    observer.next([realAddress])
+                    observer.complete()
+                  },
+                  error: () => {
+                    observer.next([])
+                    observer.complete()
+                  },
+                })
+            } else {
+              observer.next([])
+              observer.complete()
+            }
+          } else {
+            observer.next([])
+            observer.complete()
+          }
+        },
+        error: () => {
+          observer.next([])
+          observer.complete()
+        },
+      })
+    })
   }
 
   getPaymentMethods(): Observable<PaymentMethod[]> {

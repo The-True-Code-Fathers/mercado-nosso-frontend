@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
+import { AuthService } from '../../../shared/services/auth.service'
 
 export interface LoginRequest {
   email: string
@@ -8,14 +9,14 @@ export interface LoginRequest {
 }
 
 export interface UpdateUserRequest {
-    fullName: string;
-    profilePictureUrl?: string;
-    email: string;
-    telephoneNumber?: string;
-    cnpj?: string;
-    socialReason?: string;
-    isSeller?: boolean;
-    cep?: string;
+  fullName: string
+  profilePictureUrl?: string
+  email: string
+  telephoneNumber?: string
+  cnpj?: string
+  socialReason?: string
+  isSeller?: boolean
+  cep?: string
 }
 
 export interface BecomeSellerRequest {
@@ -27,17 +28,17 @@ export interface BecomeSellerRequest {
 }
 
 export interface CreateUserRequest {
-    fullName: string;
-    email: string;
-    passwordHash: string;
-    cpf: string;
-    cnpj: string;
-    isSeller: boolean;
-    cep?: string;
+  fullName: string
+  email: string
+  passwordHash: string
+  cpf: string
+  cnpj: string
+  isSeller: boolean
+  cep?: string
 }
 
 export interface UserResponse {
-    id: string
+  id: string
   fullName: string
   email: string
   isSeller: boolean
@@ -58,7 +59,7 @@ export interface UserResponse {
 export class UserService {
   private userApiUrl = 'http://localhost:8080/api/users'
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   login(email: string, passwordHash: string): Observable<UserResponse> {
     const loginRequest: LoginRequest = { email, passwordHash }
@@ -82,16 +83,21 @@ export class UserService {
     userId: string,
     request: UpdateUserRequest,
   ): Observable<UserResponse> {
+    // Sempre pega o userId do AuthService
+    const id = this.auth.getUserId() || userId
     return this.http.patch<UserResponse>(`${this.userApiUrl}/me`, request, {
       headers: {
-        'X-User-Id': userId,
+        'X-User-Id': id,
       },
     })
   }
 
+  // Busca qualquer usuário pelo id (para seller, etc)
   getUserById(userId: string): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.userApiUrl}/${userId}`)
   }
+
+  // Busca o usuário logado pela rota /me, usando o header X-User-Id
 
   becomeSeller(
     userId: string,
@@ -108,6 +114,12 @@ export class UserService {
   }
 
   getCurrentUser(userId: string): Observable<UserResponse> {
+    // Só envia se for um UUID válido
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!userId || userId === '1' || !uuidRegex.test(userId)) {
+      throw new Error('ID de usuário inválido para requisição /me')
+    }
     return this.http.get<UserResponse>(`${this.userApiUrl}/me`, {
       headers: {
         'X-User-Id': userId,
