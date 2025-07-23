@@ -80,6 +80,7 @@ export interface CategorySummary {
 })
 export class ListingService {
   private apiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api`
+  private listingsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/listings`
   private reviewsApiUrl = `${DEVELOPMENT_CONFIG.API_BASE_URL}/api/reviews`
 
   constructor(private http: HttpClient) {}
@@ -155,11 +156,11 @@ export class ListingService {
   }
 
   createListing(listing: Partial<Listing>): Observable<Listing> {
-    return this.http.post<Listing>(this.apiUrl, listing)
+    return this.http.post<Listing>(this.listingsApiUrl, listing)
   }
 
   deleteListing(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    return this.http.delete<void>(`${this.listingsApiUrl}/${id}`)
   }
 
   getReviewsByListingId(listingId: string): Observable<Review[]> {
@@ -168,13 +169,13 @@ export class ListingService {
 
   updateListing(listing: Listing): Observable<Listing> {
     return this.http.put<Listing>(
-      `${this.apiUrl}/${listing.listingId}`,
+      `${this.listingsApiUrl}/${listing.listingId}`,
       listing,
     )
   }
 
   getListingsBySellerId(sellerId: string): Observable<Listing[]> {
-    return this.http.get<Listing[]>(`${this.apiUrl}`).pipe(
+    return this.http.get<Listing[]>(`${this.listingsApiUrl}`).pipe(
       map(listings => {
         console.log('Todos os listings recebidos:', listings.length)
         console.log('Filtrando por sellerId:', sellerId)

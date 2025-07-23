@@ -999,7 +999,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   get displaySalesCount() {
     const currentListing = this.currentListing
-    console.log('=== DEBUG SALES COUNT ===')
+    /*console.log('=== DEBUG SALES COUNT ===')
     console.log('currentListing:', currentListing)
     console.log('currentListing?.salesCount:', currentListing?.salesCount)
     console.log('typeof salesCount:', typeof currentListing?.salesCount)
@@ -1008,7 +1008,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
       currentListing?.salesCount === undefined,
     )
     console.log('salesCount === null:', currentListing?.salesCount === null)
-    console.log('=========================')
+    console.log('=========================')*/
 
     // Se há dados do backend e salesCount está definido (mesmo que seja 0)
     if (
