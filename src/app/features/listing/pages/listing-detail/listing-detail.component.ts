@@ -148,6 +148,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
 
   // Related Products
   relatedProducts: Listing[] = []
+  relatedProductsLoading = signal<boolean>(false)
 
   // Reviews and Ratings
   // Usar getter para o rating médio baseado nos reviews reais
@@ -300,7 +301,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         console.log('Listing recebido do backend:', listing)
         console.log('Sales count no listing:', listing.salesCount)
         this.listing.set(listing)
-        this.updateBreadcrumb(listing.title)
+        this.updateBreadcrumb(listing.title, listing.category)
         this.initializeReviews() // Inicializar reviews com dados reais
 
         // Buscar nome do vendedor
@@ -324,11 +325,34 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     ]
   }
 
-  private updateBreadcrumb(productTitle: string): void {
+  private updateBreadcrumb(productTitle: string, category?: string): void {
+    // Truncate title to maximum 10 words
+    const truncatedTitle = this.truncateTitle(productTitle, 10)
+
     this.breadcrumbItems = [
       { label: 'Produtos', routerLink: '/products' },
-      { label: productTitle, disabled: true },
+      ...(category
+        ? [
+            {
+              label: category,
+              routerLink: '/products',
+              queryParams: { category: category },
+            },
+          ]
+        : []),
+      { label: truncatedTitle, disabled: true },
     ]
+  }
+
+  private truncateTitle(title: string, maxWords: number): string {
+    if (!title) return ''
+
+    const words = title.trim().split(/\s+/)
+    if (words.length <= maxWords) {
+      return title
+    }
+
+    return words.slice(0, maxWords).join(' ') + '...'
   }
 
   private setupScrollListener(): void {
@@ -731,8 +755,11 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   private loadRelatedProducts(sku: string): void {
     if (!sku) {
       this.relatedProducts = []
+      this.relatedProductsLoading.set(false)
       return
     }
+
+    this.relatedProductsLoading.set(true)
 
     this.listingService
       .getRelatedProductsBySku(sku)
@@ -762,6 +789,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
         next: productsArray => {
           // 4. The result is the final array of full product details
           this.relatedProducts = productsArray
+          this.relatedProductsLoading.set(false)
           console.log(
             'Related products loaded successfully!',
             this.relatedProducts,
@@ -773,6 +801,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
             err,
           )
           this.relatedProducts = []
+          this.relatedProductsLoading.set(false)
         },
       })
   }

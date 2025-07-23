@@ -319,6 +319,10 @@
       padding: var(--spacing-md) var(--spacing-lg) !important;
       font-weight: 600 !important;
       height: 45px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 45px !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -697,6 +701,7 @@
 /* Action Buttons */
 .actions-section {
   display: flex;
+  justify-content: space-between;
   gap: var(--spacing-md);
   margin: var(--spacing-lg) 0;
 }
@@ -802,6 +807,10 @@
           font-weight: 500;
           padding: var(--spacing-md) var(--spacing-lg);
           min-width: 80px;
+          height: 45px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           &:hover:not(:disabled) {
             background: var(--color-primary-light);
@@ -1293,8 +1302,30 @@
     gap: var(--spacing-lg);
   }
 
+  // Fix main product section layout for mobile
+  .product-section {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .gallery-container {
+    flex: none;
+    min-width: unset;
+    max-width: 100%;
+    margin-right: 0;
+  }
+
+  .info-container {
+    flex: none;
+    width: 100%;
+  }
+
   .custom-gallery {
     padding: var(--spacing-md);
+    width: 100% !important;
+    min-width: unset !important;
+    height: auto !important;
+    min-height: unset !important;
   }
 
   .zoom-container {
@@ -1306,6 +1337,202 @@
   .thumbnails-container {
     gap: var(--spacing-xs);
     padding: 0 var(--spacing-sm);
+  }
+
+  // Improve mobile product info section
+  .product-info-card {
+    ::ng-deep .p-card-content {
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+  }
+
+  .product-title {
+    font-size: 1.375rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: var(--spacing-md) !important;
+  }
+
+  .rating-section {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: flex-start;
+
+    .rating-main {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xs);
+    }
+
+    .sales-info {
+      align-self: stretch;
+    }
+  }
+
+  .price-section {
+    margin: var(--spacing-lg) 0;
+
+    .main-price {
+      font-size: 2rem !important;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .pix-promotion {
+      margin: var(--spacing-sm) 0;
+      padding: var(--spacing-sm);
+      font-size: 0.875rem;
+    }
+
+    .installments {
+      font-size: 0.875rem;
+    }
+  }
+
+  // Improve mobile quantity controls
+  .quantity-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+
+    .quantity-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      width: 100%;
+      justify-content: flex-start;
+
+      ::ng-deep .quantity-btn {
+        min-width: 44px !important;
+        min-height: 44px !important;
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 8px !important;
+      }
+
+      .quantity-display {
+        font-size: 1.1rem;
+        font-weight: 600;
+        min-width: 44px;
+        text-align: center;
+        padding: var(--spacing-sm);
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+      }
+    }
+  }
+
+  // Improve mobile action buttons
+  .actions-section {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin: var(--spacing-xl) 0;
+
+    ::ng-deep .p-button {
+      width: 100% !important;
+      min-height: 48px !important;
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important;
+      padding: var(--spacing-md) var(--spacing-lg) !important;
+    }
+
+    .add-cart-btn {
+      order: 2;
+    }
+
+    .buy-now-btn {
+      order: 1;
+    }
+  }
+
+  // Improve shipping calculator mobile
+  .shipping-form {
+    .shipping-input-row {
+      display: flex;
+      flex-direction: row;
+      gap: var(--spacing-sm);
+      align-items: stretch;
+
+      .p-inputgroup {
+        flex: 1;
+
+        .p-inputgroup-addon {
+          width: 44px;
+          min-width: 44px;
+        }
+
+        .cep-input {
+          font-size: 1rem !important;
+          padding: var(--spacing-md) !important;
+          height: 48px !important;
+        }
+      }
+
+      .calc-button {
+        flex-shrink: 0;
+
+        ::ng-deep .p-button {
+          height: 48px !important;
+          min-width: 70px !important;
+          font-size: 1rem !important;
+          border-radius: var(--radius-sm) !important;
+          padding: var(--spacing-sm) var(--spacing-md) !important;
+        }
+      }
+    }
+  }
+
+  // Improve payment methods mobile
+  .payment-methods {
+    .payment-icons {
+      justify-content: flex-start;
+      gap: var(--spacing-sm);
+
+      .payment-icon {
+        width: 50px;
+        height: 32px;
+
+        img {
+          max-width: 100%;
+          max-height: 100%;
+        }
+      }
+    }
+  }
+
+  // Improve seller section mobile
+  .seller-section {
+    h4 {
+      font-size: 1rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .seller-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+    }
+  }
+
+  // Improve stock section mobile
+  .stock-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+
+    .stock-label {
+      font-size: 0.9rem;
+    }
+
+    .stock-value {
+      font-size: 1rem;
+      font-weight: 600;
+    }
   }
 
   .thumbnail-item {
@@ -1324,20 +1551,8 @@
 
   .actions-section {
     flex-direction: column;
+    flex-grow: 1;
     gap: var(--spacing-sm);
-  }
-
-  .shipping-input-row {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-
-  .cep-input {
-    width: 100%;
-  }
-
-  .calc-button {
-    width: 100%;
   }
 
   .shipping-option-content {
@@ -1379,16 +1594,75 @@
     display: none !important;
   }
 
-  // Breadcrumb mobile
+  // Breadcrumb mobile - Improved layout
   .breadcrumb-section {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE/Edge
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome/Safari
+    }
 
     ::ng-deep .custom-breadcrumb {
+      min-width: max-content;
+
       .p-breadcrumb-list {
-        .p-menuitem-text {
-          font-size: 0.9rem;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        padding: var(--spacing-xs) 0;
+
+        .p-menuitem {
+          flex-shrink: 0;
+
+          .p-menuitem-link {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: var(--color-surface);
+            }
+          }
+
+          .p-menuitem-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          &:last-child .p-menuitem-text {
+            max-width: 150px; // Allow more space for product title
+            font-weight: 600;
+            color: var(--color-text-primary);
+          }
+        }
+
+        .p-menuitem-separator {
+          margin: 0 var(--spacing-xs);
+          font-size: 0.7rem;
+          color: var(--color-text-muted);
+          flex-shrink: 0;
         }
       }
+    }
+
+    // Add subtle gradient to indicate scrollable content
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 100%;
+      background: linear-gradient(to right, transparent, var(--color-bg) 70%);
+      pointer-events: none;
+      z-index: 1;
     }
   }
 }
@@ -1396,6 +1670,57 @@
 @media (max-width: 480px) {
   .listing-detail {
     padding: var(--spacing-sm);
+  }
+
+  // Extra small mobile adjustments
+  .product-title {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .main-price {
+    font-size: 1.75rem !important;
+  }
+
+  .pix-promotion {
+    font-size: 0.8rem !important;
+    padding: var(--spacing-xs) !important;
+
+    .pix-icon {
+      width: 16px !important;
+      height: 16px !important;
+    }
+  }
+
+  .installments {
+    font-size: 0.8rem !important;
+  }
+
+  // Smaller touch targets for very small screens
+  .quantity-controls {
+    ::ng-deep .quantity-btn {
+      min-width: 40px !important;
+      min-height: 40px !important;
+      width: 40px !important;
+      height: 40px !important;
+    }
+
+    .quantity-display {
+      min-width: 40px;
+      font-size: 1rem;
+      padding: var(--spacing-xs);
+    }
+  }
+
+  // Compact action buttons for very small screens
+  .actions-section {
+    margin: var(--spacing-lg) 0;
+
+    ::ng-deep .p-button {
+      min-height: 44px !important;
+      font-size: 0.95rem !important;
+      padding: var(--spacing-sm) var(--spacing-md) !important;
+    }
   }
 
   .custom-gallery {
@@ -1432,6 +1757,139 @@
     width: 45px;
     height: 45px;
     flex-shrink: 0;
+
+    img {
+      border-radius: 4px;
+    }
+  }
+
+  // Improve related products for mobile
+  .related-products-section {
+    .section-header {
+      h2 {
+        font-size: 1.25rem;
+        margin-bottom: var(--spacing-md);
+
+        i {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md);
+
+      .product-card {
+        ::ng-deep .p-card-content {
+          padding: var(--spacing-sm);
+        }
+
+        .product-title {
+          font-size: 0.9rem !important;
+          line-height: 1.3 !important;
+          margin-bottom: var(--spacing-xs) !important;
+        }
+
+        .product-pricing {
+          .price-current {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
+
+  // Improve breadcrumb for very small mobile screens
+  .breadcrumb-section {
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+
+    ::ng-deep .custom-breadcrumb {
+      .p-breadcrumb-list {
+        .p-menuitem {
+          .p-menuitem-text {
+            font-size: 0.75rem;
+            max-width: 80px; // Even more compact on small screens
+          }
+
+          &:last-child .p-menuitem-text {
+            max-width: 100px;
+            font-weight: 600;
+          }
+        }
+
+        .p-menuitem-separator {
+          margin: 0 4px;
+          font-size: 0.65rem;
+        }
+      }
+    }
+
+    // Stronger gradient indicator for small screens
+    &::after {
+      width: 30px;
+      background: linear-gradient(to right, transparent, var(--color-bg) 60%);
+    }
+  }
+}
+
+// Additional mobile-specific improvements
+@media (max-width: 768px) {
+  // Improve related products grid for tablet/mobile
+  .related-products-section {
+    margin-top: var(--spacing-xl);
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+    }
+  }
+
+  // Improve shipping results mobile display
+  .shipping-results {
+    .shipping-options {
+      .shipping-option-card {
+        ::ng-deep .p-card-content {
+          padding: var(--spacing-md);
+        }
+
+        .shipping-option-content {
+          .shipping-header {
+            margin-bottom: var(--spacing-sm);
+          }
+
+          .shipping-details {
+            gap: var(--spacing-xs);
+
+            .shipping-cost {
+              font-size: 1.1rem;
+              font-weight: 600;
+            }
+
+            .shipping-time {
+              font-size: 0.9rem;
+            }
+
+            .shipping-description {
+              font-size: 0.85rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .thumbnail-item {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+
+    img {
+      border-radius: 4px;
+    }
   }
 
   .product-title {
@@ -1488,23 +1946,6 @@
     margin-bottom: var(--spacing-sm);
   }
 
-  // Breadcrumb ainda menor
-  .breadcrumb-section {
-    margin-bottom: var(--spacing-md);
-
-    ::ng-deep .custom-breadcrumb {
-      .p-breadcrumb-list {
-        .p-menuitem-text {
-          font-size: 0.85rem;
-        }
-
-        .p-menuitem-separator {
-          margin: 0 var(--spacing-xs);
-        }
-      }
-    }
-  }
-
   // Descrição mobile
   .description-section {
     margin-top: var(--spacing-lg);
@@ -1536,6 +1977,7 @@
     text-align: center;
 
     h2 {
+      text-align: left;
       color: var(--color-text-primary);
       font-size: 1.875rem;
       font-weight: 700;
@@ -2134,5 +2576,250 @@
 
   .rating-overview .score-number {
     font-size: 2.5rem;
+  }
+}
+
+/* Mobile Title and Rating Sections */
+.mobile-title-section {
+  display: none; /* Hidden by default (desktop) */
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+
+  .mobile-product-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.4;
+  }
+
+  .mobile-rating-section {
+    .rating-main {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      margin-bottom: 0; /* Remove bottom margin */
+    }
+
+    .custom-rating {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .rating-star {
+      font-size: 1.125rem;
+      color: var(--color-border);
+      transition: color 0.2s ease;
+      line-height: 1;
+
+      &.star-full {
+        color: #ffd700;
+      }
+
+      &.star-half {
+        background: linear-gradient(
+          90deg,
+          #ffd700 50%,
+          var(--color-border) 50%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      &.star-empty {
+        color: var(--color-border);
+      }
+    }
+
+    .rating-score {
+      font-weight: 600;
+      color: var(--color-text-primary);
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .reviews-text {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    .condition-tag {
+      margin-left: var(--spacing-xs);
+    }
+
+    .sales-info {
+      margin-left: auto; /* Push sales badge to the right */
+      margin-top: 0;
+    }
+
+    ::ng-deep .sales-badge {
+      .p-badge {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+      }
+    }
+  }
+}
+
+/* Mobile Description Section */
+.mobile-description {
+  display: none; /* Hidden by default (desktop) */
+}
+
+/* Desktop Description Section */
+.desktop-description {
+  display: block; /* Visible by default (desktop) */
+}
+
+/* Desktop Title and Rating Sections */
+.desktop-title,
+.desktop-rating {
+  display: block; /* Visible by default (desktop) */
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  /* Show mobile sections */
+  .mobile-title-section {
+    display: block;
+    order: 1; /* First on mobile */
+  }
+
+  .mobile-description {
+    display: block;
+    order: 4; /* Last on mobile */
+    margin-top: var(--spacing-lg);
+  }
+
+  /* Hide desktop sections */
+  .desktop-description {
+    display: none;
+  }
+
+  .desktop-title,
+  .desktop-rating {
+    display: none;
+  }
+
+  /* Update product section order */
+  .product-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .gallery-container {
+    order: 2; /* Gallery second on mobile */
+  }
+
+  .info-container {
+    order: 3; /* Info third on mobile */
+  }
+
+  /* Mobile title improvements */
+  .mobile-title-section {
+    padding: var(--spacing-lg) var(--spacing-md);
+
+    .mobile-product-title {
+      font-size: 1.25rem;
+      line-height: 1.3;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .mobile-rating-section {
+      .rating-main {
+        gap: var(--spacing-xs);
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .rating-star {
+        font-size: 1rem;
+      }
+
+      .rating-score {
+        font-size: 0.95rem;
+      }
+
+      .reviews-text {
+        font-size: 0.85rem;
+      }
+
+      .condition-tag {
+        margin-left: var(--spacing-xs);
+
+        ::ng-deep .p-tag {
+          font-size: 0.75rem;
+          padding: 2px 6px;
+          line-height: 1;
+        }
+      }
+
+      .sales-info {
+        margin-left: var(--spacing-sm); /* Adjust for inline layout */
+        margin-top: 0;
+
+        ::ng-deep .sales-badge .p-badge {
+          font-size: 0.75rem;
+          padding: 2px 6px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-title-section {
+    padding: var(--spacing-md);
+
+    .mobile-product-title {
+      font-size: 1.125rem;
+      line-height: 1.25;
+    }
+
+    .mobile-rating-section {
+      .rating-main {
+        gap: 4px;
+        align-items: center;
+      }
+
+      .rating-star {
+        font-size: 0.9rem;
+      }
+
+      .rating-score {
+        font-size: 0.9rem;
+      }
+
+      .reviews-text {
+        font-size: 0.8rem;
+      }
+
+      .condition-tag {
+        margin-left: 4px;
+
+        ::ng-deep .p-tag {
+          font-size: 0.7rem;
+          padding: 1px 4px;
+        }
+      }
+
+      .sales-info {
+        margin-left: 4px; /* Small margin for very small screens */
+        margin-top: 0;
+
+        ::ng-deep .sales-badge .p-badge {
+          font-size: 0.7rem;
+          padding: 1px 4px;
+        }
+      }
+    }
   }
 }

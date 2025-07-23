@@ -54,6 +54,47 @@
 
     <!-- Product Gallery and Info -->
     <div class="product-section">
+      <!-- Mobile Title Section (only visible on mobile) -->
+      <div class="mobile-title-section">
+        <h1 class="mobile-product-title">{{ displayTitle }}</h1>
+
+        <!-- Rating and Reviews - Mobile -->
+        <div class="mobile-rating-section">
+          <div class="rating-main">
+            <div class="custom-rating">
+              <span
+                *ngFor="let star of getStarsArray(); let i = index"
+                class="rating-star"
+                [ngClass]="{
+                  'star-full': i < mathFloor(averageRating),
+                  'star-half':
+                    i === mathFloor(averageRating) && averageRating % 1 >= 0.5,
+                  'star-empty': i >= mathCeil(averageRating)
+                }"
+              >
+                ★
+              </span>
+            </div>
+            <span class="rating-score">{{ averageRating.toFixed(1) }}</span>
+            <span class="reviews-text"
+              >({{ getTotalReviews() }} avaliações)</span
+            >
+            <p-tag
+              [value]="displayCondition"
+              severity="success"
+              styleClass="condition-tag"
+            ></p-tag>
+            <div class="sales-info">
+              <p-badge
+                [value]="displaySalesCount + ' vendidos'"
+                severity="success"
+                styleClass="sales-badge"
+              ></p-badge>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Gallery Section -->
       <div class="gallery-container">
         <!-- Custom Gallery with Zoom -->
@@ -115,7 +156,7 @@
         </div>
 
         <!-- Product Description below gallery -->
-        <div class="description-section">
+        <div class="description-section desktop-description">
           <div class="description-header">
             <h2>Descrição do produto</h2>
           </div>
@@ -165,13 +206,13 @@
       <!-- Product Info Section -->
       <div class="info-container">
         <p-card styleClass="product-info-card">
-          <!-- Product Title -->
-          <div class="product-header">
+          <!-- Product Title - Desktop Only -->
+          <div class="product-header desktop-title">
             <h1 class="product-title">{{ displayTitle }}</h1>
           </div>
 
-          <!-- Rating and Reviews - MAIOR -->
-          <div class="rating-section">
+          <!-- Rating and Reviews - Desktop Only -->
+          <div class="rating-section desktop-rating">
             <div class="rating-main">
               <div class="custom-rating">
                 <span
@@ -201,7 +242,7 @@
             <div class="sales-info">
               <p-badge
                 [value]="displaySalesCount + ' vendidos'"
-                severity="info"
+                severity="success"
                 styleClass="sales-badge"
               ></p-badge>
             </div>
@@ -276,17 +317,6 @@
           <!-- Action Buttons -->
           <div class="actions-section">
             <p-button
-              label="Comprar agora"
-              icon="pi pi-shopping-cart"
-              size="large"
-              severity="success"
-              styleClass="buy-now-btn"
-              (onClick)="buyNow()"
-              [loading]="buyingNow"
-              [disabled]="buyingNow"
-            >
-            </p-button>
-            <p-button
               label="Adicionar ao carrinho"
               icon="pi pi-plus"
               severity="secondary"
@@ -295,6 +325,17 @@
               (onClick)="addToCart()"
               [loading]="addingToCart"
               [disabled]="addingToCart"
+            >
+            </p-button>
+            <p-button
+              label="Comprar agora"
+              icon="pi pi-shopping-cart"
+              size="large"
+              severity="success"
+              styleClass="buy-now-btn"
+              (onClick)="buyNow()"
+              [loading]="buyingNow"
+              [disabled]="buyingNow"
             >
             </p-button>
           </div>
@@ -319,44 +360,44 @@
           </div>
 
           <!-- Shipping Calculator -->
-          <div class="shipping-calculator">
-            <h4>Calcular frete e prazo</h4>
-            <div class="shipping-form">
-              <div class="shipping-input-row">
-                <div class="p-inputgroup">
-                  <span class="p-inputgroup-addon">
-                    <i class="pi pi-map-marker"></i>
-                  </span>
-                  <input
-                    pInputText
-                    type="text"
-                    maxlength="9"
-                    [(ngModel)]="cep"
-                    (input)="formatCep($event)"
-                    placeholder="Inserir CEP"
-                    class="cep-input"
-                  />
-                </div>
-                <p-button
-                  (onClick)="calcularFrete()"
-                  label="OK"
-                  icon="pi pi-check"
-                  [disabled]="!cep || cep.length < 9"
-                  styleClass="calc-button"
-                >
-                </p-button>
+          <!-- <div class="shipping-calculator"> -->
+          <h4>Calcular frete e prazo</h4>
+          <div class="shipping-form">
+            <div class="shipping-input-row">
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-map-marker"></i>
+                </span>
+                <input
+                  pInputText
+                  type="text"
+                  maxlength="9"
+                  [(ngModel)]="cep"
+                  (input)="formatCep($event)"
+                  placeholder="Inserir CEP"
+                  class="cep-input"
+                />
               </div>
-              <div class="cep-help">
-                <a
-                  href="https://buscacepinter.correios.com.br/app/endereco/index.php"
-                  target="_blank"
-                  class="cep-link"
-                >
-                  Não lembro meu CEP
-                </a>
-              </div>
+              <p-button
+                (onClick)="calcularFrete()"
+                label="OK"
+                icon="pi pi-check"
+                [disabled]="!cep || cep.length < 9"
+                styleClass="calc-button"
+              >
+              </p-button>
+            </div>
+            <div class="cep-help">
+              <a
+                href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                target="_blank"
+                class="cep-link"
+              >
+                Não lembro meu CEP
+              </a>
             </div>
           </div>
+          <!-- </div> -->
 
           <!-- Shipping Results - Below action buttons -->
           <div *ngIf="freteCalculado" class="shipping-results">
@@ -400,13 +441,82 @@
       </div>
     </div>
 
+    <!-- Mobile Description Section (only visible on mobile) -->
+    <div class="description-section mobile-description">
+      <div class="description-header">
+        <h2>Descrição do produto</h2>
+      </div>
+
+      <div class="description-content">
+        <!-- Loading state -->
+        <div *ngIf="isLoading()" class="description-loading">
+          <p-skeleton width="100%" height="4rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="80%" height="2rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="60%" height="2rem"></p-skeleton>
+        </div>
+
+        <!-- Content -->
+        <div
+          *ngIf="!isLoading()"
+          class="description-text"
+          [class.expanded]="isDescriptionExpanded"
+          [class.has-overflow]="showExpandButton && !isDescriptionExpanded"
+        >
+          {{ displayDescription }}
+        </div>
+
+        <div
+          *ngIf="showExpandButton && !isLoading()"
+          class="description-actions"
+        >
+          <p-button
+            (onClick)="toggleDescription()"
+            [label]="isDescriptionExpanded ? 'Mostrar menos' : 'Mostrar mais'"
+            [icon]="
+              isDescriptionExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'
+            "
+            severity="secondary"
+            [text]="true"
+            styleClass="show-more-btn"
+          >
+          </p-button>
+        </div>
+      </div>
+    </div>
+
     <!-- Aproveite e compre também Section -->
     <div class="related-products-section">
       <div class="section-header">
-        <h2>Aproveite e compre também</h2>
+        <h2><i class="pi pi-chart-line"></i>Aproveite e compre também</h2>
       </div>
 
-      <div class="products-grid">
+      <!-- Loading Skeleton for Related Products -->
+      <div *ngIf="relatedProductsLoading()" class="products-grid">
+        <p-card
+          *ngFor="let item of [1, 2, 3]"
+          styleClass="product-card skeleton-card"
+        >
+          <ng-template pTemplate="header">
+            <div class="product-image-container">
+              <p-skeleton
+                width="100%"
+                height="200px"
+                borderRadius="8px"
+              ></p-skeleton>
+            </div>
+          </ng-template>
+
+          <div class="product-content">
+            <p-skeleton width="90%" height="1.5rem" class="mb-2"></p-skeleton>
+            <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+            <p-skeleton width="70%" height="1.25rem" class="mb-2"></p-skeleton>
+            <p-skeleton width="50%" height="1rem"></p-skeleton>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Actual Related Products -->
+      <div *ngIf="!relatedProductsLoading()" class="products-grid">
         <p-card
           *ngFor="let product of relatedProducts"
           styleClass="product-card"
