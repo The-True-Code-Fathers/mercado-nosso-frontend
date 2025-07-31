@@ -197,7 +197,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   // Propriedades mockadas para exibição quando não há dados da API
   defaultProduct = {
     id: 1,
-    images: ['/images/banner.png', '/images/banner-lg.jpg'],
+    images: ['/images/pcgamer.webp'],
     rating: 4.8,
     price: 999.99, // Preço padrão para cálculo de parcelas
     comments: [

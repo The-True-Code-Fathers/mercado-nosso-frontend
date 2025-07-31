@@ -123,9 +123,7 @@ export class CreateListingComponent {
       const formData = this.createListingForm.value
 
       // Simular URLs das imagens enviadas (na implementação real, isso seria feito via upload)
-      const imagesUrl = this.uploadedFiles().map(
-        file => `https://placeholder.com/images/${file.name}`,
-      )
+      const imagesUrl = ['/images/pcgamer.webp'];
 
       const listing = {
         sellerId: this.sellerId,
